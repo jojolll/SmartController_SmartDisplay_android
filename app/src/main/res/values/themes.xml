@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+        <!-- the theme applied to the application or activity -->
+        <style name="CustomActionBarTheme"
+            parent="@style/Theme.AppCompat.Light.DarkActionBar">
+            <item name="android:actionBarStyle">@style/AppTheme</item>
+
+            <!-- Support library compatibility -->
+            <item name="actionBarStyle">@style/AppTheme</item>
+
+
+            <item name="windowActionBar">false</item>
+            <item name="windowNoTitle">true</item>
+        </style>
+</resources>

@@ -1,0 +1,8 @@
+<resources>
+    <dimen name="voltageBatWidth">8dp</dimen>
+    <dimen name="voltageBatMargin">2dp</dimen>
+    <dimen name="voltageBatHeight">8dp</dimen>
+    <dimen name="modeMargin">6dp</dimen>
+    <dimen name="brakeMargin">4dp</dimen>
+    <dimen name="cardBottomMargin">15dp</dimen>
+</resources>

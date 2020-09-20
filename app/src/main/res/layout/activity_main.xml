@@ -1,0 +1,755 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground"
+    tools:context="org.koxx$.smartlcd.MainActivity"
+    android:screenOrientation="portrait"
+    >
+
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="7dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/cardBottomMargin"
+                android:background="@color/colorCard"
+                android:clickable="true"
+                android:onClick="onClickSpeed"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="SPPED (M)"
+                    android:textAlignment="viewStart"
+                    android:textColor="@color/colorText"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+
+                <TextView
+                    android:id="@+id/SpeedValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-3dp"
+                    android:paddingBottom="5dp"
+                    android:text="..."
+                    android:textAlignment="center"
+                    android:textColor="@color/colorText"
+                    android:textSize="28sp"
+                    android:textStyle="bold" />
+
+
+                <TextView
+                    android:id="@+id/SpeedMaxValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-5dp"
+                    android:paddingBottom="5dp"
+                    android:text="..."
+                    android:textAlignment="center"
+                    android:textColor="@color/colorText"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/cardBottomMargin"
+                android:background="@color/colorCard"
+                android:clickable="true"
+                android:onClick="onClickMode"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="MODE"
+                    android:textAlignment="viewStart"
+                    android:textColor="@color/colorText"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="-5dp"
+                    android:orientation="horizontal"
+                    android:paddingBottom="5dp">
+
+                    <TextView
+                        android:id="@+id/ModeValue1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/modeMargin"
+                        android:layout_marginRight="@dimen/modeMargin"
+                        android:text="1"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorText"
+                        android:textSize="28sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/ModeValue2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/modeMargin"
+                        android:layout_marginRight="@dimen/modeMargin"
+                        android:text="2"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorText"
+                        android:textSize="28sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/ModeValue3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/modeMargin"
+                        android:layout_marginRight="@dimen/modeMargin"
+                        android:text="3"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorText"
+                        android:textSize="28sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/ModeValue4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/modeMargin"
+                        android:layout_marginRight="@dimen/modeMargin"
+                        android:text="Z"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorText"
+                        android:textSize="28sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/cardBottomMargin"
+                android:background="@color/colorCard"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="BRAKE"
+                    android:textAlignment="viewStart"
+                    android:textColor="@color/colorText"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="-5dp"
+                    android:orientation="horizontal"
+                    android:paddingBottom="5dp">
+
+                    <TextView
+                        android:id="@+id/BrakeValue0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/brakeMargin"
+                        android:layout_marginRight="@dimen/brakeMargin"
+                        android:text="0"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorText"
+                        android:textSize="28sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/BrakeValue1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/brakeMargin"
+                        android:layout_marginRight="@dimen/brakeMargin"
+                        android:text="1"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorText"
+                        android:textSize="28sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/BrakeValue2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/brakeMargin"
+                        android:layout_marginRight="@dimen/brakeMargin"
+                        android:text="2"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorText"
+                        android:textSize="28sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/BrakeValue3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/brakeMargin"
+                        android:layout_marginRight="@dimen/brakeMargin"
+                        android:text="3"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorText"
+                        android:textSize="28sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/BrakeValue4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/brakeMargin"
+                        android:layout_marginRight="@dimen/brakeMargin"
+                        android:text="4"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorText"
+                        android:textSize="28sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/BrakeValue5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/brakeMargin"
+                        android:layout_marginRight="@dimen/brakeMargin"
+                        android:text="5"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorText"
+                        android:textSize="28sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/cardBottomMargin"
+                android:background="@color/colorCard"
+                android:clickable="true"
+                android:onClick="onClickEco"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="ECO"
+                    android:textAlignment="viewStart"
+                    android:textColor="@color/colorText"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/EcoValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-5dp"
+                    android:paddingBottom="5dp"
+                    android:text="..."
+                    android:textAlignment="center"
+                    android:textColor="@color/colorText"
+                    android:textSize="28sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/cardBottomMargin"
+                android:background="@color/colorCard"
+                android:clickable="true"
+                android:onClick="onClickAccel"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                <TextView
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="ACCEL."
+                    android:textAlignment="viewStart"
+                    android:textColor="@color/colorText"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/AccelValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-5dp"
+                    android:paddingBottom="5dp"
+                    android:text="..."
+                    android:textAlignment="center"
+                    android:textColor="@color/colorText"
+                    android:textSize="28sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/cardBottomMargin"
+                android:background="@color/colorCard"
+                android:clickable="true"
+                android:onClick="onClickBtLock"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="LOCK"
+                    android:textAlignment="viewStart"
+                    android:textColor="@color/colorText"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/BtValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-5dp"
+                    android:paddingBottom="5dp"
+                    android:text="..."
+                    android:textAlignment="center"
+                    android:textColor="@color/colorText"
+                    android:textSize="28sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/cardBottomMargin"
+                android:background="@color/colorCard"
+                android:clickable="true"
+                android:onClick="onClickSpeedLmt"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="SPD. LMT."
+                    android:textAlignment="viewStart"
+                    android:textColor="@color/colorText"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/SpdLimitValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-5dp"
+                    android:paddingBottom="5dp"
+                    android:text="..."
+                    android:textAlignment="center"
+                    android:textColor="@color/colorText"
+                    android:textSize="28sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="7dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/cardBottomMargin"
+                android:background="@color/colorCard"
+                android:clickable="true"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="VOLTAGE"
+                        android:textColor="@color/colorText"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="0dip"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:id="@+id/BatteryValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:text="0%"
+                        android:textColor="@color/colorText"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/VoltageValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-10dp"
+                    android:paddingBottom="5dp"
+                    android:text="..."
+                    android:textAlignment="center"
+                    android:textColor="@color/colorText"
+                    android:textSize="28sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="10dp"
+                    android:layout_gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/VoltageValue1"
+                        android:layout_width="@dimen/voltageBatWidth"
+                        android:layout_height="@dimen/voltageBatHeight"
+                        android:layout_marginLeft="@dimen/voltageBatMargin"
+                        android:layout_marginRight="@dimen/voltageBatMargin"
+                        android:background="#fff" />
+
+                    <TextView
+                        android:id="@+id/VoltageValue2"
+                        android:layout_width="@dimen/voltageBatWidth"
+                        android:layout_height="@dimen/voltageBatHeight"
+                        android:layout_marginLeft="@dimen/voltageBatMargin"
+                        android:layout_marginRight="@dimen/voltageBatMargin"
+                        android:background="#fff" />
+
+                    <TextView
+                        android:id="@+id/VoltageValue3"
+                        android:layout_width="@dimen/voltageBatWidth"
+                        android:layout_height="@dimen/voltageBatHeight"
+                        android:layout_marginLeft="@dimen/voltageBatMargin"
+                        android:layout_marginRight="@dimen/voltageBatMargin"
+                        android:background="#fff" />
+
+                    <TextView
+                        android:id="@+id/VoltageValue4"
+                        android:layout_width="@dimen/voltageBatWidth"
+                        android:layout_height="@dimen/voltageBatHeight"
+                        android:layout_marginLeft="@dimen/voltageBatMargin"
+                        android:layout_marginRight="@dimen/voltageBatMargin"
+                        android:background="#fff" />
+
+                    <TextView
+                        android:id="@+id/VoltageValue5"
+                        android:layout_width="@dimen/voltageBatWidth"
+                        android:layout_height="@dimen/voltageBatHeight"
+                        android:layout_marginLeft="@dimen/voltageBatMargin"
+                        android:layout_marginRight="@dimen/voltageBatMargin"
+                        android:background="#fff" />
+
+                    <TextView
+                        android:id="@+id/VoltageValue6"
+                        android:layout_width="@dimen/voltageBatWidth"
+                        android:layout_height="@dimen/voltageBatHeight"
+                        android:layout_marginLeft="@dimen/voltageBatMargin"
+                        android:layout_marginRight="@dimen/voltageBatMargin"
+                        android:background="#fff" />
+
+                    <TextView
+                        android:id="@+id/VoltageValue7"
+                        android:layout_width="@dimen/voltageBatWidth"
+                        android:layout_height="@dimen/voltageBatHeight"
+                        android:layout_marginLeft="@dimen/voltageBatMargin"
+                        android:layout_marginRight="@dimen/voltageBatMargin"
+                        android:background="#fff" />
+
+                    <TextView
+                        android:id="@+id/VoltageValue8"
+                        android:layout_width="@dimen/voltageBatWidth"
+                        android:layout_height="@dimen/voltageBatHeight"
+                        android:layout_marginLeft="@dimen/voltageBatMargin"
+                        android:layout_marginRight="@dimen/voltageBatMargin"
+                        android:background="#fff" />
+
+                    <TextView
+                        android:id="@+id/VoltageValue9"
+                        android:layout_width="@dimen/voltageBatWidth"
+                        android:layout_height="@dimen/voltageBatHeight"
+                        android:layout_marginLeft="@dimen/voltageBatMargin"
+                        android:layout_marginRight="@dimen/voltageBatMargin"
+                        android:background="#fff" />
+
+                    <TextView
+                        android:id="@+id/VoltageValue10"
+                        android:layout_width="@dimen/voltageBatWidth"
+                        android:layout_height="@dimen/voltageBatHeight"
+                        android:layout_marginLeft="@dimen/voltageBatMargin"
+                        android:layout_marginRight="@dimen/voltageBatMargin"
+                        android:background="#fff" />
+                </LinearLayout>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/cardBottomMargin"
+                android:background="@color/colorCard"
+                android:clickable="true"
+                android:onClick="onClickCurrent"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="CUR."
+                    android:textAlignment="viewStart"
+                    android:textColor="@color/colorText"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/AmpereValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-5dp"
+                    android:paddingBottom="5dp"
+                    android:text="..."
+                    android:textAlignment="center"
+                    android:textColor="@color/colorText"
+                    android:textSize="28sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/AmpereMaxValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-5dp"
+                    android:paddingBottom="5dp"
+                    android:text="..."
+                    android:textAlignment="center"
+                    android:textColor="@color/colorText"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/cardBottomMargin"
+                android:background="@color/colorCard"
+                android:clickable="true"
+                android:onClick="onClickPower"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="POWER"
+                    android:textAlignment="viewStart"
+                    android:textColor="@color/colorText"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/PowerValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-5dp"
+                    android:paddingBottom="5dp"
+                    android:text="..."
+                    android:textAlignment="center"
+                    android:textColor="@color/colorText"
+                    android:textSize="28sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/PowerMaxValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-5dp"
+                    android:paddingBottom="5dp"
+                    android:text="..."
+                    android:textAlignment="center"
+                    android:textColor="@color/colorText"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/cardBottomMargin"
+                android:background="@color/colorCard"
+                android:clickable="true"
+                android:onClick="onClickTemperature"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="TEMP."
+                    android:textAlignment="viewStart"
+                    android:textColor="@color/colorText"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/TemperatureValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-5dp"
+                    android:paddingBottom="5dp"
+                    android:text="..."
+                    android:textAlignment="center"
+                    android:textColor="@color/colorText"
+                    android:textSize="28sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/TemperatureMaxValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-5dp"
+                    android:paddingBottom="5dp"
+                    android:text="..."
+                    android:textAlignment="center"
+                    android:textColor="@color/colorText"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/cardBottomMargin"
+                android:background="@color/colorCard"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="HR"
+                    android:textAlignment="viewStart"
+                    android:textColor="@color/colorText"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/HumidityValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-5dp"
+                    android:paddingBottom="5dp"
+                    android:text="..."
+                    android:textAlignment="center"
+                    android:textColor="@color/colorText"
+                    android:textSize="28sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/Time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/cardBottomMargin"
+                android:background="@color/colorCard"
+                android:clickable="true"
+                android:onClick="onClickTime"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="TIME"
+                    android:textAlignment="viewStart"
+                    android:textColor="@color/colorText"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/TimeOnValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-5dp"
+                    android:paddingBottom="5dp"
+                    android:text="..."
+                    android:textAlignment="center"
+                    android:textColor="@color/colorText"
+                    android:textSize="28sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/TimeRunValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-5dp"
+                    android:paddingBottom="5dp"
+                    android:text="..."
+                    android:textAlignment="center"
+                    android:textColor="@color/colorText"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
