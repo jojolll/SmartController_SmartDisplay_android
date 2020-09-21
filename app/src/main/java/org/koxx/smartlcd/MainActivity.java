@@ -56,9 +56,11 @@ import java.util.Locale;
 import timber.log.Timber;
 
 // TODO : GPS speed
-// TODO : BT manual lock
 // TODO : missing settings
 // TODO : screen fraction
+// TODO : brake (to fix)
+// TODO : add beacon visibility
+// TODO : change icons
 
 public class MainActivity extends AppCompatActivity {
 
@@ -368,9 +370,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClickEco(View v) {
 
-        mEco++;
-        if (mEco > 3)
-            mEco = 1;
+        mEco--;
+        if (mEco < 1)
+            mEco = 3;
 
         BluetoothHandler.getInstance(this).sendEcoValue((byte) mEco);
 
@@ -379,9 +381,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClickAccel(View v) {
 
-        mAccel++;
-        if (mAccel > 5)
-            mAccel = 0;
+        mAccel--;
+        if (mAccel < 0)
+            mAccel = 5;
 
         BluetoothHandler.getInstance(this).sendAccelValue((byte) mAccel);
 
