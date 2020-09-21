@@ -33,13 +33,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.hotmail.or_dvir.easysettings.pojos.EasySettings;
 import com.hotmail.or_dvir.easysettings.pojos.SettingsObject;
+import com.welie.blessedexample.R;
 
 import org.koxx.smartlcd.datas.BrakeStatusMeasurement;
 import org.koxx.smartlcd.datas.BtlockMeasurement;
 import org.koxx.smartlcd.datas.ModeMeasurement;
 import org.welie.blessed.BluetoothCentral;
 import org.welie.blessed.BluetoothPeripheral;
-import com.welie.blessedexample.R;
+
 import org.koxx.smartlcd.chrono.ChronometerTimeOn;
 import org.koxx.smartlcd.chrono.ChronometerTimeRun;
 import org.koxx.smartlcd.datas.AmpereMeasurement;
@@ -57,6 +58,7 @@ import timber.log.Timber;
 // TODO : GPS speed
 // TODO : BT manual lock
 // TODO : missing settings
+// TODO : screen fraction
 
 public class MainActivity extends AppCompatActivity {
 
@@ -84,6 +86,8 @@ public class MainActivity extends AppCompatActivity {
     int mSpeedLimiter = 0;
     int mEco = 0;
     int mAccel = 0;
+
+    int mBleLockForce = 0;
 
     int mLastBtStatus = BluetoothHandler.CONNECT_STATUS_DISCONNECTED;
 
@@ -402,6 +406,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClickBtLock(View v) {
         Log.d(TAG, "onClickBtLock");
+
+        if (mBleLockForce == 1)
+        BluetoothHandler.getInstance(this).sendBleLockForceValue((byte) 0x00);
+        else
+            BluetoothHandler.getInstance(this).sendBleLockForceValue((byte) 0x01);
+
     }
 
     public void onClickTemperature(View v) {
@@ -664,11 +674,48 @@ public class MainActivity extends AppCompatActivity {
     private final BroadcastReceiver btLockDataReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            Timber.i("btLockDataReceiver");
             BluetoothPeripheral peripheral = getPeripheral(intent.getStringExtra(BluetoothHandler.MEASUREMENT_EXTRA_PERIPHERAL));
             BtlockMeasurement measurement = (BtlockMeasurement) intent.getSerializableExtra(BluetoothHandler.MEASUREMENT_BTLOCK_EXTRA);
             if (measurement == null) return;
 
-            tvBtLock.setText(String.format(Locale.ENGLISH, "%d", measurement.btLockValue));
+            int bleLockStatus = measurement.bleLockStatus;
+            int bleLockBeaconVisibleValue = measurement.btLockBeaconVisibleValue;
+            int btLockBeaconRssiValue = measurement.btLockBeaconRssiValue;
+            int bleLockForcedValue = measurement.bleLockForcedValue;
+
+            mBleLockForce  = bleLockForcedValue;
+
+            int btLockMode = Settings.listToValueBtLockMode(context, EasySettings.retrieveSettingsSharedPrefs(context).getString(Settings.Bluetooth_lock_mode, ""));
+
+            // LOCKED
+            if (bleLockStatus == 1) {
+
+                if (bleLockForcedValue == 1) {
+                    tvBtLock.setText(String.format(Locale.ENGLISH, "%s", "ON (FORCED)"));
+                } else {
+                    if (bleLockBeaconVisibleValue == 0) {
+                        tvBtLock.setText(String.format(Locale.ENGLISH, "%s", "ON (beacon lost)"));
+                    } else {
+                        tvBtLock.setText(String.format(Locale.ENGLISH, "%s", "ON (smart. lost)"));
+                    }
+                }
+            }
+            // UNLOCKED
+            else {
+                if (bleLockBeaconVisibleValue == 1)
+                    if ((bleLockStatus == 3) || (bleLockStatus == 4)) {
+                        tvBtLock.setText(String.format(Locale.ENGLISH, "%s", "OFF (beacon visible"));
+                    } else if ((bleLockStatus == 2)) {
+                        tvBtLock.setText(String.format(Locale.ENGLISH, "%s", "OFF (smart. connected)"));
+                    } else {
+                        tvBtLock.setText(String.format(Locale.ENGLISH, "%s", "OFF"));
+                    }
+                else {
+                    tvBtLock.setText(String.format(Locale.ENGLISH, "%s", "OFF"));
+                }
+            }
+
         }
     };
 

@@ -66,7 +66,7 @@ public class Settings {
 
     private static final String LIST_Bluetooth_lock_mode_1 = "None";
     private static final String LIST_Bluetooth_lock_mode_2 = "Smartphone connected";
-    private static final String LIST_Bluetooth_lock_mode_3 = "Smartphone connected & Beacon visible";
+    private static final String LIST_Bluetooth_lock_mode_3 = "Smartphone connected or beacon visible";
     private static final String LIST_Bluetooth_lock_mode_4 = "Beacon visible";
 
     private static final String LIST_Button_press_action_1 = "Mode Z enable/disable";
@@ -188,7 +188,7 @@ public class Settings {
                         .setNegativeBtnText("cancel")
                         .setUseValueAsSummary()
                         .build(),
-                new SeekBarSettingsObject.Builder(Beacon_range, Beacon_range, -80, -100, -20)
+                new SeekBarSettingsObject.Builder(Beacon_range, Beacon_range, -80, -100, -30)
                         .setUseValueAsSummary()
                         .build(),
 //
@@ -264,18 +264,18 @@ public class Settings {
     }
 
 
-    static private int listToValueBtLockMode(Context ctx, String value) {
+    public static int listToValueBtLockMode(Context ctx, String value) {
         int intValue = 0;
 
         String valueStr = EasySettings.retrieveSettingsSharedPrefs(ctx).getString(value, "");
 
         if (valueStr.equals(LIST_Bluetooth_lock_mode_1))
             intValue = 0;
-        else if (valueStr.equals(LIST_Bluetooth_lock_mode_1))
+        else if (valueStr.equals(LIST_Bluetooth_lock_mode_2))
             intValue = 1;
-        else if (valueStr.equals(LIST_Bluetooth_lock_mode_1))
+        else if (valueStr.equals(LIST_Bluetooth_lock_mode_3))
             intValue = 2;
-        else if (valueStr.equals(LIST_Bluetooth_lock_mode_1))
+        else if (valueStr.equals(LIST_Bluetooth_lock_mode_4))
             intValue = 3;
 
         return intValue;
@@ -315,6 +315,7 @@ public class Settings {
             dos.writeByte(EasySettings.retrieveSettingsSharedPrefs(ctx).getBoolean(Speed_limiter_at_startup, false) ? 1 : 0);
             dos.writeByte((int) (Float.parseFloat(EasySettings.retrieveSettingsSharedPrefs(ctx).getString(Wheel_size, "").replace(",", ".")) * 10));
             dos.writeByte(Integer.parseInt(EasySettings.retrieveSettingsSharedPrefs(ctx).getString(Motor_pole_number, "")));
+            dos.writeByte(listToValueBtLockMode(ctx, Bluetooth_lock_mode));
 
             dos.flush();
         } catch (IOException e) {

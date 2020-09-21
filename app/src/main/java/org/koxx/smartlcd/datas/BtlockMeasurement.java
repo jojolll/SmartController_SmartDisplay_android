@@ -7,18 +7,25 @@ import java.util.Locale;
 
 public class BtlockMeasurement implements Serializable {
 
-    public int btLockValue;
+    public  int btLockBeaconRssiValue;
+    public int btLockBeaconVisibleValue;
+    public int bleLockStatus;
+    public int bleLockForcedValue;
 
     public BtlockMeasurement(byte[] value) {
         BluetoothBytesParser parser = new BluetoothBytesParser(value);
 
-        // Get temperature value
-        btLockValue = parser.getIntValue(BluetoothBytesParser.FORMAT_UINT8) + 1;
+        // Get values
+        byte[] values = parser.getValue();
+        bleLockStatus = values[0];
+        btLockBeaconVisibleValue = values[1];
+        btLockBeaconRssiValue = values[2];
+        bleLockForcedValue = values[3];
 
     }
 
     @Override
     public String toString() {
-        return String.format(Locale.ENGLISH,"%d", btLockValue);
+        return String.format(Locale.ENGLISH,"%d", bleLockStatus);
     }
 }

@@ -248,6 +248,7 @@ class BluetoothHandler {
                 context.sendBroadcast(intent);
                 //Timber.d("power : %s", measurement);
             } else if (characteristicUUID.equals(BTLOCK_CHARACTERISTIC_UUID)) {
+                Timber.i("received BTLOCK_CHARACTERISTIC_UUID");
                 BtlockMeasurement measurement = new BtlockMeasurement(value);
                 Intent intent = new Intent(MEASUREMENT_BTLOCK);
                 intent.putExtra(MEASUREMENT_BTLOCK_EXTRA, measurement);
@@ -441,6 +442,17 @@ class BluetoothHandler {
         if (peripheral == null) return;
         BluetoothGattCharacteristic characteristic2 = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, CURRENT_CALIB_CHARACTERISTIC_UUID);
         peripheral.writeCharacteristic(characteristic2, new byte[]{value}, WRITE_TYPE_DEFAULT);
+    }
+
+    public void sendBleLockForceValue(byte value) {
+        Timber.i("sendBleLockForceValue");
+
+        BluetoothPeripheral peripheral = getConnectedPeripheral();
+        if (peripheral == null) return;
+        BluetoothGattCharacteristic characteristic2 = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, BTLOCK_CHARACTERISTIC_UUID);
+        byte[] values = new byte[4];
+values[3] = value;
+        peripheral.writeCharacteristic(characteristic2, values, WRITE_TYPE_DEFAULT);
     }
 
     public BluetoothPeripheral getConnectedPeripheral() {
