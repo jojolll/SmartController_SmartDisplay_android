@@ -408,6 +408,12 @@ class BluetoothHandler {
         peripheral.writeCharacteristic(characteristic2, new byte[]{value}, WRITE_TYPE_DEFAULT);
     }
 
+    public void sendBrakeManualValue(byte value) {
+        BluetoothPeripheral peripheral = getConnectedPeripheral();
+        if (peripheral == null) return;
+        BluetoothGattCharacteristic characteristic2 = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, BRAKE_STATUS_CHARACTERISTIC_UUID);
+        peripheral.writeCharacteristic(characteristic2, new byte[]{value}, WRITE_TYPE_DEFAULT);
+    }
 
     public void sendSpeedLimiterValue(byte value) {
         BluetoothPeripheral peripheral = getConnectedPeripheral();

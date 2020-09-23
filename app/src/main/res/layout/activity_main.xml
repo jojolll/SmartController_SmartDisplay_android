@@ -6,9 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
-    tools:context="org.koxx$.smartlcd.MainActivity"
     android:screenOrientation="portrait"
-    >
+    tools:context="org.koxx.smartlcd.MainActivity">
 
 
     <LinearLayout
@@ -159,17 +158,32 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/cardBottomMargin"
                 android:background="@color/colorCard"
+                android:clickable="true"
+                android:onClick="onClickBrake"
                 android:orientation="vertical"
                 android:padding="5dp">
 
-                <TextView
-                    android:layout_width="match_parent"
+                <LinearLayout
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="BRAKE"
-                    android:textAlignment="viewStart"
-                    android:textColor="@color/colorText"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="BRAKE"
+                        android:textColor="@color/colorText"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/BrakeWarning"
+                        android:layout_width="20dip"
+                        android:layout_height="14dip"
+                        android:background="@drawable/battery_full_charge"/>
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -181,7 +195,7 @@
 
                     <TextView
                         android:id="@+id/BrakeValue0"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/brakeMargin"
                         android:layout_marginRight="@dimen/brakeMargin"
@@ -190,6 +204,7 @@
                         android:textColor="@color/colorText"
                         android:textSize="28sp"
                         android:textStyle="bold" />
+
 
                     <TextView
                         android:id="@+id/BrakeValue1"

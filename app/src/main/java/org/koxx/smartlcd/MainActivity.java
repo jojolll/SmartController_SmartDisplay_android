@@ -61,6 +61,7 @@ import timber.log.Timber;
 // TODO : brake (to fix)
 // TODO : add beacon visibility
 // TODO : change icons
+// TODO : brake overload warning
 
 public class MainActivity extends AppCompatActivity {
 
@@ -74,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
     public static final String SETTINGS_KEY_RINGTONE = "SETTINGS_KEY_RINGTONE";
 
     private TextView tvSpeed, tvVoltage, tvCurrent, tvSpeedMax, tvCurrentMax, tvPower, tvPowerMax, tvTemperature, tvTemperatureMax, tvBtLock, tvHumidity, tvSpeedLimiter, tvEco, tvAccel;
+    private ImageView ivBrakeBattery;
+
     private final DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
 
     // SmartLcd values
@@ -128,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
         tvEco = (TextView) findViewById(R.id.EcoValue);
         tvAccel = (TextView) findViewById(R.id.AccelValue);
 
+        ivBrakeBattery = (ImageView) findViewById(R.id.BrakeWarning);
 
         registerReceiver(connectStatusReceiver, new IntentFilter(BluetoothHandler.CONNECT_STATUS));
 
@@ -262,17 +266,28 @@ public class MainActivity extends AppCompatActivity {
             int resID = getResources().getIdentifier(viewId, "id", getPackageName());
 
             if (!isBatteryTooLoaded) {
-                if (i == value) {
-                    ((TextView) findViewById(resID)).setTextColor(getResources().getColor(R.color.colorText));
-                    ((TextView) findViewById(resID)).setVisibility(View.VISIBLE);
-                } else if (i < min) {
-                    ((TextView) findViewById(resID)).setVisibility(View.GONE);
-                } else if (i > max) {
-                    ((TextView) findViewById(resID)).setVisibility(View.GONE);
+                if (EasySettings.retrieveSettingsSharedPrefs(this).getBoolean(Settings.Electric_brake_progressive_mode, false)) {
+                    if (i == value) {
+                        ((TextView) findViewById(resID)).setTextColor(getResources().getColor(R.color.colorText));
+                        ((TextView) findViewById(resID)).setVisibility(View.VISIBLE);
+                    } else if (i < min) {
+                        ((TextView) findViewById(resID)).setVisibility(View.GONE);
+                    } else if (i > max) {
+                        ((TextView) findViewById(resID)).setVisibility(View.GONE);
+                    } else {
+                        ((TextView) findViewById(resID)).setTextColor(getResources().getColor(R.color.colorTextDisabled));
+                        ((TextView) findViewById(resID)).setVisibility(View.VISIBLE);
+                    }
+
                 } else {
-                    ((TextView) findViewById(resID)).setTextColor(getResources().getColor(R.color.colorTextDisabled));
-                    ((TextView) findViewById(resID)).setVisibility(View.VISIBLE);
+                    if (i == mBrakeStatus) {
+                        ((TextView) findViewById(resID)).setTextColor(getResources().getColor(R.color.colorText));
+                        ((TextView) findViewById(resID)).setVisibility(View.VISIBLE);
+                    } else {
+                        ((TextView) findViewById(resID)).setVisibility(View.GONE);
+                    }
                 }
+                ivBrakeBattery.setVisibility(View.GONE);
             } else {
                 if (i == 0) {
                     ((TextView) findViewById(resID)).setTextColor(getResources().getColor(R.color.colorText));
@@ -280,6 +295,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     ((TextView) findViewById(resID)).setVisibility(View.GONE);
                 }
+                ivBrakeBattery.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -324,6 +340,12 @@ public class MainActivity extends AppCompatActivity {
             }
 
             mySettingsList = (ArrayList<SettingsObject>) data.getSerializableExtra(SettingsActivity.INTENT_EXTRA_RESULT);
+
+            setBrakeIndicator(EasySettings.retrieveSettingsSharedPrefs(this).getInt(Settings.Electric_brake_min_value, 0),
+                    -1,
+                    EasySettings.retrieveSettingsSharedPrefs(this).getInt(Settings.Electric_brake_max_value, 0),
+                    mBatteryOverLoad);
+
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -410,7 +432,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onClickBtLock");
 
         if (mBleLockForce == 1)
-        BluetoothHandler.getInstance(this).sendBleLockForceValue((byte) 0x00);
+            BluetoothHandler.getInstance(this).sendBleLockForceValue((byte) 0x00);
         else
             BluetoothHandler.getInstance(this).sendBleLockForceValue((byte) 0x01);
 
@@ -430,6 +452,22 @@ public class MainActivity extends AppCompatActivity {
         BluetoothHandler.getInstance(this).sendModeValue((byte) mLcdMode);
 
         setModeIndicator(mLcdMode);
+
+        Log.d(TAG, "lcdMode sent : " + mLcdMode);
+
+    }
+
+    public void onClickBrake(View v) {
+        Log.d(TAG, "onClickBrake");
+
+
+        if (!EasySettings.retrieveSettingsSharedPrefs(this).getBoolean(Settings.Electric_brake_progressive_mode, false)) {
+            mBrakeStatus++;
+            if (mBrakeStatus > 5)
+                mBrakeStatus = 0;
+
+            BluetoothHandler.getInstance(this).sendBrakeManualValue((byte) mBrakeStatus);
+        }
 
         Log.d(TAG, "lcdMode sent : " + mLcdMode);
 
@@ -686,7 +724,7 @@ public class MainActivity extends AppCompatActivity {
             int btLockBeaconRssiValue = measurement.btLockBeaconRssiValue;
             int bleLockForcedValue = measurement.bleLockForcedValue;
 
-            mBleLockForce  = bleLockForcedValue;
+            mBleLockForce = bleLockForcedValue;
 
             int btLockMode = Settings.listToValueBtLockMode(context, EasySettings.retrieveSettingsSharedPrefs(context).getString(Settings.Bluetooth_lock_mode, ""));
 
