@@ -10,6 +10,11 @@
         android:title="actione one"
         app:showAsAction="always" />
 
+    <item
+        android:id="@+id/ota_mode"
+        android:title="@string/software_update_ota"
+        app:showAsAction="always" />
+
     <item android:id="@+id/settings"
-        android:title="settings"/>
+        android:title="@string/settings"/>
 </menu>

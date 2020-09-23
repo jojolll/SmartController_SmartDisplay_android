@@ -364,6 +364,9 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra(EXTRA_SETTINGS_LIST, mySettingsList);
                 startActivityForResult(intent, REQUEST_CODE_ACTIVITY_SETTINGS);
                 return true;
+            case R.id.ota_mode:
+                BluetoothHandler.getInstance(this).sendSwitchOtaValue();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

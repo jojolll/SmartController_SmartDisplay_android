@@ -85,6 +85,7 @@ class BluetoothHandler {
     private static final UUID ECO_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26ab");
     private static final UUID ACCEL_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26ac");
     private static final UUID CURRENT_CALIB_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26ad");
+    private static final UUID SWITCH_TO_OTA_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26ae");
 
 
     // Local variables
@@ -457,8 +458,17 @@ class BluetoothHandler {
         if (peripheral == null) return;
         BluetoothGattCharacteristic characteristic2 = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, BTLOCK_CHARACTERISTIC_UUID);
         byte[] values = new byte[4];
-values[3] = value;
+        values[3] = value;
         peripheral.writeCharacteristic(characteristic2, values, WRITE_TYPE_DEFAULT);
+    }
+
+    public void sendSwitchOtaValue() {
+        Timber.i("sendSwitchOtaValue");
+
+        BluetoothPeripheral peripheral = getConnectedPeripheral();
+        if (peripheral == null) return;
+        BluetoothGattCharacteristic characteristic2 = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, SWITCH_TO_OTA_CHARACTERISTIC_UUID);
+        peripheral.writeCharacteristic(characteristic2, new byte[]{0x01}, WRITE_TYPE_DEFAULT);
     }
 
     public BluetoothPeripheral getConnectedPeripheral() {
