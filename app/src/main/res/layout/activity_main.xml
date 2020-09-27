@@ -181,7 +181,7 @@
                         android:id="@+id/BrakeWarning"
                         android:layout_width="20dip"
                         android:layout_height="14dip"
-                        android:background="@drawable/battery_full_charge"/>
+                        android:background="@drawable/battery_full_charge" />
 
                 </LinearLayout>
 
@@ -767,4 +767,5 @@
         </LinearLayout>
 
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

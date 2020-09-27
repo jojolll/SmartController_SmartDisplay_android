@@ -6,6 +6,7 @@ import android.bluetooth.le.ScanResult;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
+import android.widget.TextView;
 
 import org.welie.blessed.BluetoothBytesParser;
 import org.welie.blessed.BluetoothCentral;
@@ -86,6 +87,7 @@ class BluetoothHandler {
     private static final UUID ACCEL_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26ac");
     private static final UUID CURRENT_CALIB_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26ad");
     private static final UUID SWITCH_TO_OTA_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26ae");
+    private static final UUID LOGS_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26af");
 
 
     // Local variables
@@ -95,6 +97,9 @@ class BluetoothHandler {
     private Handler handler = new Handler();
     private int currentTimeCounter = 0;
 
+    private TextView logsView;
+    private String logText = "";
+
     // Callback for peripherals
     private final BluetoothPeripheralCallback peripheralCallback = new BluetoothPeripheralCallback() {
         @Override
@@ -102,7 +107,7 @@ class BluetoothHandler {
             Timber.i("discovered services");
 
             // Request a higher MTU, iOS always asks for 185
-            peripheral.requestMtu(185);
+            peripheral.requestMtu(128);
 
             // Request a new connection priority
             peripheral.requestConnectionPriority(CONNECTION_PRIORITY_HIGH);
@@ -172,6 +177,11 @@ class BluetoothHandler {
                     peripheral.setNotify(currentCalibCharacteristic, true);
                     peripheral.readCharacteristic(currentCalibCharacteristic);
                 }
+                BluetoothGattCharacteristic logCharacteristic = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, LOGS_CHARACTERISTIC_UUID);
+                if (logCharacteristic != null) {
+                    peripheral.setNotify(logCharacteristic, true);
+                }
+
 
                 sendSettings();
             }
@@ -292,9 +302,16 @@ class BluetoothHandler {
                 intent.putExtra(MEASUREMENT_CURRENT_CALIB_EXTRA, current_calib);
                 intent.putExtra(MEASUREMENT_EXTRA_PERIPHERAL, peripheral.getAddress());
                 context.sendBroadcast(intent);
+            } else if (characteristicUUID.equals(LOGS_CHARACTERISTIC_UUID)) {
+                String log = parser.getStringValue();
+                Timber.i("ESP : %s", log);
+
+                addLog(log);
+
             }
 
         }
+
 
         @Override
         public void onMtuChanged(@NotNull BluetoothPeripheral peripheral, int mtu, int status) {
@@ -310,6 +327,8 @@ class BluetoothHandler {
         public void onConnectedPeripheral(@NotNull BluetoothPeripheral peripheral) {
             Timber.i("connected to '%s'", peripheral.getName());
 
+            addLog(">>> connected");
+
             Intent intent = new Intent(CONNECT_STATUS);
             intent.putExtra(CONNECT_STATUS_EXTRA, CONNECT_STATUS_OK);
             context.sendBroadcast(intent);
@@ -318,6 +337,8 @@ class BluetoothHandler {
         @Override
         public void onConnectionFailed(@NotNull final BluetoothPeripheral peripheral, final int status) {
             Timber.e("connection '%s' failed with status %d", peripheral.getName(), status);
+
+            addLog(">>> connection failed");
 
             Intent intent = new Intent(CONNECT_STATUS);
             intent.putExtra(CONNECT_STATUS_EXTRA, CONNECT_STATUS_FAILED);
@@ -335,6 +356,8 @@ class BluetoothHandler {
         @Override
         public void onDisconnectedPeripheral(@NotNull final BluetoothPeripheral peripheral, final int status) {
             Timber.i("disconnected '%s' with status %d", peripheral.getName(), status);
+
+            addLog(">>> disconnected");
 
             Intent intent = new Intent(CONNECT_STATUS);
             intent.putExtra(CONNECT_STATUS_EXTRA, CONNECT_STATUS_DISCONNECTED);
@@ -477,4 +500,23 @@ class BluetoothHandler {
         else
             return null;
     }
+
+    public void setLogActivity(TextView view) {
+        logsView = view;
+        logsView.setText(logText);
+
+    }
+
+    public void clearLogs() {
+        logText = "";
+        logsView.setText(logText);
+    }
+
+    private void addLog(String log) {
+        if (logsView != null) {
+            logText = logText + log + "\n";
+            logsView.setText(logText);
+        }
+    }
+
 }

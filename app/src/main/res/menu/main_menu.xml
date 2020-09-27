@@ -10,11 +10,17 @@
 
     <item
         android:id="@+id/settings"
-        android:title="@string/settings" />
+        android:title="@string/settings"
+        app:showAsAction="never"/>
 
     <item
         android:id="@+id/ota_mode"
         android:title="@string/software_update_ota"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/logs"
+        android:title="Logs"
         app:showAsAction="never" />
 
 </menu>

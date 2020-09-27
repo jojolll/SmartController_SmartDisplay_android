@@ -5,4 +5,5 @@
     <dimen name="modeMargin">6dp</dimen>
     <dimen name="brakeMargin">4dp</dimen>
     <dimen name="cardBottomMargin">15dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 </resources>

@@ -358,14 +358,19 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent = null;
         switch (item.getItemId()) {
             case R.id.settings:
-                Intent intent = new Intent(this, SettingsActivity.class);
+                intent = new Intent(this, SettingsActivity.class);
                 intent.putExtra(EXTRA_SETTINGS_LIST, mySettingsList);
                 startActivityForResult(intent, REQUEST_CODE_ACTIVITY_SETTINGS);
                 return true;
             case R.id.ota_mode:
                 BluetoothHandler.getInstance(this).sendSwitchOtaValue();
+                return true;
+            case R.id.logs:
+                intent = new Intent(this, LogActivity.class);
+                startActivity(intent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
