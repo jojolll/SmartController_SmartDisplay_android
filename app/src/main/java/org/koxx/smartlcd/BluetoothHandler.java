@@ -23,6 +23,12 @@ import org.koxx.smartlcd.datas.VoltageMeasurement;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Formatter;
+import java.util.Locale;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import timber.log.Timber;
@@ -514,7 +520,11 @@ class BluetoothHandler {
 
     private void addLog(String log) {
         if (logsView != null) {
-            logText = logText + log + "\n";
+            if (logText.length() > 1000000)
+                logText = logText.substring(logText.indexOf('\n') +1 , logText.length());
+
+            String date = new SimpleDateFormat("HH:mm:ss.SSS").format(new Date());
+            logText = logText + date + " : " + log + "\n";
             logsView.setText(logText);
         }
     }
