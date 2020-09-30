@@ -316,6 +316,7 @@ public class Settings {
             dos.writeByte((int) (Float.parseFloat(EasySettings.retrieveSettingsSharedPrefs(ctx).getString(Wheel_size, "").replace(",", ".")) * 10));
             dos.writeByte(Integer.parseInt(EasySettings.retrieveSettingsSharedPrefs(ctx).getString(Motor_pole_number, "")));
             dos.writeByte(listToValueBtLockMode(ctx, Bluetooth_lock_mode));
+            dos.writeByte(Integer.parseInt(EasySettings.retrieveSettingsSharedPrefs(ctx).getString(LCD_Speed_adjustement, "0")));
 
             dos.flush();
         } catch (IOException e) {
