@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.appcompat.widget.Toolbar;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.Legend.LegendForm;
 import com.github.mikephil.charting.components.XAxis;
@@ -19,13 +20,21 @@ import com.github.mikephil.charting.components.YAxis.AxisDependency;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import org.koxx.smartlcd.graph.Base;
+import org.koxx.smartlcd.graph.MyAxisValueFormatter;
 
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Example of a dual axis {@link LineChart} with multiple data sets.
@@ -101,7 +110,7 @@ public class GraphActivity extends Base implements OnSeekBarChangeListener,
         seekBarY.setProgress(30);
 */
 
-        chart.animateX(30000);
+        chart.animateX(1000);
 
         // get the legend (only possible after setting data)
         Legend l = chart.getLegend();
@@ -123,6 +132,12 @@ public class GraphActivity extends Base implements OnSeekBarChangeListener,
         xAxis.setTextColor(Color.BLUE);
         xAxis.setDrawGridLines(false);
         xAxis.setDrawAxisLine(false);
+        xAxis.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                return String.valueOf((int) value / 10) + "s";
+            }
+        });
 
         YAxis leftAxis = chart.getAxisLeft();
         // leftAxis.setTypeface(tfLight);
@@ -203,7 +218,7 @@ public class GraphActivity extends Base implements OnSeekBarChangeListener,
 
     public void addSpeedData(float val) {
 
-        if ((val > 0) || (started)) {
+        if ((val > -1) || (started)) {
             if (!started) {
                 values1.add(new Entry(i_speed, val));
                 i_speed++;
@@ -212,20 +227,19 @@ public class GraphActivity extends Base implements OnSeekBarChangeListener,
             i_speed++;
             started = true;
 
-/*
-            values2.add(new Entry(i, val));
-*/
-
             LineDataSet set1 = null, set2 = null;
 
             if (chart.getData() != null &&
                     chart.getData().getDataSetCount() > 0) {
                 set1 = (LineDataSet) chart.getData().getDataSetByIndex(0);
                 set1.setValues(values1);
-//            set2 = (LineDataSet) chart.getData().getDataSetByIndex(1);
-//            set2.setValues(values2);
+
                 chart.getData().notifyDataChanged();
                 chart.notifyDataSetChanged();
+
+                chart.setVisibleXRange(0, 200);
+                chart.moveViewToX(chart.getData().getEntryCount());
+
             } else {
                 initChart(set1, set2);
             }
@@ -233,20 +247,15 @@ public class GraphActivity extends Base implements OnSeekBarChangeListener,
         }
     }
 
-
     public void addCurrentData(float val) {
 
         if (started) {
             values2.add(new Entry(i_speed, val));
 
-            LineDataSet set2 = null;
-
             if (chart.getData() != null &&
                     chart.getData().getDataSetCount() > 0) {
-                set2 = (LineDataSet) chart.getData().getDataSetByIndex(1);
+                LineDataSet set2 = (LineDataSet) chart.getData().getDataSetByIndex(1);
                 set2.setValues(values2);
-                chart.getData().notifyDataChanged();
-                chart.notifyDataSetChanged();
             }
 
         }
@@ -260,8 +269,7 @@ public class GraphActivity extends Base implements OnSeekBarChangeListener,
         set1.setAxisDependency(AxisDependency.LEFT);
         set1.setColor(ColorTemplate.getHoloBlue());
         set1.setCircleColor(Color.BLUE);
-        set1.setLineWidth(2f);
-        set1.setCircleRadius(1f);
+        set1.setLineWidth(3f);
         set1.setFillAlpha(65);
         set1.setFillColor(ColorTemplate.getHoloBlue());
         set1.setHighLightColor(Color.rgb(244, 117, 117));
@@ -279,8 +287,7 @@ public class GraphActivity extends Base implements OnSeekBarChangeListener,
         set2.setAxisDependency(AxisDependency.RIGHT);
         set2.setColor(Color.RED);
         set2.setCircleColor(Color.WHITE);
-        set2.setLineWidth(2f);
-        set2.setCircleRadius(3f);
+        set2.setLineWidth(3f);
         set2.setFillAlpha(65);
         set2.setFillColor(Color.RED);
         set2.setHighLightColor(Color.rgb(244, 117, 117));
