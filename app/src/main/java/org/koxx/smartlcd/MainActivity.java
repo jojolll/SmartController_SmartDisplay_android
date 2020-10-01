@@ -33,7 +33,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.hotmail.or_dvir.easysettings.pojos.EasySettings;
 import com.hotmail.or_dvir.easysettings.pojos.SettingsObject;
-import com.welie.blessedexample.R;
 
 import org.koxx.smartlcd.datas.BrakeStatusMeasurement;
 import org.koxx.smartlcd.datas.BtlockMeasurement;
@@ -372,6 +371,10 @@ public class MainActivity extends AppCompatActivity {
                 intent = new Intent(this, LogActivity.class);
                 startActivity(intent);
                 return true;
+            case R.id.graph:
+                intent = new Intent(this, GraphActivity.class);
+                startActivity(intent);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -552,10 +555,10 @@ public class MainActivity extends AppCompatActivity {
         ImageView iv = null;
 
         if (value == BluetoothHandler.CONNECT_STATUS_OK) {
-            iv = (ImageView) inflater.inflate(R.layout.blue_only, null);
+            iv = (ImageView) inflater.inflate(R.layout.icon_bt_blue_only, null);
 
         } else if (value == BluetoothHandler.CONNECT_STATUS_FAILED) {
-            iv = (ImageView) inflater.inflate(R.layout.red_only, null);
+            iv = (ImageView) inflater.inflate(R.layout.icon_bt_red_only, null);
             AlphaAnimation alphaAnimation = new AlphaAnimation(0.0f, 1.0f);
             alphaAnimation.setDuration(1000);
             alphaAnimation.setRepeatCount(Animation.INFINITE);
@@ -564,7 +567,7 @@ public class MainActivity extends AppCompatActivity {
             iv.startAnimation(alphaAnimation);
 
         } else if (value == BluetoothHandler.CONNECT_STATUS_DISCONNECTED) {
-            iv = (ImageView) inflater.inflate(R.layout.grey_only, null);
+            iv = (ImageView) inflater.inflate(R.layout.icon_bt_grey_only, null);
             AlphaAnimation alphaAnimation = new AlphaAnimation(0.0f, 1.0f);
             alphaAnimation.setDuration(1000);
             alphaAnimation.setRepeatCount(Animation.INFINITE);

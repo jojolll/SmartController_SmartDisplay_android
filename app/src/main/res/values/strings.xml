@@ -28,4 +28,7 @@
     <string name="software_update_ota">Software update (OTA)</string>
     <string name="settings">Settings</string>
     <string name="title_activity_log">LogActivity</string>
+    <string name="title_activity_graph">GraphActivity</string>
+
+
 </resources>

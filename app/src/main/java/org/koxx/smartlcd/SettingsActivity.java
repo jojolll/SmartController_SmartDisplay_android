@@ -24,7 +24,6 @@ import com.hotmail.or_dvir.easysettings_dialogs.events.EditTextSettingsNeutralBu
 import com.hotmail.or_dvir.easysettings_dialogs.events.EditTextSettingsValueChangedEvent;
 import com.hotmail.or_dvir.easysettings_dialogs.events.ListSettingsNeutralButtonClickedEvent;
 import com.hotmail.or_dvir.easysettings_dialogs.events.ListSettingsValueChangedEvent;
-import com.welie.blessedexample.R;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

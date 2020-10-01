@@ -94,6 +94,7 @@ class BluetoothHandler {
     private static final UUID CURRENT_CALIB_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26ad");
     private static final UUID SWITCH_TO_OTA_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26ae");
     private static final UUID LOGS_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26af");
+    private static final UUID FAST_UPDATE_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26b0");
 
 
     // Local variables
@@ -105,6 +106,8 @@ class BluetoothHandler {
 
     private TextView logsView;
     private String logText = "";
+
+    private GraphActivity graphView = null;
 
     // Callback for peripherals
     private final BluetoothPeripheralCallback peripheralCallback = new BluetoothPeripheralCallback() {
@@ -188,7 +191,6 @@ class BluetoothHandler {
                     peripheral.setNotify(logCharacteristic, true);
                 }
 
-
                 sendSettings();
             }
 
@@ -235,7 +237,12 @@ class BluetoothHandler {
                 intent.putExtra(MEASUREMENT_SPEED_EXTRA, measurement);
                 intent.putExtra(MEASUREMENT_EXTRA_PERIPHERAL, peripheral.getAddress());
                 context.sendBroadcast(intent);
-                //Timber.d("speed : %s", measurement);
+
+                if (graphView !=null)
+                    graphView.addSpeedData((float) (measurement.speedValue));
+
+                Timber.d("speed : %s", measurement);
+
             } else if (characteristicUUID.equals(BRAKE_STATUS_CHARACTERISTIC_UUID)) {
                 BrakeStatusMeasurement measurement = new BrakeStatusMeasurement(value);
                 Intent intent = new Intent(MEASUREMENT_BRAKE_STATUS);
@@ -256,6 +263,10 @@ class BluetoothHandler {
                 intent.putExtra(MEASUREMENT_AMPERE_EXTRA, measurement);
                 intent.putExtra(MEASUREMENT_EXTRA_PERIPHERAL, peripheral.getAddress());
                 context.sendBroadcast(intent);
+
+                if (graphView !=null)
+                    graphView.addCurrentData((float) (measurement.current));
+
                 //Timber.d("ampere : %s", measurement);
             } else if (characteristicUUID.equals(POWER_CHARACTERISTIC_UUID)) {
                 PowerMeasurement measurement = new PowerMeasurement(value);
@@ -426,58 +437,58 @@ class BluetoothHandler {
     public void sendSettings() {
         BluetoothPeripheral peripheral = getConnectedPeripheral();
         if (peripheral == null) return;
-        BluetoothGattCharacteristic characteristic2 = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, SETTINGS_CHARACTERISTIC_UUID);
+        BluetoothGattCharacteristic characteristic = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, SETTINGS_CHARACTERISTIC_UUID);
         byte[] dataSettings = Settings.settingsToByteArry(context);
-        peripheral.writeCharacteristic(characteristic2, dataSettings, WRITE_TYPE_DEFAULT);
+        peripheral.writeCharacteristic(characteristic, dataSettings, WRITE_TYPE_DEFAULT);
     }
 
     public void sendModeValue(byte value) {
         BluetoothPeripheral peripheral = getConnectedPeripheral();
         if (peripheral == null) return;
-        BluetoothGattCharacteristic characteristic2 = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, MODE_CHARACTERISTIC_UUID);
-        peripheral.writeCharacteristic(characteristic2, new byte[]{value}, WRITE_TYPE_DEFAULT);
+        BluetoothGattCharacteristic characteristic = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, MODE_CHARACTERISTIC_UUID);
+        peripheral.writeCharacteristic(characteristic, new byte[]{value}, WRITE_TYPE_DEFAULT);
     }
 
     public void sendBrakeManualValue(byte value) {
         BluetoothPeripheral peripheral = getConnectedPeripheral();
         if (peripheral == null) return;
-        BluetoothGattCharacteristic characteristic2 = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, BRAKE_STATUS_CHARACTERISTIC_UUID);
-        peripheral.writeCharacteristic(characteristic2, new byte[]{value}, WRITE_TYPE_DEFAULT);
+        BluetoothGattCharacteristic characteristic = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, BRAKE_STATUS_CHARACTERISTIC_UUID);
+        peripheral.writeCharacteristic(characteristic, new byte[]{value}, WRITE_TYPE_DEFAULT);
     }
 
     public void sendSpeedLimiterValue(byte value) {
         BluetoothPeripheral peripheral = getConnectedPeripheral();
         if (peripheral == null) return;
-        BluetoothGattCharacteristic characteristic2 = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, SPEED_LIMITER_CHARACTERISTIC_UUID);
-        peripheral.writeCharacteristic(characteristic2, new byte[]{value}, WRITE_TYPE_DEFAULT);
+        BluetoothGattCharacteristic characteristic = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, SPEED_LIMITER_CHARACTERISTIC_UUID);
+        peripheral.writeCharacteristic(characteristic, new byte[]{value}, WRITE_TYPE_DEFAULT);
     }
 
     public void readSpeedLimiterValue(byte value) {
         BluetoothPeripheral peripheral = getConnectedPeripheral();
         if (peripheral == null) return;
-        BluetoothGattCharacteristic characteristic2 = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, SPEED_LIMITER_CHARACTERISTIC_UUID);
-        peripheral.readCharacteristic(characteristic2);
+        BluetoothGattCharacteristic characteristic = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, SPEED_LIMITER_CHARACTERISTIC_UUID);
+        peripheral.readCharacteristic(characteristic);
     }
 
     public void sendEcoValue(byte value) {
         BluetoothPeripheral peripheral = getConnectedPeripheral();
         if (peripheral == null) return;
-        BluetoothGattCharacteristic characteristic2 = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, ECO_CHARACTERISTIC_UUID);
-        peripheral.writeCharacteristic(characteristic2, new byte[]{value}, WRITE_TYPE_DEFAULT);
+        BluetoothGattCharacteristic characteristic = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, ECO_CHARACTERISTIC_UUID);
+        peripheral.writeCharacteristic(characteristic, new byte[]{value}, WRITE_TYPE_DEFAULT);
     }
 
     public void sendAccelValue(byte value) {
         BluetoothPeripheral peripheral = getConnectedPeripheral();
         if (peripheral == null) return;
-        BluetoothGattCharacteristic characteristic2 = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, ACCEL_CHARACTERISTIC_UUID);
-        peripheral.writeCharacteristic(characteristic2, new byte[]{value}, WRITE_TYPE_DEFAULT);
+        BluetoothGattCharacteristic characteristic = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, ACCEL_CHARACTERISTIC_UUID);
+        peripheral.writeCharacteristic(characteristic, new byte[]{value}, WRITE_TYPE_DEFAULT);
     }
 
     public void sendCurrentCalibValue(byte value) {
         BluetoothPeripheral peripheral = getConnectedPeripheral();
         if (peripheral == null) return;
-        BluetoothGattCharacteristic characteristic2 = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, CURRENT_CALIB_CHARACTERISTIC_UUID);
-        peripheral.writeCharacteristic(characteristic2, new byte[]{value}, WRITE_TYPE_DEFAULT);
+        BluetoothGattCharacteristic characteristic = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, CURRENT_CALIB_CHARACTERISTIC_UUID);
+        peripheral.writeCharacteristic(characteristic, new byte[]{value}, WRITE_TYPE_DEFAULT);
     }
 
     public void sendBleLockForceValue(byte value) {
@@ -485,10 +496,10 @@ class BluetoothHandler {
 
         BluetoothPeripheral peripheral = getConnectedPeripheral();
         if (peripheral == null) return;
-        BluetoothGattCharacteristic characteristic2 = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, BTLOCK_CHARACTERISTIC_UUID);
+        BluetoothGattCharacteristic characteristic = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, BTLOCK_CHARACTERISTIC_UUID);
         byte[] values = new byte[4];
         values[3] = value;
-        peripheral.writeCharacteristic(characteristic2, values, WRITE_TYPE_DEFAULT);
+        peripheral.writeCharacteristic(characteristic, values, WRITE_TYPE_DEFAULT);
     }
 
     public void sendSwitchOtaValue() {
@@ -496,8 +507,17 @@ class BluetoothHandler {
 
         BluetoothPeripheral peripheral = getConnectedPeripheral();
         if (peripheral == null) return;
-        BluetoothGattCharacteristic characteristic2 = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, SWITCH_TO_OTA_CHARACTERISTIC_UUID);
-        peripheral.writeCharacteristic(characteristic2, new byte[]{0x01}, WRITE_TYPE_DEFAULT);
+        BluetoothGattCharacteristic characteristic = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, SWITCH_TO_OTA_CHARACTERISTIC_UUID);
+        peripheral.writeCharacteristic(characteristic, new byte[]{0x01}, WRITE_TYPE_DEFAULT);
+    }
+
+    public void sendFastUpdateValue(byte value) {
+        Timber.i("sendFastUpdateValue");
+
+        BluetoothPeripheral peripheral = getConnectedPeripheral();
+        if (peripheral == null) return;
+        BluetoothGattCharacteristic characteristic = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, FAST_UPDATE_CHARACTERISTIC_UUID);
+        peripheral.writeCharacteristic(characteristic, new byte[]{value}, WRITE_TYPE_DEFAULT);
     }
 
     public BluetoothPeripheral getConnectedPeripheral() {
@@ -529,4 +549,7 @@ class BluetoothHandler {
         }
     }
 
+    public void setGraph(GraphActivity graphActivity) {
+        graphView = graphActivity;
+    }
 }

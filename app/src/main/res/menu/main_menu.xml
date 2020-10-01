@@ -23,4 +23,9 @@
         android:title="Logs"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/graph"
+        android:title="Graphics"
+        app:showAsAction="never" />
+
 </menu>
