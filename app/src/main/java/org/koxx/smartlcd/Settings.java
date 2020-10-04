@@ -322,7 +322,7 @@ public class Settings {
         DataOutputStream dos = new DataOutputStream(bos);
 
         try {
-            String beaconAddress = EasySettings.retrieveSettingsSharedPrefs(ctx).getString(Beacon_Mac_Address, "AA:BB:CC:DD:EE:FF").substring(0, 17);
+            String beaconAddress = EasySettings.retrieveSettingsSharedPrefs(ctx).getString(Beacon_Mac_Address, "AA:BB:CC:DD:EE:FF").substring(0, 17).toLowerCase();
             dos.writeBytes(beaconAddress); // size 17
             // remain 3
 

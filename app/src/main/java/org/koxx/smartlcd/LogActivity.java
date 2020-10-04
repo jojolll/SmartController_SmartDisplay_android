@@ -35,4 +35,10 @@ public class LogActivity extends AppCompatActivity {
         
         BluetoothHandler.getInstance(this).setLogActivity(tv);
     }
+
+    @Override
+    protected void onDestroy() {
+        //BluetoothHandler.getInstance(this).setLogActivity(null);
+        super.onDestroy();
+    }
 }

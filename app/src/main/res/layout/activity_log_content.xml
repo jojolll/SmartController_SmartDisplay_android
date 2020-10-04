@@ -16,7 +16,7 @@
             android:layout_height="match_parent"
             android:fontFamily="monospace"
             android:text="12345678i"
-            android:textSize="8dp"
+            android:textSize="6dp"
             android:gravity="bottom"
             />
 

@@ -236,7 +236,7 @@ class BluetoothHandler {
                 intent.putExtra(MEASUREMENT_EXTRA_PERIPHERAL, peripheral.getAddress());
                 context.sendBroadcast(intent);
 
-                if (graphView !=null)
+                if (graphView != null)
                     graphView.addSpeedData((float) (measurement.speedValue));
 
                 Timber.d("speed : %s", measurement);
@@ -262,7 +262,7 @@ class BluetoothHandler {
                 intent.putExtra(MEASUREMENT_EXTRA_PERIPHERAL, peripheral.getAddress());
                 context.sendBroadcast(intent);
 
-                if (graphView !=null)
+                if (graphView != null)
                     graphView.addCurrentData((float) (measurement.current));
 
                 //Timber.d("ampere : %s", measurement);
@@ -537,20 +537,21 @@ class BluetoothHandler {
     }
 
     public void setLogActivity(TextView view) {
-        logsView = view;
-        logsView.setText(logText);
-
+            logsView = view;
+        if ((logText != null) && (logsView != null))
+            logsView.setText(logText);
     }
 
     public void clearLogs() {
         logText = "";
-        logsView.setText(logText);
+        if (logsView != null)
+            logsView.setText(logText);
     }
 
     private void addLog(String log) {
         if (logsView != null) {
-            if (logText.length() > 1000000)
-                logText = logText.substring(logText.indexOf('\n') +1 , logText.length());
+            if (logText.length() > 60000)
+                logText = logText.substring(logText.indexOf('\n') + 1, logText.length());
 
             String date = new SimpleDateFormat("HH:mm:ss.SSS").format(new Date());
             logText = logText + date + " : " + log + "\n";

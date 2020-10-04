@@ -437,6 +437,7 @@ public class MainActivity extends AppCompatActivity {
 
         mLastCurrent = 0;
         tvCurrentMax.setText(String.format(Locale.ENGLISH, "..."));
+        tvPowerMax.setText(String.format(Locale.ENGLISH, "..."));
     }
 
     public void onClickBtLock(View v) {
