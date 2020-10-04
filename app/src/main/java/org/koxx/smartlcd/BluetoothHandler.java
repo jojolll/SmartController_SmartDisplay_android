@@ -24,11 +24,7 @@ import org.koxx.smartlcd.datas.VoltageMeasurement;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Formatter;
-import java.util.Locale;
-import java.util.TimeZone;
 import java.util.UUID;
 
 import timber.log.Timber;
@@ -87,7 +83,7 @@ class BluetoothHandler {
     private static final UUID BTLOCK_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a6");
     private static final UUID TEMPERATURE_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a7");
     private static final UUID HUMIDITY_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a8");
-    private static final UUID SETTINGS_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a9");
+    private static final UUID SETTINGS1_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a9");
     private static final UUID SPEED_LIMITER_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26aa");
     private static final UUID ECO_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26ab");
     private static final UUID ACCEL_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26ac");
@@ -95,6 +91,8 @@ class BluetoothHandler {
     private static final UUID SWITCH_TO_OTA_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26ae");
     private static final UUID LOGS_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26af");
     private static final UUID FAST_UPDATE_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26b0");
+    private static final UUID SETTINGS2_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26b1");
+    private static final UUID SETTINGS3_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26b2");
 
 
     // Local variables
@@ -437,9 +435,20 @@ class BluetoothHandler {
     public void sendSettings() {
         BluetoothPeripheral peripheral = getConnectedPeripheral();
         if (peripheral == null) return;
-        BluetoothGattCharacteristic characteristic = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, SETTINGS_CHARACTERISTIC_UUID);
-        byte[] dataSettings = Settings.settingsToByteArry(context);
+
+        BluetoothGattCharacteristic characteristic = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, SETTINGS1_CHARACTERISTIC_UUID);
+        byte[] dataSettings = Settings.settings1ToByteArray(context);
         peripheral.writeCharacteristic(characteristic, dataSettings, WRITE_TYPE_DEFAULT);
+
+        characteristic = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, SETTINGS2_CHARACTERISTIC_UUID);
+        dataSettings = Settings.settings2ToByteArray(context);
+        peripheral.writeCharacteristic(characteristic, dataSettings, WRITE_TYPE_DEFAULT);
+
+        characteristic = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, SETTINGS3_CHARACTERISTIC_UUID);
+        dataSettings = Settings.settings3ToByteArray(context);
+        peripheral.writeCharacteristic(characteristic, dataSettings, WRITE_TYPE_DEFAULT);
+
+
     }
 
     public void sendModeValue(byte value) {

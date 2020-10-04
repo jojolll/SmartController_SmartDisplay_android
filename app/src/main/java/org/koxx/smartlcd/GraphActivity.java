@@ -58,26 +58,13 @@ public class GraphActivity extends Base implements OnSeekBarChangeListener,
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /*
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        */
+
         setContentView(R.layout.activity_graph);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         setTitle("Speed / current graph");
 
-        /*
-        tvX = findViewById(R.id.tvXMax);
-        tvY = findViewById(R.id.tvYMax);
-
-        seekBarX = findViewById(R.id.seekBar1);
-        seekBarX.setOnSeekBarChangeListener(this);
-
-        seekBarY = findViewById(R.id.seekBar2);
-        seekBarY.setOnSeekBarChangeListener(this);
-*/
         chart = findViewById(R.id.chart1);
         chart.setOnChartValueSelectedListener(this);
 
@@ -96,19 +83,10 @@ public class GraphActivity extends Base implements OnSeekBarChangeListener,
         chart.setHighlightPerDragEnabled(true);
 
         // if disabled, scaling can be done on x- and y-axis separately
-        chart.setPinchZoom(true);
-
-        // set an alternative background color
+        chart.setPinchZoom(false);
         chart.setBackgroundColor(Color.WHITE);
-
-
         chart.setNoDataText("Scooter needs to be moving to capture datas.");
 
-        // add data
-/*
-        seekBarX.setProgress(20);
-        seekBarY.setProgress(30);
-*/
 
         chart.animateX(1000);
 
@@ -117,14 +95,12 @@ public class GraphActivity extends Base implements OnSeekBarChangeListener,
 
         // modify the legend ...
         l.setForm(LegendForm.LINE);
-        //l.setTypeface(tfLight);
         l.setTextSize(11f);
         l.setTextColor(Color.BLUE);
         l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
         l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
         l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
         l.setDrawInside(false);
-//        l.setYOffset(11f);
 
         XAxis xAxis = chart.getXAxis();
         //xAxis.setTypeface(tfLight);
@@ -140,17 +116,13 @@ public class GraphActivity extends Base implements OnSeekBarChangeListener,
         });
 
         YAxis leftAxis = chart.getAxisLeft();
-        // leftAxis.setTypeface(tfLight);
         leftAxis.setTextColor(ColorTemplate.getHoloBlue());
-//        leftAxis.setAxisMaximum(50f);
         leftAxis.setAxisMinimum(0f);
         leftAxis.setDrawGridLines(true);
         //leftAxis.setGranularityEnabled(true);
 
         YAxis rightAxis = chart.getAxisRight();
-        //rightAxis.setTypeface(tfLight);
         rightAxis.setTextColor(Color.RED);
-        //rightAxis.setAxisMaximum(10);
         rightAxis.setAxisMinimum(0);
         rightAxis.setDrawGridLines(false);
         rightAxis.setDrawZeroLine(false);
@@ -179,8 +151,6 @@ public class GraphActivity extends Base implements OnSeekBarChangeListener,
         tvX.setText(String.valueOf(seekBarX.getProgress()));
         tvY.setText(String.valueOf(seekBarY.getProgress()));
 
-//        setData(seekBarX.getProgress(), seekBarY.getProgress());
-
         // redraw
         chart.invalidate();
     }
@@ -196,10 +166,6 @@ public class GraphActivity extends Base implements OnSeekBarChangeListener,
 
         chart.centerViewToAnimated(e.getX(), e.getY(), chart.getData().getDataSetByIndex(h.getDataSetIndex())
                 .getAxisDependency(), 100);
-        //chart.zoomAndCenterAnimated(2.5f, 2.5f, e.getX(), e.getY(), chart.getData().getDataSetByIndex(dataSetIndex)
-        // .getAxisDependency(), 1000);
-        //chart.zoomAndCenterAnimated(1.8f, 1.8f, e.getX(), e.getY(), chart.getData().getDataSetByIndex(dataSetIndex)
-        // .getAxisDependency(), 1000);
     }
 
     @Override
@@ -215,10 +181,9 @@ public class GraphActivity extends Base implements OnSeekBarChangeListener,
     public void onStopTrackingTouch(SeekBar seekBar) {
     }
 
-
     public void addSpeedData(float val) {
 
-        if ((val > -1) || (started)) {
+        if ((val > 0) || (started)) {
             if (!started) {
                 values1.add(new Entry(i_speed, val));
                 i_speed++;
@@ -257,7 +222,6 @@ public class GraphActivity extends Base implements OnSeekBarChangeListener,
                 LineDataSet set2 = (LineDataSet) chart.getData().getDataSetByIndex(1);
                 set2.setValues(values2);
             }
-
         }
     }
 
@@ -277,11 +241,6 @@ public class GraphActivity extends Base implements OnSeekBarChangeListener,
         set1.setDrawCircles(false);
         set1.setDrawValues(false);
 
-        //set1.setFillFormatter(new MyFillFormatter(0f));
-        //set1.setDrawHorizontalHighlightIndicator(false);
-        //set1.setVisible(false);
-        //set1.setCircleHoleColor(Color.WHITE);
-
         // create a dataset and give it a type
         set2 = new LineDataSet(values2, "Current (A)");
         set2.setAxisDependency(AxisDependency.RIGHT);
@@ -294,7 +253,6 @@ public class GraphActivity extends Base implements OnSeekBarChangeListener,
         set2.setDrawCircleHole(false);
         set2.setDrawCircles(false);
         set2.setDrawValues(false);
-        //set2.setFillFormatter(new MyFillFormatter(900f));
 
         // create a data object with the data sets
         LineData data = new LineData(set1, set2);

@@ -57,7 +57,7 @@ public class Settings {
     public static final String Electric_brake_min_value = "Electric brake min value";
     public static final String Electric_brake_max_value = "Electric brake max value";
     public static final String Electric_brake_time_between_mode_shift = "Electric brake time between mode shift";
-    public static final String Electric_brake_disabled_condition = "Electric brake disabled on high battery voltage";
+    public static final String Electric_brake_disabled_voltage = "Electric brake disabled on high battery voltage";
     public static final String Electric_brake_disabled_voltage_limit = "Electric brake disabled voltage limit";
     public static final String Current_loop_mode = "Current loop mode";
     public static final String Current_loop_max_current = "Current loop max current";
@@ -216,7 +216,7 @@ public class Settings {
                 new SeekBarSettingsObject.Builder(Electric_brake_time_between_mode_shift, Electric_brake_time_between_mode_shift, 500, 100, 2000)
                         .setUseValueAsSummary()
                         .build(),
-                new CheckBoxSettingsObject.Builder(Electric_brake_disabled_condition, Electric_brake_disabled_condition, false)
+                new CheckBoxSettingsObject.Builder(Electric_brake_disabled_voltage, Electric_brake_disabled_voltage, false)
                         .setOffText("off")
                         .setOnText("on")
                         .build(),
@@ -281,21 +281,11 @@ public class Settings {
         return intValue;
     }
 
-    static public byte[] settingsToByteArry(Context ctx) {
+    static public byte[] settings1ToByteArray(Context ctx) {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(bos);
 
         try {
-            /*
-            dos.writeByte(listToValueButton(ctx, Button_1_short_press_action));
-            dos.writeByte(listToValueButton(ctx, Button_1_long_press_action));
-            dos.writeByte(listToValueButton(ctx, Button_2_short_press_action));
-            dos.writeByte(listToValueButton(ctx, Button_2_long_press_action));
-            dos.writeShort(EasySettings.retrieveSettingsSharedPrefs(ctx).getInt(Button_long_press_duration, 500));
-            dos.writeByte(listToValueBtLockMode(ctx, Bluetooth_lock_mode));
-            dos.writeUTF(EasySettings.retrieveSettingsSharedPrefs(ctx).getString(Bluetooth_pin_code, ""));
-            dos.writeUTF(EasySettings.retrieveSettingsSharedPrefs(ctx).getString(Beacon_Mac_Address, ""));
-             */
 
             dos.writeByte(EasySettings.retrieveSettingsSharedPrefs(ctx).getInt(Beacon_range, 0));
             dos.writeByte(EasySettings.retrieveSettingsSharedPrefs(ctx).getInt(Mode_Z_Power_limitation, 0));
@@ -307,7 +297,7 @@ public class Settings {
             int value = EasySettings.retrieveSettingsSharedPrefs(ctx).getInt(Electric_brake_time_between_mode_shift, 500);
             dos.writeByte((byte) ((value >> 0) & 0xff));
             dos.writeByte((byte) ((value >> 8) & 0xff));
-            dos.writeByte(EasySettings.retrieveSettingsSharedPrefs(ctx).getBoolean(Electric_brake_disabled_condition, false) ? 1 : 0);
+            dos.writeByte(EasySettings.retrieveSettingsSharedPrefs(ctx).getBoolean(Electric_brake_disabled_voltage, false) ? 1 : 0);
             dos.writeByte(EasySettings.retrieveSettingsSharedPrefs(ctx).getInt(Electric_brake_disabled_voltage_limit, 0));
             dos.writeByte(EasySettings.retrieveSettingsSharedPrefs(ctx).getBoolean(Current_loop_mode, false) ? 1 : 0);
             dos.writeByte(EasySettings.retrieveSettingsSharedPrefs(ctx).getInt(Current_loop_max_current, 0));
@@ -317,7 +307,46 @@ public class Settings {
             dos.writeByte(Integer.parseInt(EasySettings.retrieveSettingsSharedPrefs(ctx).getString(Motor_pole_number, "")));
             dos.writeByte(listToValueBtLockMode(ctx, Bluetooth_lock_mode));
             dos.writeByte(Integer.parseInt(EasySettings.retrieveSettingsSharedPrefs(ctx).getString(LCD_Speed_adjustement, "0")));
-            dos.writeByte(0x01);
+            // remain 1
+
+            dos.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bos.toByteArray();
+
+    }
+
+    static public byte[] settings2ToByteArray(Context ctx) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        DataOutputStream dos = new DataOutputStream(bos);
+
+        try {
+            String beaconAddress = EasySettings.retrieveSettingsSharedPrefs(ctx).getString(Beacon_Mac_Address, "AA:BB:CC:DD:EE:FF").substring(0, 17);
+            dos.writeBytes(beaconAddress); // size 17
+            // remain 3
+
+            dos.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bos.toByteArray();
+
+    }
+
+    static public byte[] settings3ToByteArray(Context ctx) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        DataOutputStream dos = new DataOutputStream(bos);
+
+        try {
+            dos.writeByte(listToValueButton(ctx, Button_1_short_press_action));
+            dos.writeByte(listToValueButton(ctx, Button_1_long_press_action));
+            dos.writeByte(listToValueButton(ctx, Button_2_short_press_action));
+            dos.writeByte(listToValueButton(ctx, Button_2_long_press_action));
+            dos.writeByte(EasySettings.retrieveSettingsSharedPrefs(ctx).getInt(Button_long_press_duration, 5));
+            // remain 15
+
+            //            dos.writeUTF(EasySettings.retrieveSettingsSharedPrefs(ctx).getString(Bluetooth_pin_code, ""));
 
             dos.flush();
         } catch (IOException e) {
