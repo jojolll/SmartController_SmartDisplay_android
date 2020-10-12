@@ -53,16 +53,24 @@ public class Settings {
     public static final String Mode_Z_Power_limitation = "Mode Z Power limitation -";
     public static final String Mode_Z_Eco_mode = "Mode Z Eco mode";
     public static final String Mode_Z_Acceleration = "Mode Z Acceleration";
+
+    public static final String Electric_brake = "Electric brake";
     public static final String Electric_brake_progressive_mode = "Electric brake progressive mode";
     public static final String Electric_brake_min_value = "Electric brake min value";
     public static final String Electric_brake_max_value = "Electric brake max value";
     public static final String Electric_brake_time_between_mode_shift = "Electric brake time between mode shift";
     public static final String Electric_brake_disabled_voltage = "Electric brake disabled on high battery voltage";
     public static final String Electric_brake_disabled_voltage_limit = "Electric brake disabled voltage limit";
+
+    public static final String Limiters = "Limiters";
     public static final String Current_loop_mode = "Current loop mode";
     public static final String Current_loop_max_current = "Current loop max current";
     public static final String Speed_loop_mode = "Speed loop mode";
     public static final String Speed_limiter_at_startup = "Speed limiter at startup";
+
+    public static final String Battery_saving = "Battery saving";
+    public static final String Battery_saving_medium_voltage = "Automatic medium battery saving at battery percent";
+    public static final String Battery_saving_strong_voltage = "Automatic strong battery saving at battery percent";
 
     private static final String LIST_Bluetooth_lock_mode_1 = "None";
     private static final String LIST_Bluetooth_lock_mode_2 = "Smartphone connected";
@@ -73,9 +81,9 @@ public class Settings {
     private static final String LIST_Button_press_action_2 = "Anti-theft manual lock";
     private static final String LIST_Button_press_action_3 = "Nitro boost";
     private static final String LIST_Button_press_action_4 = "Startup speed limitation disable";
+    private static final String LIST_Button_press_action_5 = "Aux on/off";
 
     public static ArrayList<SettingsObject> initialize() {
-
 
         ArrayList<String> LIST_Bluetooth_lock_mode = new ArrayList<>();
         LIST_Bluetooth_lock_mode.add(LIST_Bluetooth_lock_mode_1);
@@ -88,6 +96,7 @@ public class Settings {
         LIST_Button_press_action.add(LIST_Button_press_action_2);
         LIST_Button_press_action.add(LIST_Button_press_action_3);
         LIST_Button_press_action.add(LIST_Button_press_action_4);
+        LIST_Button_press_action.add(LIST_Button_press_action_5);
 
         ArrayList<SettingsObject> settings = EasySettings.createSettingsArray(
 // ----------------------
@@ -176,7 +185,7 @@ public class Settings {
                         .setUseValueAsSummary()
                         .setNegativeBtnText("cancel")
                         .build(),
-                new EditTextSettingsObject.Builder(Settings.Bluetooth_pin_code, Settings.Bluetooth_pin_code, "0000", "save")
+                new EditTextSettingsObject.Builder(Settings.Bluetooth_pin_code, Settings.Bluetooth_pin_code, "147258", "save")
                         .setDialogContent("enter new numeric value here")
                         .setUseValueAsPrefillText()
                         .setNegativeBtnText("cancel")
@@ -201,8 +210,22 @@ public class Settings {
                         .build(),
                 new SeekBarSettingsObject.Builder(Mode_Z_Acceleration, Mode_Z_Acceleration, 100, 0, 100)
                         .setUseValueAsSummary()
+                        .addDivider()
                         .build(),
-//
+
+// ----------------------
+                new HeaderSettingsObject.Builder(Settings.Battery_saving)
+                        .build(),
+                new SeekBarSettingsObject.Builder(Battery_saving_medium_voltage, Battery_saving_medium_voltage, 0, 0, 50)
+                        .setUseValueAsSummary()
+                        .build(),
+                new SeekBarSettingsObject.Builder(Battery_saving_strong_voltage, Battery_saving_strong_voltage, 0, 0, 30)
+                        .setUseValueAsSummary()
+                        .addDivider()
+                        .build(),
+// ----------------------
+                new HeaderSettingsObject.Builder(Settings.Electric_brake)
+                        .build(),
                 new CheckBoxSettingsObject.Builder(Electric_brake_progressive_mode, Electric_brake_progressive_mode, false)
                         .setOffText("off")
                         .setOnText("on")
@@ -222,8 +245,12 @@ public class Settings {
                         .build(),
                 new SeekBarSettingsObject.Builder(Electric_brake_disabled_voltage_limit, Electric_brake_disabled_voltage_limit, 40, 0, 85)
                         .setUseValueAsSummary()
+                        .addDivider()
                         .build(),
 //
+// ----------------------
+                new HeaderSettingsObject.Builder(Settings.Limiters)
+                        .build(),
                 new CheckBoxSettingsObject.Builder(Current_loop_mode, Current_loop_mode, false)
                         .setOffText("off")
                         .setOnText("on")
@@ -231,7 +258,6 @@ public class Settings {
                 new SeekBarSettingsObject.Builder(Current_loop_max_current, Current_loop_max_current, 22, 1, 99)
                         .setUseValueAsSummary()
                         .build(),
-//
                 new CheckBoxSettingsObject.Builder(Speed_loop_mode, Speed_loop_mode, false)
                         .setOffText("off")
                         .setOnText("on")
@@ -259,6 +285,8 @@ public class Settings {
             intValue = 2;
         else if (valueStr.equals(LIST_Button_press_action_4))
             intValue = 3;
+        else if (valueStr.equals(LIST_Button_press_action_5))
+            intValue = 4;
 
         return intValue;
     }
@@ -344,9 +372,19 @@ public class Settings {
             dos.writeByte(listToValueButton(ctx, Button_2_short_press_action));
             dos.writeByte(listToValueButton(ctx, Button_2_long_press_action));
             dos.writeByte(EasySettings.retrieveSettingsSharedPrefs(ctx).getInt(Button_long_press_duration, 5));
-            // remain 15
-
-            //            dos.writeUTF(EasySettings.retrieveSettingsSharedPrefs(ctx).getString(Bluetooth_pin_code, ""));
+            dos.writeByte(EasySettings.retrieveSettingsSharedPrefs(ctx).getInt(Battery_saving_medium_voltage, 0));
+            dos.writeByte(EasySettings.retrieveSettingsSharedPrefs(ctx).getInt(Battery_saving_strong_voltage, 0));
+            int pinCode = 147258;
+            try {
+                pinCode = Integer.parseInt(EasySettings.retrieveSettingsSharedPrefs(ctx).getString(Bluetooth_pin_code, "147258"));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            dos.writeByte((byte) ((pinCode >> 0) & 0xff));
+            dos.writeByte((byte) ((pinCode >> 8) & 0xff));
+            dos.writeByte((byte) ((pinCode >> 16) & 0xff));
+            dos.writeByte((byte) ((pinCode >> 24) & 0xff));
+            // remain 9
 
             dos.flush();
         } catch (IOException e) {

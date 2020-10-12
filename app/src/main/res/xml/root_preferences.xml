@@ -17,6 +17,7 @@
 
     </PreferenceCategory>
 
+    <!--
     <PreferenceCategory
         app:key="prefs"
         app:title="@string/sync_header">
@@ -33,5 +34,6 @@
             app:title="@string/attachment_title" />
 
     </PreferenceCategory>
+-->
 
 </PreferenceScreen>

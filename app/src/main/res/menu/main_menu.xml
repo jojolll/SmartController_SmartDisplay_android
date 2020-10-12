@@ -10,22 +10,27 @@
 
     <item
         android:id="@+id/settings"
-        android:title="@string/settings"
+        android:title="@string/menu_settings"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/reset_pref_peripheral"
+        android:title="@string/menu_reset_pref_peripheral"
         app:showAsAction="never"/>
 
     <item
         android:id="@+id/ota_mode"
-        android:title="@string/software_update_ota"
+        android:title="@string/menu_software_update_ota"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/logs"
-        android:title="Logs"
+        android:title="@string/menu_logs"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/graph"
-        android:title="Graphics"
+        android:title="@string/menu_graphics"
         app:showAsAction="never" />
 
 </menu>

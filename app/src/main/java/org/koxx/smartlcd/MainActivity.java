@@ -1,6 +1,8 @@
 package org.koxx.smartlcd;
 
 import android.Manifest;
+import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
@@ -115,6 +117,8 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
+        actionBarSetup(null);
+
         tvSpeed = (TextView) findViewById(R.id.SpeedValue);
         tvVoltage = (TextView) findViewById(R.id.VoltageValue);
         tvCurrent = (TextView) findViewById(R.id.AmpereValue);
@@ -206,6 +210,13 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    private void actionBarSetup(String subtitle) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            androidx.appcompat.app.ActionBar ab = getSupportActionBar();
+            ab.setSubtitle(subtitle);
+        }
+    }
 
     @Override
     protected void onStart() {
@@ -375,6 +386,10 @@ public class MainActivity extends AppCompatActivity {
                 intent = new Intent(this, GraphActivity.class);
                 startActivity(intent);
                 return true;
+            case R.id.reset_pref_peripheral:
+                BluetoothHandler.getInstance(this).resetBlePreferredPeripheral();
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -583,15 +598,18 @@ public class MainActivity extends AppCompatActivity {
     private final BroadcastReceiver connectStatusReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Integer value = (Integer) intent.getSerializableExtra(BluetoothHandler.CONNECT_STATUS_EXTRA);
+            Integer status = (Integer) intent.getSerializableExtra(BluetoothHandler.CONNECT_STATUS_EXTRA);
+            String name = (String) intent.getSerializableExtra(BluetoothHandler.CONNECT_STATUS_EXTRA_NAME);
 
-            mLastBtStatus = value;
+            mLastBtStatus = status;
 
-            Timber.i("==========> new BT status : %d", value);
+            Timber.i("==========> new BT status : %d", status);
 
             item = menu.findItem(R.id.bt_connect);
             item.getActionView().clearAnimation();
-            item.setActionView(getBtAnimation(value));
+            item.setActionView(getBtAnimation(status));
+
+            actionBarSetup(name);
 
             //item.setEnabled(menusEnabled); // any text will be automatically disabled
             //item.setIcon(resIcon);

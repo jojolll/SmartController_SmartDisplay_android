@@ -2,9 +2,11 @@ package org.koxx.smartlcd;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanResult;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.widget.TextView;
 
@@ -24,17 +26,23 @@ import org.koxx.smartlcd.datas.VoltageMeasurement;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import timber.log.Timber;
 
 import static android.bluetooth.BluetoothGatt.CONNECTION_PRIORITY_HIGH;
 import static android.bluetooth.BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT;
+import static android.content.Context.MODE_PRIVATE;
 import static java.lang.Math.abs;
+import static org.welie.blessed.BluetoothPeripheral.BOND_BONDED;
 
 class BluetoothHandler {
 
+    public static final String PREFS_NAME = "BLE_PREFS";
+    public static final String PREFS_PREFERRED_BLE = "PREFERRED_BLE";
 
     public static final int CONNECT_STATUS_OK = 0;
     public static final int CONNECT_STATUS_FAILED = 1;
@@ -43,6 +51,7 @@ class BluetoothHandler {
     // Intent constants
     public static final String CONNECT_STATUS = "connect_status";
     public static final String CONNECT_STATUS_EXTRA = "connect_status.extra";
+    public static final String CONNECT_STATUS_EXTRA_NAME = "connect_status.extra.name";
     public static final String MEASUREMENT_EXTRA_PERIPHERAL = "measurement.peripheral";
     public static final String MEASUREMENT_MODE = "measurement.mode";
     public static final String MEASUREMENT_MODE_EXTRA = "measurement.mode.extra";
@@ -344,8 +353,14 @@ class BluetoothHandler {
 
             addLog(">>> connected");
 
+            SharedPreferences sharedPreferences = context.getSharedPreferences(PREFS_NAME, 0);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString(PREFS_PREFERRED_BLE, peripheral.getName());
+            editor.commit();
+
             Intent intent = new Intent(CONNECT_STATUS);
             intent.putExtra(CONNECT_STATUS_EXTRA, CONNECT_STATUS_OK);
+            intent.putExtra(CONNECT_STATUS_EXTRA_NAME, peripheral.getName());
             context.sendBroadcast(intent);
         }
 
@@ -390,8 +405,24 @@ class BluetoothHandler {
         @Override
         public void onDiscoveredPeripheral(@NotNull BluetoothPeripheral peripheral, @NotNull ScanResult scanResult) {
             Timber.i("Found peripheral '%s'", peripheral.getName());
-            central.stopScan();
-            central.connectPeripheral(peripheral, peripheralCallback);
+            Timber.i("=> Peripheral bond state = %d", peripheral.getBondState());
+
+//            if (peripheral.getBondState() == BOND_BONDED) {
+
+            SharedPreferences sharedPreferences = context.getSharedPreferences(PREFS_NAME, 0);
+            String blePrefName = sharedPreferences.getString(PREFS_PREFERRED_BLE, "");
+            boolean ignore = false;
+            if (blePrefName == null || blePrefName.equals(""))
+                ignore = true;
+            else
+                Timber.i(" ==> search for %s", blePrefName);
+
+            if (blePrefName.equals(peripheral.getName()) || ignore) {
+                Timber.i("  ==> FOUND ! ");
+                central.stopScan();
+                central.connectPeripheral(peripheral, peripheralCallback);
+            }
+//            }
         }
 
         @Override
@@ -401,9 +432,19 @@ class BluetoothHandler {
                 // Bluetooth is on now, start scanning again
                 // Scan for peripherals with a certain service UUIDs
                 central.startPairingPopupHack();
-//                central.scanForPeripheralsWithServices(new UUID[]{BLP_SERVICE_UUID});
-                central.scanForPeripheralsWithNames(new String[]{"SmartLCD"});
-//                central.scanForPeripherals();
+
+
+                SharedPreferences sharedPreferences = context.getSharedPreferences(PREFS_NAME, 0);
+                String blePrefName = sharedPreferences.getString(PREFS_PREFERRED_BLE, "");
+                if (blePrefName == null || blePrefName.equals(""))
+                    blePrefName = "SmartLCD";
+
+                Timber.i(" ==> scan for %s", blePrefName);
+
+                // central.scanForPeripheralsWithServices(new UUID[]{BLP_SERVICE_UUID});
+                central.scanForPeripheralsWithNames(new String[]{blePrefName});
+                //central.autoConnectPeripheral(blePrefName);
+                // central.scanForPeripherals();
             }
         }
     };
@@ -427,6 +468,25 @@ class BluetoothHandler {
         // Scan for peripherals with a certain service UUIDs
         central.startPairingPopupHack();
 //        central.scanForPeripheralsWithServices(new UUID[]{BLP_SERVICE_UUID, HTS_SERVICE_UUID, HRS_SERVICE_UUID});
+
+        /*
+        Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+        if (pairedDevices.size() > 0) {
+            for (BluetoothDevice device : pairedDevices) {
+                Log.d("paired devices:"," BLE Name:"+device.getName());
+                try {
+                    if(device.getName().contains("koko")){
+                        Method m = device.getClass()
+                                .getMethod("removeBond", (Class[]) null);
+                        m.invoke(device, (Object[]) null);
+                    }
+                } catch (Exception e) {
+                    Log.e("fail", e.getMessage());
+                }
+            }
+        }
+        */
+
         central.scanForPeripheralsWithNames(new String[]{"SmartLCD"});
 //        central.scanForPeripherals();
     }
@@ -537,7 +597,7 @@ class BluetoothHandler {
     }
 
     public void setLogActivity(TextView view) {
-            logsView = view;
+        logsView = view;
         if ((logText != null) && (logsView != null))
             logsView.setText(logText);
     }
@@ -561,5 +621,12 @@ class BluetoothHandler {
 
     public void setGraph(GraphActivity graphActivity) {
         graphView = graphActivity;
+    }
+
+    public void resetBlePreferredPeripheral() {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(PREFS_PREFERRED_BLE, "");
+        editor.commit();
     }
 }
