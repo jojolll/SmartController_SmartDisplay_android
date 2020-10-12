@@ -1007,6 +1007,14 @@ public class BluetoothCentral {
         }
     }
 
+    public Set<BluetoothDevice> getBondedDevices()
+    {
+        // Get the set of bonded devices
+        Set<BluetoothDevice> bondedDevices = bluetoothAdapter.getBondedDevices();
+        return bondedDevices;
+    }
+
+
     /**
      * Make the pairing popup appear in the foreground by doing a 1 sec discovery.
      * <p>

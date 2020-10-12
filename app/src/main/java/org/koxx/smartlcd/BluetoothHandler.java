@@ -1,6 +1,7 @@
 package org.koxx.smartlcd;
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanResult;
@@ -29,6 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import timber.log.Timber;
@@ -113,6 +115,10 @@ class BluetoothHandler {
 
     private TextView logsView;
     private String logText = "";
+
+    private int attemps = 0;
+
+    ArrayList<String> ignoreList = new ArrayList<>();
 
     private GraphActivity graphView = null;
 
@@ -353,9 +359,11 @@ class BluetoothHandler {
 
             addLog(">>> connected");
 
+            attemps = 0;
+
             SharedPreferences sharedPreferences = context.getSharedPreferences(PREFS_NAME, 0);
             SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString(PREFS_PREFERRED_BLE, peripheral.getName());
+            editor.putString(PREFS_PREFERRED_BLE, peripheral.getAddress());
             editor.commit();
 
             Intent intent = new Intent(CONNECT_STATUS);
@@ -374,13 +382,20 @@ class BluetoothHandler {
             intent.putExtra(CONNECT_STATUS_EXTRA, CONNECT_STATUS_FAILED);
             context.sendBroadcast(intent);
 
+            attemps++;
+
             // Reconnect to this device when it becomes available again
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    central.autoConnectPeripheral(peripheral, peripheralCallback);
-                }
-            }, 5000);
+            if ((peripheral.getBondState() == BOND_BONDED) && peripheral.getName() != null && peripheral.getName().startsWith("SmartLCD")) {
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        central.autoConnectPeripheral(peripheral, peripheralCallback);
+                    }
+                }, 5000);
+            } else {
+                ignoreList.add(peripheral.getAddress());
+                central.scanForPeripherals();
+            }
         }
 
         @Override
@@ -389,40 +404,53 @@ class BluetoothHandler {
 
             addLog(">>> disconnected");
 
+            attemps++;
+
             Intent intent = new Intent(CONNECT_STATUS);
             intent.putExtra(CONNECT_STATUS_EXTRA, CONNECT_STATUS_DISCONNECTED);
             context.sendBroadcast(intent);
 
             // Reconnect to this device when it becomes available again
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    central.autoConnectPeripheral(peripheral, peripheralCallback);
-                }
-            }, 5000);
+            if ((peripheral.getBondState() == BOND_BONDED) && peripheral.getName() != null && peripheral.getName().startsWith("SmartLCD")) {
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        central.autoConnectPeripheral(peripheral, peripheralCallback);
+                    }
+                }, 5000);
+            } else {
+                ignoreList.add(peripheral.getAddress());
+                central.scanForPeripherals();
+            }
         }
 
         @Override
         public void onDiscoveredPeripheral(@NotNull BluetoothPeripheral peripheral, @NotNull ScanResult scanResult) {
-            Timber.i("Found peripheral '%s'", peripheral.getName());
+            Timber.i("Found peripheral '%s' / %s", peripheral.getName(), peripheral.getAddress());
             Timber.i("=> Peripheral bond state = %d", peripheral.getBondState());
 
-//            if (peripheral.getBondState() == BOND_BONDED) {
+            if (peripheral.getBondState() == BOND_BONDED) {
+                if ((peripheral.getBondState() == BOND_BONDED) && peripheral.getName() != null && peripheral.getName().startsWith("SmartLCD")) {
+                    Timber.i(" ==> connect to '%s' / %s", peripheral.getName(), peripheral.getAddress());
+                    central.stopScan();
+                    central.connectPeripheral(peripheral, peripheralCallback);
+                }
+            } else {
 
-            SharedPreferences sharedPreferences = context.getSharedPreferences(PREFS_NAME, 0);
-            String blePrefName = sharedPreferences.getString(PREFS_PREFERRED_BLE, "");
-            boolean ignore = false;
-            if (blePrefName == null || blePrefName.equals(""))
-                ignore = true;
-            else
-                Timber.i(" ==> search for %s", blePrefName);
+                Timber.i("  ==> found a peripheral ... but not bonded");
 
-            if (blePrefName.equals(peripheral.getName()) || ignore) {
-                Timber.i("  ==> FOUND ! ");
-                central.stopScan();
-                central.connectPeripheral(peripheral, peripheralCallback);
+                if (getPreferedPeripheral() == null || getPreferedPeripheral().equals("")) {
+                    if (!ignoreList.contains(peripheral.getAddress())) {
+                        if (peripheral.getName() != null && peripheral.getName().startsWith("SmartLCD")) {
+                            Timber.i(" ==> connect to '%s'", peripheral.getAddress());
+                            central.stopScan();
+                            central.connectPeripheral(peripheral, peripheralCallback);
+                        } else {
+                            Timber.i(" ==> not prefered peripheral / name not matching");
+                        }
+                    }
+                }
             }
-//            }
         }
 
         @Override
@@ -433,21 +461,20 @@ class BluetoothHandler {
                 // Scan for peripherals with a certain service UUIDs
                 central.startPairingPopupHack();
 
-
-                SharedPreferences sharedPreferences = context.getSharedPreferences(PREFS_NAME, 0);
-                String blePrefName = sharedPreferences.getString(PREFS_PREFERRED_BLE, "");
-                if (blePrefName == null || blePrefName.equals(""))
-                    blePrefName = "SmartLCD";
-
-                Timber.i(" ==> scan for %s", blePrefName);
-
                 // central.scanForPeripheralsWithServices(new UUID[]{BLP_SERVICE_UUID});
-                central.scanForPeripheralsWithNames(new String[]{blePrefName});
-                //central.autoConnectPeripheral(blePrefName);
+                //central.scanForPeripheralsWithNames(new String[]{blePrefAddress});
+                central.scanForPeripherals();
+                //central.autoConnectPeripheral(blePrefAddress);
                 // central.scanForPeripherals();
             }
         }
     };
+
+    public String getPreferedPeripheral() {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PREFS_NAME, 0);
+        String blePrefAddress = sharedPreferences.getString(PREFS_PREFERRED_BLE, "");
+        return blePrefAddress;
+    }
 
     public static synchronized BluetoothHandler getInstance(Context context) {
         if (instance == null) {
@@ -487,8 +514,19 @@ class BluetoothHandler {
         }
         */
 
-        central.scanForPeripheralsWithNames(new String[]{"SmartLCD"});
-//        central.scanForPeripherals();
+        String blePrefAddress = getPreferedPeripheral();
+
+        Timber.i(" ==> scan for %s", blePrefAddress);
+
+        // central.scanForPeripheralsWithServices(new UUID[]{BLP_SERVICE_UUID});
+        /*
+        if (blePrefAddress.contains(":"))
+            central.scanForPeripheralsWithAddresses(new String[]{blePrefAddress});
+        else
+            central.scanForPeripheralsWithNames(new String[]{blePrefAddress});
+
+         */
+        central.scanForPeripherals();
     }
 
 
