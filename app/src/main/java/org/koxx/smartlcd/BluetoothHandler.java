@@ -81,6 +81,9 @@ class BluetoothHandler {
     public static final String MEASUREMENT_ACCEL_EXTRA = "measurement.accel.extra";
     public static final String MEASUREMENT_CURRENT_CALIB = "measurement.current_calib";
     public static final String MEASUREMENT_CURRENT_CALIB_EXTRA = "measurement.current_calib.extra";
+    public static final String MEASUREMENT_AUX = "measurement.aux";
+    public static final String MEASUREMENT_AUX_EXTRA = "measurement.aux.extra";
+
 
 
     // UUIDs for the Health Thermometer service (HTS)
@@ -104,6 +107,7 @@ class BluetoothHandler {
     private static final UUID FAST_UPDATE_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26b0");
     private static final UUID SETTINGS2_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26b1");
     private static final UUID SETTINGS3_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26b2");
+    private static final UUID AUX_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26b3");
 
 
     // Local variables
@@ -203,7 +207,11 @@ class BluetoothHandler {
                 if (logCharacteristic != null) {
                     peripheral.setNotify(logCharacteristic, true);
                 }
-
+                BluetoothGattCharacteristic auxCharacteristic = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, AUX_CHARACTERISTIC_UUID);
+                if (auxCharacteristic != null) {
+                    peripheral.setNotify(auxCharacteristic, true);
+                    peripheral.readCharacteristic(auxCharacteristic);
+                }
                 sendSettings();
             }
 
@@ -330,6 +338,12 @@ class BluetoothHandler {
                 Integer current_calib = parser.getIntValue(BluetoothBytesParser.FORMAT_UINT8);
                 Intent intent = new Intent(MEASUREMENT_CURRENT_CALIB);
                 intent.putExtra(MEASUREMENT_CURRENT_CALIB_EXTRA, current_calib);
+                intent.putExtra(MEASUREMENT_EXTRA_PERIPHERAL, peripheral.getAddress());
+                context.sendBroadcast(intent);
+            } else if (characteristicUUID.equals(AUX_CHARACTERISTIC_UUID)) {
+                Integer aux = parser.getIntValue(BluetoothBytesParser.FORMAT_UINT8);
+                Intent intent = new Intent(MEASUREMENT_AUX);
+                intent.putExtra(MEASUREMENT_AUX_EXTRA, aux);
                 intent.putExtra(MEASUREMENT_EXTRA_PERIPHERAL, peripheral.getAddress());
                 context.sendBroadcast(intent);
             } else if (characteristicUUID.equals(LOGS_CHARACTERISTIC_UUID)) {
@@ -616,6 +630,15 @@ class BluetoothHandler {
         if (peripheral == null) return;
         BluetoothGattCharacteristic characteristic = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, SWITCH_TO_OTA_CHARACTERISTIC_UUID);
         peripheral.writeCharacteristic(characteristic, new byte[]{0x01}, WRITE_TYPE_DEFAULT);
+    }
+
+    public void sendAuxValue(byte value) {
+        Timber.i("sendAuxValue");
+
+        BluetoothPeripheral peripheral = getConnectedPeripheral();
+        if (peripheral == null) return;
+        BluetoothGattCharacteristic characteristic = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, AUX_CHARACTERISTIC_UUID);
+        peripheral.writeCharacteristic(characteristic, new byte[]{value}, WRITE_TYPE_DEFAULT);
     }
 
     public void sendFastUpdateValue(byte value) {

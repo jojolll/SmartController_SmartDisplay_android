@@ -91,12 +91,18 @@ public class Settings {
         LIST_Bluetooth_lock_mode.add(LIST_Bluetooth_lock_mode_3);
         LIST_Bluetooth_lock_mode.add(LIST_Bluetooth_lock_mode_4);
 
-        ArrayList<String> LIST_Button_press_action = new ArrayList<>();
-        LIST_Button_press_action.add(LIST_Button_press_action_1);
-        LIST_Button_press_action.add(LIST_Button_press_action_2);
-        LIST_Button_press_action.add(LIST_Button_press_action_3);
-        LIST_Button_press_action.add(LIST_Button_press_action_4);
-        LIST_Button_press_action.add(LIST_Button_press_action_5);
+        ArrayList<String> LIST_Button_short_press_action = new ArrayList<>();
+        LIST_Button_short_press_action.add(LIST_Button_press_action_1);
+        LIST_Button_short_press_action.add(LIST_Button_press_action_3);
+        LIST_Button_short_press_action.add(LIST_Button_press_action_4);
+        LIST_Button_short_press_action.add(LIST_Button_press_action_5);
+
+        ArrayList<String> LIST_Button_long_press_action = new ArrayList<>();
+        LIST_Button_long_press_action.add(LIST_Button_press_action_1);
+        LIST_Button_long_press_action.add(LIST_Button_press_action_2);
+        LIST_Button_long_press_action.add(LIST_Button_press_action_3);
+        LIST_Button_long_press_action.add(LIST_Button_press_action_4);
+        LIST_Button_long_press_action.add(LIST_Button_press_action_5);
 
         ArrayList<SettingsObject> settings = EasySettings.createSettingsArray(
 // ----------------------
@@ -158,19 +164,19 @@ public class Settings {
 // ----------------------
                 new HeaderSettingsObject.Builder(Settings.Escooter_Accessories)
                         .build(),
-                new ListSettingsObject.Builder(Button_1_short_press_action, Button_1_short_press_action, LIST_Button_press_action_1, LIST_Button_press_action, "save")
+                new ListSettingsObject.Builder(Button_1_short_press_action, Button_1_short_press_action, LIST_Button_press_action_1, LIST_Button_short_press_action, "save")
                         .setUseValueAsSummary()
                         .setNegativeBtnText("cancel")
                         .build(),
-                new ListSettingsObject.Builder(Button_1_long_press_action, Button_1_long_press_action, LIST_Button_press_action_2, LIST_Button_press_action, "save")
+                new ListSettingsObject.Builder(Button_1_long_press_action, Button_1_long_press_action, LIST_Button_press_action_2, LIST_Button_long_press_action, "save")
                         .setUseValueAsSummary()
                         .setNegativeBtnText("cancel")
                         .build(),
-                new ListSettingsObject.Builder(Button_2_short_press_action, Button_2_short_press_action, LIST_Button_press_action_3, LIST_Button_press_action, "save")
+                new ListSettingsObject.Builder(Button_2_short_press_action, Button_2_short_press_action, LIST_Button_press_action_3, LIST_Button_short_press_action, "save")
                         .setUseValueAsSummary()
                         .setNegativeBtnText("cancel")
                         .build(),
-                new ListSettingsObject.Builder(Button_2_long_press_action, Button_2_long_press_action, LIST_Button_press_action_4, LIST_Button_press_action, "save")
+                new ListSettingsObject.Builder(Button_2_long_press_action, Button_2_long_press_action, LIST_Button_press_action_4, LIST_Button_long_press_action, "save")
                         .setUseValueAsSummary()
                         .setNegativeBtnText("cancel")
                         .build(),

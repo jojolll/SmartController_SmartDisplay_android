@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_SETTINGS_LIST = "EXTRA_SETTINGS_LIST";
     public static final String SETTINGS_KEY_RINGTONE = "SETTINGS_KEY_RINGTONE";
 
-    private TextView tvSpeed, tvVoltage, tvCurrent, tvSpeedMax, tvCurrentMax, tvPower, tvPowerMax, tvTemperature, tvTemperatureMax, tvBtLock, tvHumidity, tvSpeedLimiter, tvEco, tvAccel;
+    private TextView tvSpeed, tvVoltage, tvCurrent, tvSpeedMax, tvCurrentMax, tvPower, tvPowerMax, tvTemperature, tvTemperatureMax, tvBtLock, tvHumidity, tvSpeedLimiter, tvEco, tvAccel, tvAux;
     private ImageView ivBrakeBattery;
 
     private final DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
@@ -92,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
     int mSpeedLimiter = 0;
     int mEco = 0;
     int mAccel = 0;
+    int mAux = 0;
 
     int mBleLockForce = 0;
 
@@ -133,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
         tvSpeedLimiter = (TextView) findViewById(R.id.SpdLimitValue);
         tvEco = (TextView) findViewById(R.id.EcoValue);
         tvAccel = (TextView) findViewById(R.id.AccelValue);
+        tvAux = (TextView) findViewById(R.id.AuxValue);
 
         ivBrakeBattery = (ImageView) findViewById(R.id.BrakeWarning);
 
@@ -152,6 +154,7 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(speedLimiterDataReceiver, new IntentFilter(BluetoothHandler.MEASUREMENT_SPEED_LIMITER));
         registerReceiver(ecoDataReceiver, new IntentFilter(BluetoothHandler.MEASUREMENT_ECO));
         registerReceiver(accelDataReceiver, new IntentFilter(BluetoothHandler.MEASUREMENT_ACCEL));
+        registerReceiver(auxDataReceiver, new IntentFilter(BluetoothHandler.MEASUREMENT_AUX));
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -414,6 +417,19 @@ public class MainActivity extends AppCompatActivity {
         BluetoothHandler.getInstance(this).sendSpeedLimiterValue((byte) mSpeedLimiter);
 
         Log.d(TAG, "mSpeedLimiter sent : " + mSpeedLimiter);
+    }
+
+    public void onClickAux(View v) {
+        Log.d(TAG, "onClickAux");
+
+        if (mAux == 1)
+            mAux = 0;
+        else
+            mAux = 1;
+
+        BluetoothHandler.getInstance(this).sendAuxValue((byte) mAux);
+
+        Log.d(TAG, "mAux sent : " + mAux);
     }
 
     public void onClickEco(View v) {
@@ -851,6 +867,21 @@ public class MainActivity extends AppCompatActivity {
                 txt = "NONE";
 
             tvEco.setText(txt);
+        }
+    };
+    private final BroadcastReceiver auxDataReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            BluetoothPeripheral peripheral = getPeripheral(intent.getStringExtra(BluetoothHandler.MEASUREMENT_EXTRA_PERIPHERAL));
+            Integer value = (Integer) intent.getSerializableExtra(BluetoothHandler.MEASUREMENT_AUX_EXTRA);
+            if (value == null) return;
+
+            mAux = value;
+
+            if (value == 0)
+                tvAux.setText(String.format(Locale.ENGLISH, "OFF"));
+            else
+                tvAux.setText(String.format(Locale.ENGLISH, "ON"));
         }
     };
     private final BroadcastReceiver accelDataReceiver = new BroadcastReceiver() {
