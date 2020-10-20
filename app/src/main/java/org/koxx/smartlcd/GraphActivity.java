@@ -4,6 +4,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -11,7 +13,6 @@ import android.widget.TextView;
 import androidx.appcompat.widget.Toolbar;
 
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.Legend.LegendForm;
 import com.github.mikephil.charting.components.XAxis;
@@ -20,21 +21,16 @@ import com.github.mikephil.charting.components.YAxis.AxisDependency;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import org.koxx.smartlcd.graph.Base;
-import org.koxx.smartlcd.graph.MyAxisValueFormatter;
 
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
+
+import timber.log.Timber;
 
 /**
  * Example of a dual axis {@link LineChart} with multiple data sets.
@@ -264,4 +260,21 @@ public class GraphActivity extends Base implements OnSeekBarChangeListener,
         chart.setData(data);
     }
 
+    public void onClickSpeed(View view) {
+
+        EditText te_kp, te_ki, te_kd;
+        te_kp = findViewById(R.id.kp);
+        te_ki = findViewById(R.id.ki);
+        te_kd = findViewById(R.id.kd);
+        Timber.i("kp = %s / ki = %s / kd = %s", te_kp.getText(), te_kp.getText(), te_kp.getText());
+
+        try {
+            BluetoothHandler.getInstance(this).sendSpeedPidValue(
+                    Integer.parseInt(String.valueOf(te_kp.getText())),
+                    Integer.parseInt(String.valueOf(te_ki.getText())),
+                    Integer.parseInt(String.valueOf(te_kd.getText())));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

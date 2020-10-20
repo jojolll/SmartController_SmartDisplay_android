@@ -11,6 +11,8 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 import android.widget.TextView;
 
+import com.hotmail.or_dvir.easysettings.pojos.EasySettings;
+
 import org.welie.blessed.BluetoothBytesParser;
 import org.welie.blessed.BluetoothCentral;
 import org.welie.blessed.BluetoothCentralCallback;
@@ -26,6 +28,9 @@ import org.koxx.smartlcd.datas.VoltageMeasurement;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -85,7 +90,6 @@ class BluetoothHandler {
     public static final String MEASUREMENT_AUX_EXTRA = "measurement.aux.extra";
 
 
-
     // UUIDs for the Health Thermometer service (HTS)
     private static final UUID SMARTLCD_MAIN_SERVICE_UUID = UUID.fromString("4fafc201-1fb5-459e-8fcc-c5c9c331914b");
     private static final UUID SPEED_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a0");
@@ -108,6 +112,7 @@ class BluetoothHandler {
     private static final UUID SETTINGS2_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26b1");
     private static final UUID SETTINGS3_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26b2");
     private static final UUID AUX_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26b3");
+    private static final UUID SPEED_PID_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26b4");
 
 
     // Local variables
@@ -648,6 +653,41 @@ class BluetoothHandler {
         if (peripheral == null) return;
         BluetoothGattCharacteristic characteristic = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, FAST_UPDATE_CHARACTERISTIC_UUID);
         peripheral.writeCharacteristic(characteristic, new byte[]{value}, WRITE_TYPE_DEFAULT);
+    }
+
+
+    public void sendSpeedPidValue(Integer kp, Integer ki, Integer kd) {
+        Timber.i("sendSpeedPidValue");
+
+        BluetoothPeripheral peripheral = getConnectedPeripheral();
+        if (peripheral == null) return;
+        BluetoothGattCharacteristic characteristic = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, SPEED_PID_CHARACTERISTIC_UUID);
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        DataOutputStream dos = new DataOutputStream(bos);
+        try {
+
+            dos.writeByte((byte) ((kp >> 0) & 0xff));
+            dos.writeByte((byte) ((kp >> 8) & 0xff));
+            dos.writeByte((byte) ((kp >> 16) & 0xff));
+            dos.writeByte((byte) ((kp >> 24) & 0xff));
+
+            dos.writeByte((byte) ((ki >> 0) & 0xff));
+            dos.writeByte((byte) ((ki >> 8) & 0xff));
+            dos.writeByte((byte) ((ki >> 16) & 0xff));
+            dos.writeByte((byte) ((ki >> 24) & 0xff));
+
+            dos.writeByte((byte) ((kd >> 0) & 0xff));
+            dos.writeByte((byte) ((kd >> 8) & 0xff));
+            dos.writeByte((byte) ((kd >> 16) & 0xff));
+            dos.writeByte((byte) ((kd >> 24) & 0xff));
+
+            dos.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        peripheral.writeCharacteristic(characteristic, bos.toByteArray(), WRITE_TYPE_DEFAULT);
     }
 
     public BluetoothPeripheral getConnectedPeripheral() {

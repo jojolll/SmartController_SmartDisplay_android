@@ -222,10 +222,10 @@ public class Settings {
 // ----------------------
                 new HeaderSettingsObject.Builder(Settings.Battery_saving)
                         .build(),
-                new SeekBarSettingsObject.Builder(Battery_saving_medium_voltage, Battery_saving_medium_voltage, 0, 0, 50)
+                new SeekBarSettingsObject.Builder(Battery_saving_medium_voltage, Battery_saving_medium_voltage, 40, 0, 100)
                         .setUseValueAsSummary()
                         .build(),
-                new SeekBarSettingsObject.Builder(Battery_saving_strong_voltage, Battery_saving_strong_voltage, 0, 0, 30)
+                new SeekBarSettingsObject.Builder(Battery_saving_strong_voltage, Battery_saving_strong_voltage, 20, 0, 100)
                         .setUseValueAsSummary()
                         .addDivider()
                         .build(),
@@ -378,6 +378,15 @@ public class Settings {
             dos.writeByte(listToValueButton(ctx, Button_2_short_press_action));
             dos.writeByte(listToValueButton(ctx, Button_2_long_press_action));
             dos.writeByte(EasySettings.retrieveSettingsSharedPrefs(ctx).getInt(Button_long_press_duration, 5));
+
+            int value = (int)(Float.parseFloat(EasySettings.retrieveSettingsSharedPrefs(ctx).getString(Battery_min_voltage, "").replace(",", ".")) * 10);
+            dos.writeByte((byte) ((value >> 0) & 0xff));
+            dos.writeByte((byte) ((value >> 8) & 0xff));
+
+            value = (int)(Float.parseFloat(EasySettings.retrieveSettingsSharedPrefs(ctx).getString(Battery_max_voltage, "").replace(",", ".")) * 10);
+            dos.writeByte((byte) ((value >> 0) & 0xff));
+            dos.writeByte((byte) ((value >> 8) & 0xff));
+
             dos.writeByte(EasySettings.retrieveSettingsSharedPrefs(ctx).getInt(Battery_saving_medium_voltage, 0));
             dos.writeByte(EasySettings.retrieveSettingsSharedPrefs(ctx).getInt(Battery_saving_strong_voltage, 0));
             int pinCode = 147258;
@@ -390,7 +399,7 @@ public class Settings {
             dos.writeByte((byte) ((pinCode >> 8) & 0xff));
             dos.writeByte((byte) ((pinCode >> 16) & 0xff));
             dos.writeByte((byte) ((pinCode >> 24) & 0xff));
-            // remain 9
+            // remain 5
 
             dos.flush();
         } catch (IOException e) {
