@@ -37,7 +37,7 @@ public class Settings {
 
     public static final String Escooter_Accessories = "E-scooter Accessories";
     public static final String Button_1_short_press_action = "Button 1 short press action";
-    public static final String Button_1_long_press_action = "Button_1 long press action";
+    public static final String Button_1_long_press_action = "Button 1 long press action";
     public static final String Button_2_short_press_action = "Button 2 short press action";
     public static final String Button_2_long_press_action = "Button 2 long press action";
     public static final String Button_long_press_duration = "Button long press duration";
@@ -60,13 +60,14 @@ public class Settings {
     public static final String Electric_brake_max_value = "Electric brake max value";
     public static final String Electric_brake_time_between_mode_shift = "Electric brake time between mode shift";
     public static final String Electric_brake_disabled_voltage = "Electric brake disabled on high battery voltage";
-    public static final String Electric_brake_disabled_voltage_limit = "Electric brake disabled voltage limit";
+    public static final String Electric_brake_disabled_percent_limit = "Electric brake disabled percent limit";
 
     public static final String Limiters = "Limiters";
     public static final String Current_loop_mode = "Current loop mode";
     public static final String Current_loop_max_current = "Current loop max current";
     public static final String Speed_loop_mode = "Speed loop mode";
     public static final String Speed_limiter_at_startup = "Speed limiter at startup";
+    public static final String Speed_limiter_max_speed = "Speed limiter max speed (km/h)";
 
     public static final String Battery_saving = "Battery saving";
     public static final String Battery_saving_medium_voltage = "Automatic medium battery saving at battery percent";
@@ -77,11 +78,12 @@ public class Settings {
     private static final String LIST_Bluetooth_lock_mode_3 = "Smartphone connected or beacon visible";
     private static final String LIST_Bluetooth_lock_mode_4 = "Beacon visible";
 
-    private static final String LIST_Button_press_action_1 = "Mode Z enable/disable";
-    private static final String LIST_Button_press_action_2 = "Anti-theft manual lock";
-    private static final String LIST_Button_press_action_3 = "Nitro boost";
-    private static final String LIST_Button_press_action_4 = "Startup speed limitation disable";
-    private static final String LIST_Button_press_action_5 = "Aux on/off";
+    private static final String LIST_Button_press_action_1 = "Mode Z ON/OFF";
+    private static final String LIST_Button_press_action_2 = "Anti-theft manual lock ON";
+    private static final String LIST_Button_press_action_3 = "Nitro boost continuous";
+    private static final String LIST_Button_press_action_6 = "Nitro boost ON/OFF";
+    private static final String LIST_Button_press_action_4 = "Startup speed limitation ON/OFF";
+    private static final String LIST_Button_press_action_5 = "Aux ON/OFF";
 
     public static ArrayList<SettingsObject> initialize() {
 
@@ -96,6 +98,7 @@ public class Settings {
         LIST_Button_short_press_action.add(LIST_Button_press_action_3);
         LIST_Button_short_press_action.add(LIST_Button_press_action_4);
         LIST_Button_short_press_action.add(LIST_Button_press_action_5);
+        LIST_Button_short_press_action.add(LIST_Button_press_action_6);
 
         ArrayList<String> LIST_Button_long_press_action = new ArrayList<>();
         LIST_Button_long_press_action.add(LIST_Button_press_action_1);
@@ -249,7 +252,7 @@ public class Settings {
                         .setOffText("off")
                         .setOnText("on")
                         .build(),
-                new SeekBarSettingsObject.Builder(Electric_brake_disabled_voltage_limit, Electric_brake_disabled_voltage_limit, 40, 0, 85)
+                new SeekBarSettingsObject.Builder(Electric_brake_disabled_percent_limit, Electric_brake_disabled_percent_limit, 90, 80, 95)
                         .setUseValueAsSummary()
                         .addDivider()
                         .build(),
@@ -271,9 +274,10 @@ public class Settings {
                 new CheckBoxSettingsObject.Builder(Speed_limiter_at_startup, Speed_limiter_at_startup, false)
                         .setOffText("off")
                         .setOnText("on")
+                        .build(),
+                new SeekBarSettingsObject.Builder(Speed_limiter_max_speed, Speed_limiter_max_speed, 25, 20, 33)
+                        .setUseValueAsSummary()
                         .build()
-
-
         );
         return settings;
     }
@@ -293,7 +297,8 @@ public class Settings {
             intValue = 3;
         else if (valueStr.equals(LIST_Button_press_action_5))
             intValue = 4;
-
+        else if (valueStr.equals(LIST_Button_press_action_6))
+            intValue = 5;
         return intValue;
     }
 
@@ -332,7 +337,7 @@ public class Settings {
             dos.writeByte((byte) ((value >> 0) & 0xff));
             dos.writeByte((byte) ((value >> 8) & 0xff));
             dos.writeByte(EasySettings.retrieveSettingsSharedPrefs(ctx).getBoolean(Electric_brake_disabled_voltage, false) ? 1 : 0);
-            dos.writeByte(EasySettings.retrieveSettingsSharedPrefs(ctx).getInt(Electric_brake_disabled_voltage_limit, 0));
+            dos.writeByte(EasySettings.retrieveSettingsSharedPrefs(ctx).getInt(Electric_brake_disabled_percent_limit, 0));
             dos.writeByte(EasySettings.retrieveSettingsSharedPrefs(ctx).getBoolean(Current_loop_mode, false) ? 1 : 0);
             dos.writeByte(EasySettings.retrieveSettingsSharedPrefs(ctx).getInt(Current_loop_max_current, 0));
             dos.writeByte(EasySettings.retrieveSettingsSharedPrefs(ctx).getBoolean(Speed_loop_mode, false) ? 1 : 0);
@@ -341,7 +346,7 @@ public class Settings {
             dos.writeByte(Integer.parseInt(EasySettings.retrieveSettingsSharedPrefs(ctx).getString(Motor_pole_number, "")));
             dos.writeByte(listToValueBtLockMode(ctx, Bluetooth_lock_mode));
             dos.writeByte(Integer.parseInt(EasySettings.retrieveSettingsSharedPrefs(ctx).getString(LCD_Speed_adjustement, "0")));
-            // remain 1
+            dos.writeByte(EasySettings.retrieveSettingsSharedPrefs(ctx).getInt(Speed_limiter_max_speed, 25));
 
             dos.flush();
         } catch (IOException e) {

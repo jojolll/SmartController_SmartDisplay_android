@@ -2,7 +2,6 @@ package org.koxx.smartlcd;
 
 import android.Manifest;
 import android.annotation.TargetApi;
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
@@ -76,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String SETTINGS_KEY_RINGTONE = "SETTINGS_KEY_RINGTONE";
 
     private TextView tvSpeed, tvVoltage, tvCurrent, tvSpeedMax, tvCurrentMax, tvPower, tvPowerMax, tvTemperature, tvTemperatureMax, tvBtLock, tvHumidity, tvSpeedLimiter, tvEco, tvAccel, tvAux;
-    private ImageView ivBrakeBattery;
+    private ImageView ivBrakeBattery, ivBrakePressed;
 
     private final DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
 
@@ -84,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
     int mLcdMode = 0;
     boolean mBatteryOverLoad = false;
     int mBrakeStatus = 0;
+    boolean mBrakePressed = false;
     float mLastSpeed = 0;
     float mMaxSpeed = 0;
     float mLastPower = 0;
@@ -136,7 +136,8 @@ public class MainActivity extends AppCompatActivity {
         tvAccel = (TextView) findViewById(R.id.AccelValue);
         tvAux = (TextView) findViewById(R.id.AuxValue);
 
-        ivBrakeBattery = (ImageView) findViewById(R.id.BrakeWarning);
+        ivBrakeBattery = (ImageView) findViewById(R.id.BrakeBatteryWarning);
+        ivBrakePressed = (ImageView) findViewById(R.id.BrakePressedWarning);
 
         registerReceiver(connectStatusReceiver, new IntentFilter(BluetoothHandler.CONNECT_STATUS));
 
@@ -170,6 +171,7 @@ public class MainActivity extends AppCompatActivity {
         setBrakeIndicator(EasySettings.retrieveSettingsSharedPrefs(this).getInt(Settings.Electric_brake_min_value, 0),
                 -1,
                 EasySettings.retrieveSettingsSharedPrefs(this).getInt(Settings.Electric_brake_max_value, 0),
+                false,
                 mBatteryOverLoad);
 
         // chronometer
@@ -273,10 +275,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void setBrakeIndicator(int min, int value, int max, boolean isBatteryTooLoaded) {
+    public void setBrakeIndicator(int min, int value, int max, boolean isPressed, boolean isBatteryTooLoaded) {
         for (int i = 0; i <= 5; i++) {
             String viewId = "BrakeValue" + i;
             int resID = getResources().getIdentifier(viewId, "id", getPackageName());
+
+            ivBrakePressed.setVisibility(isPressed ? View.VISIBLE : View.GONE);
 
             if (!isBatteryTooLoaded) {
                 if (EasySettings.retrieveSettingsSharedPrefs(this).getBoolean(Settings.Electric_brake_progressive_mode, false)) {
@@ -357,6 +361,7 @@ public class MainActivity extends AppCompatActivity {
             setBrakeIndicator(EasySettings.retrieveSettingsSharedPrefs(this).getInt(Settings.Electric_brake_min_value, 0),
                     -1,
                     EasySettings.retrieveSettingsSharedPrefs(this).getInt(Settings.Electric_brake_max_value, 0),
+                    false,
                     mBatteryOverLoad);
 
         }
@@ -683,10 +688,12 @@ public class MainActivity extends AppCompatActivity {
             if (measurement == null) return;
 
             mBrakeStatus = measurement.brakeValue;
+            mBrakePressed = measurement.brakePressed;
 
             setBrakeIndicator(EasySettings.retrieveSettingsSharedPrefs(context).getInt(Settings.Electric_brake_min_value, 0),
                     mBrakeStatus,
                     EasySettings.retrieveSettingsSharedPrefs(context).getInt(Settings.Electric_brake_max_value, 0),
+                    mBrakePressed,
                     mBatteryOverLoad);
 
         }
@@ -710,8 +717,10 @@ public class MainActivity extends AppCompatActivity {
 
             // check is battery is overloaded
             boolean overloadCheck = EasySettings.retrieveSettingsSharedPrefs(context).getBoolean(Settings.Electric_brake_disabled_voltage, true);
-            int maxVoltage = EasySettings.retrieveSettingsSharedPrefs(context).getInt(Settings.Electric_brake_disabled_voltage_limit, 0);
-            if ((measurement.voltage > maxVoltage) && (overloadCheck))
+            int batMaxVoltage = EasySettings.retrieveSettingsSharedPrefs(context).getInt(Settings.Electric_brake_max_value, 0);
+            int batMinVoltage = EasySettings.retrieveSettingsSharedPrefs(context).getInt(Settings.Electric_brake_min_value, 0);
+            int limitVoltage = EasySettings.retrieveSettingsSharedPrefs(context).getInt(Settings.Electric_brake_disabled_percent_limit, 0);
+            if ((measurement.voltage > batMinVoltage + (limitVoltage * (batMaxVoltage - batMinVoltage))) && (overloadCheck))
                 mBatteryOverLoad = true;
             else
                 mBatteryOverLoad = false;
@@ -720,6 +729,7 @@ public class MainActivity extends AppCompatActivity {
             setBrakeIndicator(EasySettings.retrieveSettingsSharedPrefs(context).getInt(Settings.Electric_brake_min_value, 0),
                     mBrakeStatus,
                     EasySettings.retrieveSettingsSharedPrefs(context).getInt(Settings.Electric_brake_max_value, 0),
+                    mBrakePressed,
                     mBatteryOverLoad);
         }
     };

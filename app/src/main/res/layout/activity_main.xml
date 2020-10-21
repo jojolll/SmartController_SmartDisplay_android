@@ -178,10 +178,17 @@
                         android:textStyle="bold" />
 
                     <ImageView
-                        android:id="@+id/BrakeWarning"
+                        android:id="@+id/BrakeBatteryWarning"
                         android:layout_width="20dip"
-                        android:layout_height="14dip"
+                        android:layout_height="12dip"
+                        android:layout_marginRight="4dip"
                         android:background="@drawable/battery_full_charge" />
+
+                    <ImageView
+                        android:id="@+id/BrakePressedWarning"
+                        android:layout_width="20dip"
+                        android:layout_height="12dip"
+                        android:background="@drawable/brake_pressed" />
 
                 </LinearLayout>
 
