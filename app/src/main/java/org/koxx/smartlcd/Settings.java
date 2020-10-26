@@ -78,6 +78,7 @@ public class Settings {
     private static final String LIST_Bluetooth_lock_mode_3 = "Smartphone connected or beacon visible";
     private static final String LIST_Bluetooth_lock_mode_4 = "Beacon visible";
 
+    private static final String LIST_Button_press_action_0 = "None";
     private static final String LIST_Button_press_action_1 = "Mode Z ON/OFF";
     private static final String LIST_Button_press_action_2 = "Anti-theft manual lock ON";
     private static final String LIST_Button_press_action_3 = "Nitro boost continuous";
@@ -94,6 +95,7 @@ public class Settings {
         LIST_Bluetooth_lock_mode.add(LIST_Bluetooth_lock_mode_4);
 
         ArrayList<String> LIST_Button_short_press_action = new ArrayList<>();
+        LIST_Button_short_press_action.add(LIST_Button_press_action_0);
         LIST_Button_short_press_action.add(LIST_Button_press_action_1);
         LIST_Button_short_press_action.add(LIST_Button_press_action_3);
         LIST_Button_short_press_action.add(LIST_Button_press_action_4);
@@ -101,6 +103,7 @@ public class Settings {
         LIST_Button_short_press_action.add(LIST_Button_press_action_6);
 
         ArrayList<String> LIST_Button_long_press_action = new ArrayList<>();
+        LIST_Button_long_press_action.add(LIST_Button_press_action_0);
         LIST_Button_long_press_action.add(LIST_Button_press_action_1);
         LIST_Button_long_press_action.add(LIST_Button_press_action_2);
         LIST_Button_long_press_action.add(LIST_Button_press_action_3);
@@ -287,18 +290,20 @@ public class Settings {
 
         String valueStr = EasySettings.retrieveSettingsSharedPrefs(ctx).getString(value, "");
 
-        if (valueStr.equals(LIST_Button_press_action_1))
+         if (valueStr.equals(LIST_Button_press_action_0))
             intValue = 0;
-        else if (valueStr.equals(LIST_Button_press_action_2))
+        else if (valueStr.equals(LIST_Button_press_action_1))
             intValue = 1;
-        else if (valueStr.equals(LIST_Button_press_action_3))
+        else if (valueStr.equals(LIST_Button_press_action_2))
             intValue = 2;
-        else if (valueStr.equals(LIST_Button_press_action_4))
+        else if (valueStr.equals(LIST_Button_press_action_3))
             intValue = 3;
-        else if (valueStr.equals(LIST_Button_press_action_5))
+        else if (valueStr.equals(LIST_Button_press_action_4))
             intValue = 4;
-        else if (valueStr.equals(LIST_Button_press_action_6))
+        else if (valueStr.equals(LIST_Button_press_action_5))
             intValue = 5;
+        else if (valueStr.equals(LIST_Button_press_action_6))
+            intValue = 6;
         return intValue;
     }
 

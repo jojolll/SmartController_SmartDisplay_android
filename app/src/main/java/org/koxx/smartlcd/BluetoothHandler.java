@@ -122,7 +122,7 @@ class BluetoothHandler {
     private Handler handler = new Handler();
     private int currentTimeCounter = 0;
 
-    private TextView logsView;
+    private LogActivity logsView;
     private String logText = "";
 
     private int attemps = 0;
@@ -697,26 +697,21 @@ class BluetoothHandler {
             return null;
     }
 
-    public void setLogActivity(TextView view) {
+    public void setLogActivity(LogActivity view) {
         logsView = view;
-        if ((logText != null) && (logsView != null))
-            logsView.setText(logText);
     }
 
     public void clearLogs() {
-        logText = "";
-        if (logsView != null)
-            logsView.setText(logText);
+        if (logsView != null) {
+            logsView.getOnscreenLog().clearLog();
+        }
     }
 
     private void addLog(String log) {
         if (logsView != null) {
-            if (logText.length() > 60000)
-                logText = logText.substring(logText.indexOf('\n') + 1, logText.length());
-
             String date = new SimpleDateFormat("HH:mm:ss.SSS").format(new Date());
-            logText = logText + date + " : " + log + "\n";
-            logsView.setText(logText);
+            logText = date + " : " + log;
+            logsView.getOnscreenLog().log(logText);
         }
     }
 

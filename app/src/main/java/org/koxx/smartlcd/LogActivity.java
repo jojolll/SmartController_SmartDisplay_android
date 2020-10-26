@@ -8,10 +8,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.view.View;
-import android.widget.ScrollView;
-import android.widget.TextView;
+
+import org.koxx.smartlcd.tools.OnScreenLog;
 
 public class LogActivity extends AppCompatActivity {
+
+    private OnScreenLog log;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,12 +30,16 @@ public class LogActivity extends AppCompatActivity {
             }
         });
 
+        /*
         ScrollView svLogs = (ScrollView) findViewById(R.id.svLogs);
         svLogs.fullScroll(View.FOCUS_DOWN);
-
         TextView tv = findViewById(R.id.logs);
-        
-        BluetoothHandler.getInstance(this).setLogActivity(tv);
+        */
+
+
+        log = new OnScreenLog(this, R.id.content_1);
+
+        BluetoothHandler.getInstance(this).setLogActivity(this);
     }
 
     @Override
@@ -41,4 +47,10 @@ public class LogActivity extends AppCompatActivity {
         //BluetoothHandler.getInstance(this).setLogActivity(null);
         super.onDestroy();
     }
+
+    public OnScreenLog getOnscreenLog()
+    {
+        return log;
+    }
+
 }
