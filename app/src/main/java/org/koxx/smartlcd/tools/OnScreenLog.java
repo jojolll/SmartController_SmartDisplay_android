@@ -29,7 +29,6 @@ public class OnScreenLog {
     public OnScreenLog(Activity activity, int ViewID){
         OnScreenLog.activity = activity;
         tvLog = new TextView(activity.getApplicationContext());
-        maintainLog("Log is working");
         tvLog.setLayoutParams(new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.WRAP_CONTENT,
                 RelativeLayout.LayoutParams.WRAP_CONTENT));

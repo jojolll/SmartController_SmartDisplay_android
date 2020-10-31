@@ -56,6 +56,7 @@ public class Settings {
 
     public static final String Electric_brake = "Electric brake";
     public static final String Electric_brake_progressive_mode = "Electric brake progressive mode";
+    public static final String Electric_brake_type = "Electric brake type";
     public static final String Electric_brake_min_value = "Electric brake min value";
     public static final String Electric_brake_max_value = "Electric brake max value";
     public static final String Electric_brake_time_between_mode_shift = "Electric brake time between mode shift";
@@ -86,6 +87,10 @@ public class Settings {
     private static final String LIST_Button_press_action_4 = "Startup speed limitation ON/OFF";
     private static final String LIST_Button_press_action_5 = "Aux ON/OFF";
 
+    private static final String LIST_Electric_brake_type_0 = "None";
+    private static final String LIST_Electric_brake_type_1 = "Digital";
+    private static final String LIST_Electric_brake_type_2 = "Analog";
+
     public static ArrayList<SettingsObject> initialize() {
 
         ArrayList<String> LIST_Bluetooth_lock_mode = new ArrayList<>();
@@ -109,6 +114,11 @@ public class Settings {
         LIST_Button_long_press_action.add(LIST_Button_press_action_3);
         LIST_Button_long_press_action.add(LIST_Button_press_action_4);
         LIST_Button_long_press_action.add(LIST_Button_press_action_5);
+
+        ArrayList<String> LIST_Electric_brake_type = new ArrayList<>();
+        LIST_Electric_brake_type.add(LIST_Electric_brake_type_0);
+        LIST_Electric_brake_type.add(LIST_Electric_brake_type_1);
+        LIST_Electric_brake_type.add(LIST_Electric_brake_type_2);
 
         ArrayList<SettingsObject> settings = EasySettings.createSettingsArray(
 // ----------------------
@@ -242,6 +252,10 @@ public class Settings {
                         .setOffText("off")
                         .setOnText("on")
                         .build(),
+                new ListSettingsObject.Builder(Electric_brake_type, Electric_brake_type, LIST_Electric_brake_type_0, LIST_Electric_brake_type, "save")
+                        .setUseValueAsSummary()
+                        .setNegativeBtnText("cancel")
+                        .build(),
                 new SeekBarSettingsObject.Builder(Electric_brake_min_value, Electric_brake_min_value, 0, 0, 5)
                         .setUseValueAsSummary()
                         .build(),
@@ -290,7 +304,7 @@ public class Settings {
 
         String valueStr = EasySettings.retrieveSettingsSharedPrefs(ctx).getString(value, "");
 
-         if (valueStr.equals(LIST_Button_press_action_0))
+        if (valueStr.equals(LIST_Button_press_action_0))
             intValue = 0;
         else if (valueStr.equals(LIST_Button_press_action_1))
             intValue = 1;
@@ -325,6 +339,21 @@ public class Settings {
         return intValue;
     }
 
+    public static int listToValueBrakeMode(Context ctx, String value) {
+        int intValue = 0;
+
+        String valueStr = EasySettings.retrieveSettingsSharedPrefs(ctx).getString(value, "");
+
+        if (valueStr.equals(LIST_Electric_brake_type_0))
+            intValue = 0;
+        else if (valueStr.equals(LIST_Electric_brake_type_1))
+            intValue = 1;
+        else if (valueStr.equals(LIST_Electric_brake_type_2))
+            intValue = 2;
+
+        return intValue;
+    }
+
     static public byte[] settings1ToByteArray(Context ctx) {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(bos);
@@ -352,6 +381,7 @@ public class Settings {
             dos.writeByte(listToValueBtLockMode(ctx, Bluetooth_lock_mode));
             dos.writeByte(Integer.parseInt(EasySettings.retrieveSettingsSharedPrefs(ctx).getString(LCD_Speed_adjustement, "0")));
             dos.writeByte(EasySettings.retrieveSettingsSharedPrefs(ctx).getInt(Speed_limiter_max_speed, 25));
+            // remain 0
 
             dos.flush();
         } catch (IOException e) {
@@ -368,7 +398,8 @@ public class Settings {
         try {
             String beaconAddress = EasySettings.retrieveSettingsSharedPrefs(ctx).getString(Beacon_Mac_Address, "AA:BB:CC:DD:EE:FF").substring(0, 17).toLowerCase();
             dos.writeBytes(beaconAddress); // size 17
-            // remain 3
+            dos.writeByte(listToValueBrakeMode(ctx, Electric_brake_type));
+            // remain 2
 
             dos.flush();
         } catch (IOException e) {
@@ -389,11 +420,11 @@ public class Settings {
             dos.writeByte(listToValueButton(ctx, Button_2_long_press_action));
             dos.writeByte(EasySettings.retrieveSettingsSharedPrefs(ctx).getInt(Button_long_press_duration, 5));
 
-            int value = (int)(Float.parseFloat(EasySettings.retrieveSettingsSharedPrefs(ctx).getString(Battery_min_voltage, "").replace(",", ".")) * 10);
+            int value = (int) (Float.parseFloat(EasySettings.retrieveSettingsSharedPrefs(ctx).getString(Battery_min_voltage, "").replace(",", ".")) * 10);
             dos.writeByte((byte) ((value >> 0) & 0xff));
             dos.writeByte((byte) ((value >> 8) & 0xff));
 
-            value = (int)(Float.parseFloat(EasySettings.retrieveSettingsSharedPrefs(ctx).getString(Battery_max_voltage, "").replace(",", ".")) * 10);
+            value = (int) (Float.parseFloat(EasySettings.retrieveSettingsSharedPrefs(ctx).getString(Battery_max_voltage, "").replace(",", ".")) * 10);
             dos.writeByte((byte) ((value >> 0) & 0xff));
             dos.writeByte((byte) ((value >> 8) & 0xff));
 
