@@ -332,6 +332,8 @@ public class MainActivity extends AppCompatActivity {
         }
         if (bat < 0)
             ((TextView) findViewById(R.id.BatteryValue)).setText("0%");
+        else if (bat > 100)
+            ((TextView) findViewById(R.id.BatteryValue)).setText("100%");
         else
             ((TextView) findViewById(R.id.BatteryValue)).setText(bat + "%");
     }

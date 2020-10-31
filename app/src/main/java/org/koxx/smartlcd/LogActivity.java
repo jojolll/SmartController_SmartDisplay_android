@@ -44,12 +44,13 @@ public class LogActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        //BluetoothHandler.getInstance(this).setLogActivity(null);
+        BluetoothHandler.getInstance(this).setLogActivity(null);
+        log.clearLog();
         super.onDestroy();
+
     }
 
-    public OnScreenLog getOnscreenLog()
-    {
+    public OnScreenLog getOnscreenLog() {
         return log;
     }
 
