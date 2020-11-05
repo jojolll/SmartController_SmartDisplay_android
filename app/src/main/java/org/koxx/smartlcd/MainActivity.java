@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_SETTINGS_LIST = "EXTRA_SETTINGS_LIST";
     public static final String SETTINGS_KEY_RINGTONE = "SETTINGS_KEY_RINGTONE";
 
-    private TextView tvSpeed, tvVoltage, tvCurrent, tvSpeedMax, tvCurrentMax, tvPower, tvPowerMax, tvTemperature, tvTemperatureMax, tvBtLock, tvHumidity, tvSpeedLimiter, tvEco, tvAccel, tvAux;
+    private TextView tvSpeed, tvVoltage, tvCurrent, tvSpeedMax, tvCurrentMax, tvPower, tvPowerMax, tvTemperature, tvTemperatureMax, tvBtLock, tvHumidity, tvSpeedLimiter, tvEco, tvAccel, tvAux, tvDistance;
     private ImageView ivBrakeBattery, ivBrakePressed;
 
     private final DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
@@ -135,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
         tvEco = (TextView) findViewById(R.id.EcoValue);
         tvAccel = (TextView) findViewById(R.id.AccelValue);
         tvAux = (TextView) findViewById(R.id.AuxValue);
+        tvDistance = (TextView) findViewById(R.id.DistanceValue);
 
         ivBrakeBattery = (ImageView) findViewById(R.id.BrakeBatteryWarning);
         ivBrakePressed = (ImageView) findViewById(R.id.BrakePressedWarning);
@@ -151,11 +152,12 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(powerDataReceiver, new IntentFilter(BluetoothHandler.MEASUREMENT_POWER));
         registerReceiver(btLockDataReceiver, new IntentFilter(BluetoothHandler.MEASUREMENT_BTLOCK));
         registerReceiver(temperatureDataReceiver, new IntentFilter(BluetoothHandler.MEASUREMENT_TEMPERATURE));
-        registerReceiver(humidityDataReceiver, new IntentFilter(BluetoothHandler.MEASUREMENT_HUMIDITY));
         registerReceiver(speedLimiterDataReceiver, new IntentFilter(BluetoothHandler.MEASUREMENT_SPEED_LIMITER));
         registerReceiver(ecoDataReceiver, new IntentFilter(BluetoothHandler.MEASUREMENT_ECO));
         registerReceiver(accelDataReceiver, new IntentFilter(BluetoothHandler.MEASUREMENT_ACCEL));
         registerReceiver(auxDataReceiver, new IntentFilter(BluetoothHandler.MEASUREMENT_AUX));
+        registerReceiver(dstDataReceiver, new IntentFilter(BluetoothHandler.MEASUREMENT_DISTANCE));
+
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -439,6 +441,17 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "mAux sent : " + mAux);
     }
 
+    public void onClickDistance(View v) {
+        Log.d(TAG, "onClickDistance");
+
+        BluetoothHandler.getInstance(this).sendDstReset();
+        tvAccel.setText("0.0 km");
+
+        Log.d(TAG, "onClickDistance reset");
+    }
+
+
+
     public void onClickEco(View v) {
 
         mEco--;
@@ -572,7 +585,6 @@ public class MainActivity extends AppCompatActivity {
         unregisterReceiver(powerDataReceiver);
         unregisterReceiver(btLockDataReceiver);
         unregisterReceiver(temperatureDataReceiver);
-        unregisterReceiver(humidityDataReceiver);
 
     }
 
@@ -821,10 +833,10 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             BluetoothPeripheral peripheral = getPeripheral(intent.getStringExtra(BluetoothHandler.MEASUREMENT_EXTRA_PERIPHERAL));
-            Integer value = (Integer) intent.getSerializableExtra(BluetoothHandler.MEASUREMENT_TEMPERATURE_EXTRA);
-            if (value == null) return;
+            Integer temp = (Integer) intent.getSerializableExtra(BluetoothHandler.MEASUREMENT_TEMPERATURE_EXTRA);
+            if (temp == null) return;
 
-            int temp = value / 1000;
+            temp = temp / 1000;
 
             tvTemperature.setText(String.format(Locale.ENGLISH, "%d °", temp));
 
@@ -832,20 +844,17 @@ public class MainActivity extends AppCompatActivity {
                 tvTemperatureMax.setText(String.format(Locale.ENGLISH, "%d °", temp));
                 mLastTemp = temp;
             }
+
+            Integer hr = (Integer) intent.getSerializableExtra(BluetoothHandler.MEASUREMENT_TEMPERATURE_HR_EXTRA);
+
+            hr = hr / 1000;
+
+            tvHumidity.setText(String.format(Locale.ENGLISH, "%d %%", hr));
+
         }
     };
-    private final BroadcastReceiver humidityDataReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            BluetoothPeripheral peripheral = getPeripheral(intent.getStringExtra(BluetoothHandler.MEASUREMENT_EXTRA_PERIPHERAL));
-            Integer value = (Integer) intent.getSerializableExtra(BluetoothHandler.MEASUREMENT_HUMIDITY_EXTRA);
-            if (value == null) return;
 
-            int temp = value / 1000;
 
-            tvHumidity.setText(String.format(Locale.ENGLISH, "%d %%", temp));
-        }
-    };
     private final BroadcastReceiver speedLimiterDataReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -861,6 +870,7 @@ public class MainActivity extends AppCompatActivity {
                 tvSpeedLimiter.setText(String.format(Locale.ENGLISH, "ON"));
         }
     };
+
     private final BroadcastReceiver ecoDataReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -881,6 +891,7 @@ public class MainActivity extends AppCompatActivity {
             tvEco.setText(txt);
         }
     };
+
     private final BroadcastReceiver auxDataReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -896,6 +907,20 @@ public class MainActivity extends AppCompatActivity {
                 tvAux.setText(String.format(Locale.ENGLISH, "ON"));
         }
     };
+
+    private final BroadcastReceiver dstDataReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            BluetoothPeripheral peripheral = getPeripheral(intent.getStringExtra(BluetoothHandler.MEASUREMENT_EXTRA_PERIPHERAL));
+            Integer value = (Integer) intent.getSerializableExtra(BluetoothHandler.MEASUREMENT_DISTANCE_EXTRA);
+            if (value == null) return;
+
+            double dst = value / 10000.0;
+
+            tvDistance.setText(String.format(Locale.ENGLISH, "%3.1f km", dst));
+        }
+    };
+
     private final BroadcastReceiver accelDataReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -922,7 +947,6 @@ public class MainActivity extends AppCompatActivity {
             tvAccel.setText(txt);
         }
     };
-
 
     private BluetoothPeripheral getPeripheral(String peripheralAddress) {
         BluetoothCentral central = BluetoothHandler.getInstance(getApplicationContext()).central;

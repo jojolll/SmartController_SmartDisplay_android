@@ -1,5 +1,6 @@
 package org.koxx.smartlcd;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -29,6 +30,8 @@ public class LogActivity extends AppCompatActivity {
                 BluetoothHandler.getInstance(getApplicationContext()).clearLogs();
             }
         });
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
 
         /*
         ScrollView svLogs = (ScrollView) findViewById(R.id.svLogs);

@@ -17,7 +17,7 @@ public class OnScreenLog {
     private static int timeoutTime = 1000;
     private static TextView tvLog;
     private static int logCount = 0;
-    private static int logCountMax = 3000;
+    private static int logCountMax = 2000;
     private static String[] logs = new String[logCountMax];
     private static int cntClicks = 0;
     private static boolean visibility = false;
@@ -125,6 +125,7 @@ public class OnScreenLog {
 
     public void clearLog(){
         tvLog.setText("");
+        logCount = 0;
     }
 
     public void setLogVisible(boolean visibility){

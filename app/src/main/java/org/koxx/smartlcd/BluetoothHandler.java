@@ -76,8 +76,9 @@ class BluetoothHandler {
     public static final String MEASUREMENT_BTLOCK_EXTRA = "measurement.btlock.extra";
     public static final String MEASUREMENT_TEMPERATURE = "measurement.temperature";
     public static final String MEASUREMENT_TEMPERATURE_EXTRA = "measurement.temperature.extra";
-    public static final String MEASUREMENT_HUMIDITY = "measurement.humidity";
-    public static final String MEASUREMENT_HUMIDITY_EXTRA = "measurement.humidity.extra";
+    public static final String MEASUREMENT_TEMPERATURE_HR_EXTRA = "measurement.temperature.hr.extra";
+    //public static final String MEASUREMENT_HUMIDITY = "measurement.humidity";
+    //public static final String MEASUREMENT_HUMIDITY_EXTRA = "measurement.humidity.extra";
     public static final String MEASUREMENT_SPEED_LIMITER = "measurement.speed_limiter";
     public static final String MEASUREMENT_SPEED_LIMITER_EXTRA = "measurement.speed_limiter.extra";
     public static final String MEASUREMENT_ECO = "measurement.eco";
@@ -88,9 +89,11 @@ class BluetoothHandler {
     public static final String MEASUREMENT_CURRENT_CALIB_EXTRA = "measurement.current_calib.extra";
     public static final String MEASUREMENT_AUX = "measurement.aux";
     public static final String MEASUREMENT_AUX_EXTRA = "measurement.aux.extra";
+    public static final String MEASUREMENT_DISTANCE = "measurement.dst";
+    public static final String MEASUREMENT_DISTANCE_EXTRA = "measurement.dst.extra";
 
 
-    // UUIDs for the Health Thermometer service (HTS)
+    // UUIDs all datas
     private static final UUID SMARTLCD_MAIN_SERVICE_UUID = UUID.fromString("4fafc201-1fb5-459e-8fcc-c5c9c331914b");
     private static final UUID SPEED_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a0");
     private static final UUID MODE_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a1");
@@ -100,7 +103,7 @@ class BluetoothHandler {
     private static final UUID POWER_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a5");
     private static final UUID BTLOCK_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a6");
     private static final UUID TEMPERATURE_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a7");
-    private static final UUID HUMIDITY_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a8");
+    //private static final UUID HUMIDITY_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a8");
     private static final UUID SETTINGS1_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a9");
     private static final UUID SPEED_LIMITER_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26aa");
     private static final UUID ECO_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26ab");
@@ -113,6 +116,7 @@ class BluetoothHandler {
     private static final UUID SETTINGS3_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26b2");
     private static final UUID AUX_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26b3");
     private static final UUID SPEED_PID_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26b4");
+    private static final UUID DISTANCE_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26b5");
 
 
     // Local variables
@@ -120,12 +124,9 @@ class BluetoothHandler {
     private static BluetoothHandler instance = null;
     private Context context;
     private Handler handler = new Handler();
-    private int currentTimeCounter = 0;
 
     private LogActivity logsView;
     private String logText = "";
-
-    private int attemps = 0;
 
     ArrayList<String> ignoreList = new ArrayList<>();
 
@@ -183,11 +184,6 @@ class BluetoothHandler {
                     peripheral.setNotify(temperatureCharacteristic, true);
                     peripheral.readCharacteristic(temperatureCharacteristic);
                 }
-                BluetoothGattCharacteristic humidityCharacteristic = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, HUMIDITY_CHARACTERISTIC_UUID);
-                if (humidityCharacteristic != null) {
-                    peripheral.setNotify(humidityCharacteristic, true);
-                    peripheral.readCharacteristic(humidityCharacteristic);
-                }
                 BluetoothGattCharacteristic speedLimiterCharacteristic = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, SPEED_LIMITER_CHARACTERISTIC_UUID);
                 if (speedLimiterCharacteristic != null) {
                     peripheral.setNotify(speedLimiterCharacteristic, true);
@@ -217,6 +213,12 @@ class BluetoothHandler {
                     peripheral.setNotify(auxCharacteristic, true);
                     peripheral.readCharacteristic(auxCharacteristic);
                 }
+                BluetoothGattCharacteristic distanceCharacteristic = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, DISTANCE_CHARACTERISTIC_UUID);
+                if (distanceCharacteristic != null) {
+                    peripheral.setNotify(distanceCharacteristic, true);
+                    peripheral.readCharacteristic(distanceCharacteristic);
+                }
+
                 sendSettings();
             }
 
@@ -249,6 +251,7 @@ class BluetoothHandler {
             if (status != BluetoothPeripheral.GATT_SUCCESS) return;
             UUID characteristicUUID = characteristic.getUuid();
             BluetoothBytesParser parser = new BluetoothBytesParser(value);
+            Timber.i("update <%s>", characteristicUUID);
 
             if (characteristicUUID.equals(MODE_CHARACTERISTIC_UUID)) {
                 ModeMeasurement measurement = new ModeMeasurement(value);
@@ -267,7 +270,7 @@ class BluetoothHandler {
                 if (graphView != null)
                     graphView.addSpeedData((float) (measurement.speedValue));
 
-                Timber.d("speed : %s", measurement);
+                Timber.d("speed : %s", measurement.speedValue);
 
             } else if (characteristicUUID.equals(BRAKE_STATUS_CHARACTERISTIC_UUID)) {
                 BrakeStatusMeasurement measurement = new BrakeStatusMeasurement(value);
@@ -311,14 +314,10 @@ class BluetoothHandler {
                 //Timber.d("btlock : %s", measurement);
             } else if (characteristicUUID.equals(TEMPERATURE_CHARACTERISTIC_UUID)) {
                 Integer temperature = parser.getIntValue(BluetoothBytesParser.FORMAT_UINT32);
+                Integer humidity = parser.getIntValue(BluetoothBytesParser.FORMAT_UINT32);
                 Intent intent = new Intent(MEASUREMENT_TEMPERATURE);
                 intent.putExtra(MEASUREMENT_TEMPERATURE_EXTRA, temperature);
-                intent.putExtra(MEASUREMENT_EXTRA_PERIPHERAL, peripheral.getAddress());
-                context.sendBroadcast(intent);
-            } else if (characteristicUUID.equals(HUMIDITY_CHARACTERISTIC_UUID)) {
-                Integer humidity = parser.getIntValue(BluetoothBytesParser.FORMAT_UINT32);
-                Intent intent = new Intent(MEASUREMENT_HUMIDITY);
-                intent.putExtra(MEASUREMENT_HUMIDITY_EXTRA, humidity);
+                intent.putExtra(MEASUREMENT_TEMPERATURE_HR_EXTRA, humidity);
                 intent.putExtra(MEASUREMENT_EXTRA_PERIPHERAL, peripheral.getAddress());
                 context.sendBroadcast(intent);
             } else if (characteristicUUID.equals(SPEED_LIMITER_CHARACTERISTIC_UUID)) {
@@ -351,6 +350,12 @@ class BluetoothHandler {
                 intent.putExtra(MEASUREMENT_AUX_EXTRA, aux);
                 intent.putExtra(MEASUREMENT_EXTRA_PERIPHERAL, peripheral.getAddress());
                 context.sendBroadcast(intent);
+            } else if (characteristicUUID.equals(DISTANCE_CHARACTERISTIC_UUID)) {
+                Integer dst = parser.getIntValue(BluetoothBytesParser.FORMAT_UINT32);
+                Intent intent = new Intent(MEASUREMENT_DISTANCE);
+                intent.putExtra(MEASUREMENT_DISTANCE_EXTRA, dst);
+                intent.putExtra(MEASUREMENT_EXTRA_PERIPHERAL, peripheral.getAddress());
+                context.sendBroadcast(intent);
             } else if (characteristicUUID.equals(LOGS_CHARACTERISTIC_UUID)) {
                 String log = parser.getStringValue();
                 Timber.i("ESP : %s", log);
@@ -358,9 +363,7 @@ class BluetoothHandler {
                 addLog(log);
 
             }
-
         }
-
 
         @Override
         public void onMtuChanged(@NotNull BluetoothPeripheral peripheral, int mtu, int status) {
@@ -377,8 +380,6 @@ class BluetoothHandler {
             Timber.i("connected to '%s'", peripheral.getName());
 
             addLog(">>> connected");
-
-            attemps = 0;
 
             SharedPreferences sharedPreferences = context.getSharedPreferences(PREFS_NAME, 0);
             SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -401,8 +402,6 @@ class BluetoothHandler {
             intent.putExtra(CONNECT_STATUS_EXTRA, CONNECT_STATUS_FAILED);
             context.sendBroadcast(intent);
 
-            attemps++;
-
             // Reconnect to this device when it becomes available again
             if ((peripheral.getBondState() == BOND_BONDED) && peripheral.getName() != null && peripheral.getName().startsWith("SmartLCD")) {
                 handler.postDelayed(new Runnable() {
@@ -422,8 +421,6 @@ class BluetoothHandler {
             Timber.i("disconnected '%s' with status %d", peripheral.getName(), status);
 
             addLog(">>> disconnected");
-
-            attemps++;
 
             Intent intent = new Intent(CONNECT_STATUS);
             intent.putExtra(CONNECT_STATUS_EXTRA, CONNECT_STATUS_DISCONNECTED);
@@ -644,6 +641,15 @@ class BluetoothHandler {
         if (peripheral == null) return;
         BluetoothGattCharacteristic characteristic = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, AUX_CHARACTERISTIC_UUID);
         peripheral.writeCharacteristic(characteristic, new byte[]{value}, WRITE_TYPE_DEFAULT);
+    }
+
+    public void sendDstReset() {
+        Timber.i("sendDstReset");
+
+        BluetoothPeripheral peripheral = getConnectedPeripheral();
+        if (peripheral == null) return;
+        BluetoothGattCharacteristic characteristic = peripheral.getCharacteristic(SMARTLCD_MAIN_SERVICE_UUID, DISTANCE_CHARACTERISTIC_UUID);
+        peripheral.writeCharacteristic(characteristic, new byte[]{0}, WRITE_TYPE_DEFAULT);
     }
 
     public void sendFastUpdateValue(byte value) {

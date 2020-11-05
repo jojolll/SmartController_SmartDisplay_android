@@ -13,7 +13,6 @@ public class SpeedMeasurement implements Serializable {
         BluetoothBytesParser parser = new BluetoothBytesParser(byteArray);
 
         speedValue = parser.getIntValue(BluetoothBytesParser.FORMAT_UINT8);
-
     }
 
     @Override
