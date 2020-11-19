@@ -1,4 +1,4 @@
-package org.koxx.smartlcd.chrono;
+package org.koxx.smartcntrl.chrono;
 
 
 import android.os.Parcel;

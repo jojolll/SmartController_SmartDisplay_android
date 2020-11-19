@@ -1,4 +1,4 @@
-package org.koxx.smartlcd.graph;
+package org.koxx.smartcntrl.graph;
 
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;

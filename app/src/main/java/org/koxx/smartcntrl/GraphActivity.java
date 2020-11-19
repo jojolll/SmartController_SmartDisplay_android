@@ -1,4 +1,4 @@
-package org.koxx.smartlcd;
+package org.koxx.smartcntrl;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -26,7 +26,7 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
-import org.koxx.smartlcd.graph.Base;
+import org.koxx.smartcntrl.graph.Base;
 
 import java.util.ArrayList;
 

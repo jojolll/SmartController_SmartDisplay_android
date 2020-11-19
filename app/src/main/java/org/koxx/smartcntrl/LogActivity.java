@@ -1,4 +1,4 @@
-package org.koxx.smartlcd;
+package org.koxx.smartcntrl;
 
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -10,7 +10,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.view.View;
 
-import org.koxx.smartlcd.tools.OnScreenLog;
+import org.koxx.smartcntrl.tools.OnScreenLog;
 
 public class LogActivity extends AppCompatActivity {
 

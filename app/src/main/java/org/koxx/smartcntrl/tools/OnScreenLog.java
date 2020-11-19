@@ -1,4 +1,4 @@
-package org.koxx.smartlcd.tools;
+package org.koxx.smartcntrl.tools;
 
 import android.app.Activity;
 import android.graphics.Color;
@@ -17,7 +17,7 @@ public class OnScreenLog {
     private static int timeoutTime = 1000;
     private static TextView tvLog;
     private static int logCount = 0;
-    private static int logCountMax = 2000;
+    private static int logCountMax = 1000;
     private static String[] logs = new String[logCountMax];
     private static int cntClicks = 0;
     private static boolean visibility = false;
@@ -111,6 +111,9 @@ public class OnScreenLog {
 
     private void maintainLog(String newText){
         String logText = "";
+
+        // TODO : pourri !!!
+
         if(logCount<logCountMax) logCount++;
         for(int i=logCount-1; i>0; i--){
             logs[i] = logs[i-1];

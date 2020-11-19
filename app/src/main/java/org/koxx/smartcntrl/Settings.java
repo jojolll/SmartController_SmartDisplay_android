@@ -1,4 +1,4 @@
-package org.koxx.smartlcd;
+package org.koxx.smartcntrl;
 
 import android.content.Context;
 
@@ -42,7 +42,7 @@ public class Settings {
     public static final String Button_2_long_press_action = "Button 2 long press action";
     public static final String Button_long_press_duration = "Button long press duration";
 
-    public static final String SmartLCD_controller = "SmartLCD controller";
+    public static final String SmartController = "SmartController";
     public static final String Bluetooth_lock_mode = "Bluetooth lock mode";
     public static final String Bluetooth_pin_code = "Bluetooth pin code";
     public static final String Beacon_Mac_Address = "Beacon Mac Address";
@@ -201,7 +201,7 @@ public class Settings {
                         .addDivider()
                         .build(),
 // ----------------------
-                new HeaderSettingsObject.Builder(Settings.SmartLCD_controller)
+                new HeaderSettingsObject.Builder(Settings.SmartController)
                         .build(),
                 new ListSettingsObject.Builder(Bluetooth_lock_mode, Bluetooth_lock_mode, LIST_Bluetooth_lock_mode_1, LIST_Bluetooth_lock_mode, "save")
                         .setUseValueAsSummary()

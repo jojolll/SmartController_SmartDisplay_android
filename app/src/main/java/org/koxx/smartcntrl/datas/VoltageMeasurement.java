@@ -1,4 +1,4 @@
-package org.koxx.smartlcd.datas;
+package org.koxx.smartcntrl.datas;
 
 import androidx.annotation.NonNull;
 

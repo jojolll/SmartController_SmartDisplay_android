@@ -1,4 +1,4 @@
-package org.koxx.smartlcd;
+package org.koxx.smartcntrl;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;

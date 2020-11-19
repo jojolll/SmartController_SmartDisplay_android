@@ -1,4 +1,4 @@
-package org.koxx.smartlcd;
+package org.koxx.smartcntrl;
 
 import android.Manifest;
 import android.annotation.TargetApi;
@@ -35,18 +35,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.hotmail.or_dvir.easysettings.pojos.EasySettings;
 import com.hotmail.or_dvir.easysettings.pojos.SettingsObject;
 
-import org.koxx.smartlcd.datas.BrakeStatusMeasurement;
-import org.koxx.smartlcd.datas.BtlockMeasurement;
-import org.koxx.smartlcd.datas.ModeMeasurement;
+import org.koxx.smartcntrl.datas.BrakeStatusMeasurement;
+import org.koxx.smartcntrl.datas.BtlockMeasurement;
+import org.koxx.smartcntrl.datas.ModeMeasurement;
 import org.welie.blessed.BluetoothCentral;
 import org.welie.blessed.BluetoothPeripheral;
 
-import org.koxx.smartlcd.chrono.ChronometerTimeOn;
-import org.koxx.smartlcd.chrono.ChronometerTimeRun;
-import org.koxx.smartlcd.datas.AmpereMeasurement;
-import org.koxx.smartlcd.datas.PowerMeasurement;
-import org.koxx.smartlcd.datas.SpeedMeasurement;
-import org.koxx.smartlcd.datas.VoltageMeasurement;
+import org.koxx.smartcntrl.chrono.ChronometerTimeOn;
+import org.koxx.smartcntrl.chrono.ChronometerTimeRun;
+import org.koxx.smartcntrl.datas.AmpereMeasurement;
+import org.koxx.smartcntrl.datas.PowerMeasurement;
+import org.koxx.smartcntrl.datas.SpeedMeasurement;
+import org.koxx.smartcntrl.datas.VoltageMeasurement;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
 
-    // SmartLcd values
+    // SmartCntrl values
     int mLcdMode = 0;
     boolean mBatteryOverLoad = false;
     int mBrakeStatus = 0;
@@ -445,7 +445,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onClickDistance");
 
         BluetoothHandler.getInstance(this).sendDstReset();
-        tvAccel.setText("0.0 km");
+        tvDistance.setText("0.0 km");
 
         Log.d(TAG, "onClickDistance reset");
     }

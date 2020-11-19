@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.koxx.smartlcd">
+    package="org.koxx.smartcntrl">
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
@@ -16,21 +16,20 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="org.koxx.smartlcd.GraphActivity"
+            android:name="org.koxx.smartcntrl.GraphActivity"
             android:label="@string/title_activity_graph"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
-            android:name="org.koxx.smartlcd.LogActivity"
+            android:name="org.koxx.smartcntrl.LogActivity"
             android:label="@string/title_activity_log"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name="org.koxx.smartlcd.MainActivity">
+        <activity android:name="org.koxx.smartcntrl.SettingsActivity" />
+        <activity android:name="org.koxx.smartcntrl.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="org.koxx.smartlcd.SettingsActivity" />
     </application>
 
 </manifest>

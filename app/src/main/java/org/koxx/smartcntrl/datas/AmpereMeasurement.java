@@ -1,4 +1,4 @@
-package org.koxx.smartlcd.datas;
+package org.koxx.smartcntrl.datas;
 
 import androidx.annotation.NonNull;
 
@@ -9,21 +9,21 @@ import java.util.Locale;
 
 import static org.welie.blessed.BluetoothBytesParser.FORMAT_SINT32;
 
-public class PowerMeasurement implements Serializable {
+public class AmpereMeasurement implements Serializable {
 
-    public Integer power;
+    public float current;
 
-    public PowerMeasurement(byte[] value) {
+    public AmpereMeasurement(byte[] value) {
         BluetoothBytesParser parser = new BluetoothBytesParser(value);
 
         // Parse the flags
-        power = parser.getIntValue(FORMAT_SINT32);
+        current = (float) (parser.getIntValue(FORMAT_SINT32) / 1000.0);
 
     }
 
     @NonNull
     @Override
     public String toString() {
-        return String.format(Locale.ENGLISH, "%d", power);
+        return String.format(Locale.ENGLISH, "%2.2f", current);
     }
 }

@@ -1,5 +1,5 @@
 
-package org.koxx.smartlcd.graph;
+package org.koxx.smartcntrl.graph;
 
 import android.content.pm.PackageManager;
 import android.os.Bundle;

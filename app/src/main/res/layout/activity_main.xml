@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
     android:screenOrientation="portrait"
-    tools:context="org.koxx.smartlcd.MainActivity">
+    tools:context="org.koxx.smartcntrl.MainActivity">
 
 
     <LinearLayout
