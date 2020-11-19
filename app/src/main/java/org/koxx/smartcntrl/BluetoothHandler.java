@@ -13,13 +13,10 @@ import org.welie.blessed.BluetoothCentral;
 import org.welie.blessed.BluetoothCentralCallback;
 import org.welie.blessed.BluetoothPeripheral;
 import org.welie.blessed.BluetoothPeripheralCallback;
-import org.koxx.smartcntrl.datas.AmpereMeasurement;
 import org.koxx.smartcntrl.datas.BrakeStatusMeasurement;
 import org.koxx.smartcntrl.datas.BtlockMeasurement;
 import org.koxx.smartcntrl.datas.ModeMeasurement;
-import org.koxx.smartcntrl.datas.PowerMeasurement;
-import org.koxx.smartcntrl.datas.SpeedMeasurement;
-import org.koxx.smartcntrl.datas.VoltageMeasurement;
+import org.koxx.smartcntrl.datas.Measurements;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -58,19 +55,8 @@ class BluetoothHandler {
     public static final String MEASUREMENT_SPEED_EXTRA = "measurement.speed.extra";
     public static final String MEASUREMENT_BRAKE_STATUS = "measurement.brake_status";
     public static final String MEASUREMENT_BRAKE_STATUS_EXTRA = "measurement.brake_status.extra";
-    public static final String MEASUREMENT_VOLTAGE = "measurement.voltage";
-    public static final String MEASUREMENT_VOLTAGE_EXTRA = "measurement.voltage.extra";
-    public static final String MEASUREMENT_AMPERE = "measurement.ampere";
-    public static final String MEASUREMENT_AMPERE_EXTRA = "measurement.ampere.extra";
-    public static final String MEASUREMENT_POWER = "measurement.power";
-    public static final String MEASUREMENT_POWER_EXTRA = "measurement.power.extra";
     public static final String MEASUREMENT_BTLOCK = "measurement.btlock";
     public static final String MEASUREMENT_BTLOCK_EXTRA = "measurement.btlock.extra";
-    public static final String MEASUREMENT_TEMPERATURE = "measurement.temperature";
-    public static final String MEASUREMENT_TEMPERATURE_EXTRA = "measurement.temperature.extra";
-    public static final String MEASUREMENT_TEMPERATURE_HR_EXTRA = "measurement.temperature.hr.extra";
-    //public static final String MEASUREMENT_HUMIDITY = "measurement.humidity";
-    //public static final String MEASUREMENT_HUMIDITY_EXTRA = "measurement.humidity.extra";
     public static final String MEASUREMENT_SPEED_LIMITER = "measurement.speed_limiter";
     public static final String MEASUREMENT_SPEED_LIMITER_EXTRA = "measurement.speed_limiter.extra";
     public static final String MEASUREMENT_ECO = "measurement.eco";
@@ -81,20 +67,18 @@ class BluetoothHandler {
     public static final String MEASUREMENT_CURRENT_CALIB_EXTRA = "measurement.current_calib.extra";
     public static final String MEASUREMENT_AUX = "measurement.aux";
     public static final String MEASUREMENT_AUX_EXTRA = "measurement.aux.extra";
-    public static final String MEASUREMENT_DISTANCE = "measurement.dst";
-    public static final String MEASUREMENT_DISTANCE_EXTRA = "measurement.dst.extra";
 
 
     // UUIDs all datas
     private static final UUID SMARTCNTRL_MAIN_SERVICE_UUID = UUID.fromString("4fafc201-1fb5-459e-8fcc-c5c9c331914b");
-    private static final UUID SPEED_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a0");
+    private static final UUID MEASUREMENTS_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a0");
     private static final UUID MODE_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a1");
     private static final UUID BRAKE_STATUS_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a2");
-    private static final UUID VOLTAGE_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a3");
-    private static final UUID AMPERE_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a4");
-    private static final UUID POWER_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a5");
+//    private static final UUID VOLTAGE_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a3");
+//    private static final UUID AMPERE_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a4");
+//    private static final UUID POWER_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a5");
     private static final UUID BTLOCK_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a6");
-    private static final UUID TEMPERATURE_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a7");
+//    private static final UUID TEMPERATURE_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a7");
     //private static final UUID HUMIDITY_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a8");
     private static final UUID SETTINGS1_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a9");
     private static final UUID SPEED_LIMITER_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26aa");
@@ -108,7 +92,7 @@ class BluetoothHandler {
     private static final UUID SETTINGS3_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26b2");
     private static final UUID AUX_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26b3");
     private static final UUID SPEED_PID_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26b4");
-    private static final UUID DISTANCE_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26b5");
+    private static final UUID DISTANCE_RST_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26b5");
 
 
     // Local variables
@@ -137,7 +121,7 @@ class BluetoothHandler {
             peripheral.requestConnectionPriority(CONNECTION_PRIORITY_HIGH);
 
             if (peripheral.getService(SMARTCNTRL_MAIN_SERVICE_UUID) != null) {
-                BluetoothGattCharacteristic speedCharacteristic = peripheral.getCharacteristic(SMARTCNTRL_MAIN_SERVICE_UUID, SPEED_CHARACTERISTIC_UUID);
+                BluetoothGattCharacteristic speedCharacteristic = peripheral.getCharacteristic(SMARTCNTRL_MAIN_SERVICE_UUID, MEASUREMENTS_CHARACTERISTIC_UUID);
                 if (speedCharacteristic != null) {
                     peripheral.setNotify(speedCharacteristic, true);
                 }
@@ -151,30 +135,10 @@ class BluetoothHandler {
                     peripheral.setNotify(brakeStatusCharacteristic, true);
                     peripheral.readCharacteristic(brakeStatusCharacteristic);
                 }
-                BluetoothGattCharacteristic voltageCharacteristic = peripheral.getCharacteristic(SMARTCNTRL_MAIN_SERVICE_UUID, VOLTAGE_CHARACTERISTIC_UUID);
-                if (voltageCharacteristic != null) {
-                    peripheral.setNotify(voltageCharacteristic, true);
-                    peripheral.readCharacteristic(voltageCharacteristic);
-                }
-                BluetoothGattCharacteristic ampereCharacteristic = peripheral.getCharacteristic(SMARTCNTRL_MAIN_SERVICE_UUID, AMPERE_CHARACTERISTIC_UUID);
-                if (ampereCharacteristic != null) {
-                    peripheral.setNotify(ampereCharacteristic, true);
-                    peripheral.readCharacteristic(ampereCharacteristic);
-                }
-                BluetoothGattCharacteristic powerCharacteristic = peripheral.getCharacteristic(SMARTCNTRL_MAIN_SERVICE_UUID, POWER_CHARACTERISTIC_UUID);
-                if (powerCharacteristic != null) {
-                    peripheral.setNotify(powerCharacteristic, true);
-                    peripheral.readCharacteristic(powerCharacteristic);
-                }
                 BluetoothGattCharacteristic btlockCharacteristic = peripheral.getCharacteristic(SMARTCNTRL_MAIN_SERVICE_UUID, BTLOCK_CHARACTERISTIC_UUID);
                 if (btlockCharacteristic != null) {
                     peripheral.setNotify(btlockCharacteristic, true);
                     peripheral.readCharacteristic(btlockCharacteristic);
-                }
-                BluetoothGattCharacteristic temperatureCharacteristic = peripheral.getCharacteristic(SMARTCNTRL_MAIN_SERVICE_UUID, TEMPERATURE_CHARACTERISTIC_UUID);
-                if (temperatureCharacteristic != null) {
-                    peripheral.setNotify(temperatureCharacteristic, true);
-                    peripheral.readCharacteristic(temperatureCharacteristic);
                 }
                 BluetoothGattCharacteristic speedLimiterCharacteristic = peripheral.getCharacteristic(SMARTCNTRL_MAIN_SERVICE_UUID, SPEED_LIMITER_CHARACTERISTIC_UUID);
                 if (speedLimiterCharacteristic != null) {
@@ -204,11 +168,6 @@ class BluetoothHandler {
                 if (auxCharacteristic != null) {
                     peripheral.setNotify(auxCharacteristic, true);
                     peripheral.readCharacteristic(auxCharacteristic);
-                }
-                BluetoothGattCharacteristic distanceCharacteristic = peripheral.getCharacteristic(SMARTCNTRL_MAIN_SERVICE_UUID, DISTANCE_CHARACTERISTIC_UUID);
-                if (distanceCharacteristic != null) {
-                    peripheral.setNotify(distanceCharacteristic, true);
-                    peripheral.readCharacteristic(distanceCharacteristic);
                 }
 
                 sendSettings();
@@ -252,17 +211,19 @@ class BluetoothHandler {
                 intent.putExtra(MEASUREMENT_EXTRA_PERIPHERAL, peripheral.getAddress());
                 context.sendBroadcast(intent);
                 //Timber.d("mode : %s", measurement);
-            } else if (characteristicUUID.equals(SPEED_CHARACTERISTIC_UUID)) {
-                SpeedMeasurement measurement = new SpeedMeasurement(value);
+            } else if (characteristicUUID.equals(MEASUREMENTS_CHARACTERISTIC_UUID)) {
+                Measurements measurement = new Measurements(value);
                 Intent intent = new Intent(MEASUREMENT_SPEED);
                 intent.putExtra(MEASUREMENT_SPEED_EXTRA, measurement);
                 intent.putExtra(MEASUREMENT_EXTRA_PERIPHERAL, peripheral.getAddress());
                 context.sendBroadcast(intent);
 
-                if (graphView != null)
+                if (graphView != null) {
                     graphView.addSpeedData((float) (measurement.speedValue));
+                    graphView.addCurrentData((float) (measurement.current));
+                }
 
-                Timber.d("speed : %s", measurement.speedValue);
+                Timber.d("measurement : %s", measurement.toString());
 
             } else if (characteristicUUID.equals(BRAKE_STATUS_CHARACTERISTIC_UUID)) {
                 BrakeStatusMeasurement measurement = new BrakeStatusMeasurement(value);
@@ -271,45 +232,12 @@ class BluetoothHandler {
                 intent.putExtra(MEASUREMENT_EXTRA_PERIPHERAL, peripheral.getAddress());
                 context.sendBroadcast(intent);
                 //Timber.d("brake : %s", measurement);
-            } else if (characteristicUUID.equals(VOLTAGE_CHARACTERISTIC_UUID)) {
-                VoltageMeasurement measurement = new VoltageMeasurement(value);
-                Intent intent = new Intent(MEASUREMENT_VOLTAGE);
-                intent.putExtra(MEASUREMENT_VOLTAGE_EXTRA, measurement);
-                intent.putExtra(MEASUREMENT_EXTRA_PERIPHERAL, peripheral.getAddress());
-                context.sendBroadcast(intent);
-                //Timber.d("voltage : %s", measurement);
-            } else if (characteristicUUID.equals(AMPERE_CHARACTERISTIC_UUID)) {
-                AmpereMeasurement measurement = new AmpereMeasurement(value);
-                Intent intent = new Intent(MEASUREMENT_AMPERE);
-                intent.putExtra(MEASUREMENT_AMPERE_EXTRA, measurement);
-                intent.putExtra(MEASUREMENT_EXTRA_PERIPHERAL, peripheral.getAddress());
-                context.sendBroadcast(intent);
 
-                if (graphView != null)
-                    graphView.addCurrentData((float) (measurement.current));
-
-                //Timber.d("ampere : %s", measurement);
-            } else if (characteristicUUID.equals(POWER_CHARACTERISTIC_UUID)) {
-                PowerMeasurement measurement = new PowerMeasurement(value);
-                Intent intent = new Intent(MEASUREMENT_POWER);
-                intent.putExtra(MEASUREMENT_POWER_EXTRA, measurement);
-                intent.putExtra(MEASUREMENT_EXTRA_PERIPHERAL, peripheral.getAddress());
-                context.sendBroadcast(intent);
-                //Timber.d("power : %s", measurement);
             } else if (characteristicUUID.equals(BTLOCK_CHARACTERISTIC_UUID)) {
                 Timber.i("received BTLOCK_CHARACTERISTIC_UUID");
                 BtlockMeasurement measurement = new BtlockMeasurement(value);
                 Intent intent = new Intent(MEASUREMENT_BTLOCK);
                 intent.putExtra(MEASUREMENT_BTLOCK_EXTRA, measurement);
-                intent.putExtra(MEASUREMENT_EXTRA_PERIPHERAL, peripheral.getAddress());
-                context.sendBroadcast(intent);
-                //Timber.d("btlock : %s", measurement);
-            } else if (characteristicUUID.equals(TEMPERATURE_CHARACTERISTIC_UUID)) {
-                Integer temperature = parser.getIntValue(BluetoothBytesParser.FORMAT_UINT32);
-                Integer humidity = parser.getIntValue(BluetoothBytesParser.FORMAT_UINT32);
-                Intent intent = new Intent(MEASUREMENT_TEMPERATURE);
-                intent.putExtra(MEASUREMENT_TEMPERATURE_EXTRA, temperature);
-                intent.putExtra(MEASUREMENT_TEMPERATURE_HR_EXTRA, humidity);
                 intent.putExtra(MEASUREMENT_EXTRA_PERIPHERAL, peripheral.getAddress());
                 context.sendBroadcast(intent);
             } else if (characteristicUUID.equals(SPEED_LIMITER_CHARACTERISTIC_UUID)) {
@@ -340,12 +268,6 @@ class BluetoothHandler {
                 Integer aux = parser.getIntValue(BluetoothBytesParser.FORMAT_UINT8);
                 Intent intent = new Intent(MEASUREMENT_AUX);
                 intent.putExtra(MEASUREMENT_AUX_EXTRA, aux);
-                intent.putExtra(MEASUREMENT_EXTRA_PERIPHERAL, peripheral.getAddress());
-                context.sendBroadcast(intent);
-            } else if (characteristicUUID.equals(DISTANCE_CHARACTERISTIC_UUID)) {
-                Integer dst = parser.getIntValue(BluetoothBytesParser.FORMAT_UINT32);
-                Intent intent = new Intent(MEASUREMENT_DISTANCE);
-                intent.putExtra(MEASUREMENT_DISTANCE_EXTRA, dst);
                 intent.putExtra(MEASUREMENT_EXTRA_PERIPHERAL, peripheral.getAddress());
                 context.sendBroadcast(intent);
             } else if (characteristicUUID.equals(LOGS_CHARACTERISTIC_UUID)) {
@@ -640,7 +562,7 @@ class BluetoothHandler {
 
         BluetoothPeripheral peripheral = getConnectedPeripheral();
         if (peripheral == null) return;
-        BluetoothGattCharacteristic characteristic = peripheral.getCharacteristic(SMARTCNTRL_MAIN_SERVICE_UUID, DISTANCE_CHARACTERISTIC_UUID);
+        BluetoothGattCharacteristic characteristic = peripheral.getCharacteristic(SMARTCNTRL_MAIN_SERVICE_UUID, DISTANCE_RST_CHARACTERISTIC_UUID);
         peripheral.writeCharacteristic(characteristic, new byte[]{0}, WRITE_TYPE_DEFAULT);
     }
 
