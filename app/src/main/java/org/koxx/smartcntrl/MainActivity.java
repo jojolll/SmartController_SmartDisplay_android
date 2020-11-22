@@ -38,6 +38,7 @@ import com.hotmail.or_dvir.easysettings.pojos.SettingsObject;
 import org.koxx.smartcntrl.datas.BrakeStatusMeasurement;
 import org.koxx.smartcntrl.datas.BtlockMeasurement;
 import org.koxx.smartcntrl.datas.ModeMeasurement;
+import org.koxx.smartcntrl.ApplicationLifecycleHandler;
 import org.welie.blessed.BluetoothCentral;
 import org.welie.blessed.BluetoothPeripheral;
 
@@ -112,6 +113,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        ApplicationLifecycleHandler handler = new ApplicationLifecycleHandler(getApplicationContext());
+        registerActivityLifecycleCallbacks(handler);
+        registerComponentCallbacks(handler);
 
         setContentView(R.layout.activity_main);
 
