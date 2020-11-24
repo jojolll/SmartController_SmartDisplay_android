@@ -24,9 +24,11 @@ import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -406,6 +408,13 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.calib_brake_max:
                 BluetoothHandler.getInstance(this).sendCalibOrder(CalibType.BrakeMaxPressure, 0);
+                return true;
+            case R.id.calib_voltage_max:
+                showAlertDialogButtonClicked(CalibType.BatMaxVoltage);
+                return true;
+            case R.id.calib_voltage_min:
+                showAlertDialogButtonClicked(CalibType.BatMaxVoltage);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -997,4 +1006,58 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
     }
+
+
+    public void showAlertDialogButtonClicked(final CalibType calibType) {
+
+        // Create an alert builder
+        AlertDialog.Builder builder
+                = new AlertDialog.Builder(this);
+        if (calibType == CalibType.BatMaxVoltage)
+            builder.setTitle("Battery current max voltage");
+        else
+            builder.setTitle("Battery current min voltage");
+
+        // set the custom layout
+        final View customLayout
+                = getLayoutInflater()
+                .inflate(
+                        R.layout.dialog_voltage,
+                        null);
+        builder.setView(customLayout);
+
+        // add a button
+        builder
+                .setPositiveButton(
+                        "OK",
+                        new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(
+                                    DialogInterface dialog,
+                                    int which) {
+
+                                // send data from the
+                                // AlertDialog to the Activity
+                                EditText editText
+                                        = customLayout
+                                        .findViewById(
+                                                R.id.editText);
+
+                                float value = Float.valueOf(editText.getText().toString()) * 10;
+                                if (calibType == CalibType.BatMaxVoltage) {
+                                    BluetoothHandler.getInstance(getApplicationContext()).sendCalibOrder(CalibType.BatMaxVoltage, (int) value);
+                                } else if (calibType == CalibType.BatMinVoltage) {
+                                    BluetoothHandler.getInstance(getApplicationContext()).sendCalibOrder(CalibType.BatMinVoltage, (int) value);
+                                }
+                            }
+                        });
+
+        // create and show
+        // the alert dialog
+        AlertDialog dialog
+                = builder.create();
+        dialog.show();
+    }
+
 }

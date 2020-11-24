@@ -9,6 +9,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 
 /**
  * Created by ariel on 07/07/2016.
@@ -16,17 +18,20 @@ import android.widget.TextView;
 public class OnScreenLog {
     private static int timeoutTime = 1000;
     private static TextView tvLog;
-    private static int logCount = 0;
-    private static int logCountMax = 1000;
-    private static String[] logs = new String[logCountMax];
+    private static int maxChars = 50000;
     private static int cntClicks = 0;
     private static boolean visibility = false;
     private static Activity activity;
     private int maxClicks = 5;
 
-    public OnScreenLog(){}
+    ArrayList<String> logs2 = new ArrayList<>();
 
-    public OnScreenLog(Activity activity, int ViewID){
+    String logText = "";
+
+    public OnScreenLog() {
+    }
+
+    public OnScreenLog(Activity activity, int ViewID) {
         OnScreenLog.activity = activity;
         tvLog = new TextView(activity.getApplicationContext());
         tvLog.setLayoutParams(new RelativeLayout.LayoutParams(
@@ -41,20 +46,26 @@ public class OnScreenLog {
         RelativeLayout relativeLayout;
         try {
             linearLayout = (LinearLayout) activity.findViewById(ViewID);
-        } catch (ClassCastException e) {linearLayout = null;};
+        } catch (ClassCastException e) {
+            linearLayout = null;
+        }
+        ;
 
         try {
             relativeLayout = (RelativeLayout) activity.findViewById(ViewID);
-        } catch (ClassCastException e) {relativeLayout = null;};
-        if(linearLayout != null) {
+        } catch (ClassCastException e) {
+            relativeLayout = null;
+        }
+        ;
+        if (linearLayout != null) {
             linearLayout.addView(tvLog);
             v = linearLayout;
-        } else if(relativeLayout != null) {
+        } else if (relativeLayout != null) {
             relativeLayout.addView(tvLog);
             v = relativeLayout;
         }
 
-        if(v != null) {
+        if (v != null) {
             v.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
@@ -64,7 +75,7 @@ public class OnScreenLog {
                             timerHandler.removeCallbacks(rTimeout);
                             timerHandler.postDelayed(rTimeout, timeoutTime);
 
-                            if (cntClicks > maxClicks-1) {
+                            if (cntClicks > maxClicks - 1) {
                                 setLogVisible(!visibility);
                                 timerHandler.removeCallbacks(rTimeout);
                                 cntClicks = 0;
@@ -79,17 +90,17 @@ public class OnScreenLog {
 
     }
 
-    public void log (String text){
+    public void log(String text) {
         String logText = text;
         maintainLog(logText);
     }
 
-    public void log (int text){
+    public void log(int text) {
         String logText = String.valueOf(text);
         maintainLog(logText);
     }
 
-    public void log (int[] text){
+    public void log(int[] text) {
         StringBuilder builder = new StringBuilder();
         for (int i : text) {
             builder.append(i);
@@ -99,7 +110,7 @@ public class OnScreenLog {
         maintainLog(logText);
     }
 
-    public void log (byte[] text){
+    public void log(byte[] text) {
         StringBuilder builder = new StringBuilder();
         for (int i : text) {
             builder.append(i);
@@ -109,49 +120,23 @@ public class OnScreenLog {
         maintainLog(logText);
     }
 
-    private void maintainLog(String newText){
-        String logText = "";
+    private void maintainLog(String newText) {
 
-        // TODO : pourri !!!
+        logText = newText + "\n" + logText;
+        logText = logText.substring(0, (logText.length() > maxChars) ? maxChars : logText.length());
+        tvLog.setText(logText);
 
-        if(logCount<logCountMax) logCount++;
-        for(int i=logCount-1; i>0; i--){
-            logs[i] = logs[i-1];
-        }
-        logs[0] = newText;
-        for(int i=0; i<logCount; i++){
-            if(i<logCount-1) logText+=logs[i]+System.getProperty("line.separator");
-            else logText+=logs[i];
-        }
+    }
+
+    public void clearLog() {
+        logText = "";
         tvLog.setText(logText);
     }
 
-    public void clearLog(){
-        tvLog.setText("");
-        logCount = 0;
-    }
-
-    public void setLogVisible(boolean visibility){
-        if(visibility) tvLog.setVisibility(View.VISIBLE);
+    public void setLogVisible(boolean visibility) {
+        if (visibility) tvLog.setVisibility(View.VISIBLE);
         else tvLog.setVisibility(View.INVISIBLE);
         OnScreenLog.visibility = visibility;
-    }
-
-    public static int getLogCountMax() {
-        return logCountMax;
-    }
-
-    public static void setLogCountMax(int logCountMax) {
-        OnScreenLog.logCountMax = logCountMax;
-        logs = new String[logCountMax];
-    }
-
-    public int getMaxClicks() {
-        return maxClicks;
-    }
-
-    public void setMaxClicks(int maxClicks) {
-        this.maxClicks = maxClicks;
     }
 
     Handler timerHandler = new Handler();

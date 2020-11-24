@@ -41,6 +41,16 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/calib_voltage_min"
+        android:title="Calibrate min voltage"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/calib_voltage_max"
+        android:title="Calibrate max voltage"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/ota_mode"
         android:title="@string/menu_software_update_ota"
         app:showAsAction="never" />
