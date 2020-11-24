@@ -27,7 +27,7 @@ public class Measurements implements Serializable {
         power = parser.getIntValue(BluetoothBytesParser.FORMAT_SINT16);
         temperature =  (float) (parser.getIntValue(BluetoothBytesParser.FORMAT_SINT16) / 10.0);
         humidity =  (float) (parser.getIntValue(BluetoothBytesParser.FORMAT_UINT16) / 10.0);
-        distance =  (float) (parser.getIntValue(BluetoothBytesParser.FORMAT_UINT16) / 10.0);
+        distance =  (float) (parser.getIntValue(BluetoothBytesParser.FORMAT_UINT16) / 100.0);
     }
 
     @Override

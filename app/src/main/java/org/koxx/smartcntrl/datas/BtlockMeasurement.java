@@ -7,7 +7,7 @@ import java.util.Locale;
 
 public class BtlockMeasurement implements Serializable {
 
-    public  int btLockBeaconRssiValue;
+    public int btLockBeaconRssiValue;
     public int btLockBeaconVisibleValue;
     public int bleLockStatus;
     public int bleLockForcedValue;
@@ -26,6 +26,7 @@ public class BtlockMeasurement implements Serializable {
 
     @Override
     public String toString() {
-        return String.format(Locale.ENGLISH,"%d", bleLockStatus);
+        return String.format(Locale.ENGLISH, "bleLockStatus %d / btLockBeaconVisibleValue %d / btLockBeaconRssiValue %d / bleLockForcedValue %d",
+                bleLockStatus, btLockBeaconVisibleValue, btLockBeaconRssiValue, bleLockForcedValue);
     }
 }

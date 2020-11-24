@@ -37,8 +37,8 @@ import com.hotmail.or_dvir.easysettings.pojos.SettingsObject;
 
 import org.koxx.smartcntrl.datas.BrakeStatusMeasurement;
 import org.koxx.smartcntrl.datas.BtlockMeasurement;
+import org.koxx.smartcntrl.datas.CalibType;
 import org.koxx.smartcntrl.datas.ModeMeasurement;
-import org.koxx.smartcntrl.ApplicationLifecycleHandler;
 import org.welie.blessed.BluetoothCentral;
 import org.welie.blessed.BluetoothPeripheral;
 
@@ -106,9 +106,11 @@ public class MainActivity extends AppCompatActivity {
 
     ArrayList<SettingsObject> mySettingsList;
 
-    private MenuItem item;
+    private MenuItem iconBtStatus;
     private Menu menu;
     private AnimationSet animation;
+    private TextView tvBeaconRssi;
+    private View tvBeaconVisible;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -276,11 +278,16 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void setBrakeIndicator(int min, int value, int max, boolean isPressed, boolean isBatteryTooLoaded) {
+
+        if ((value < min) || (value == 255))
+            value = min;
+
+        ivBrakePressed.setVisibility(isPressed ? View.VISIBLE : View.GONE);
+        ivBrakeBattery.setVisibility(isBatteryTooLoaded ? View.VISIBLE : View.GONE);
+
         for (int i = 0; i <= 5; i++) {
             String viewId = "BrakeValue" + i;
             int resID = getResources().getIdentifier(viewId, "id", getPackageName());
-
-            ivBrakePressed.setVisibility(isPressed ? View.VISIBLE : View.GONE);
 
             if (!isBatteryTooLoaded) {
                 if (EasySettings.retrieveSettingsSharedPrefs(this).getBoolean(Settings.Electric_brake_progressive_mode, false)) {
@@ -304,7 +311,6 @@ public class MainActivity extends AppCompatActivity {
                         ((TextView) findViewById(resID)).setVisibility(View.GONE);
                     }
                 }
-                ivBrakeBattery.setVisibility(View.GONE);
             } else {
                 if (i == 0) {
                     ((TextView) findViewById(resID)).setTextColor(getResources().getColor(R.color.colorText));
@@ -312,7 +318,6 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     ((TextView) findViewById(resID)).setVisibility(View.GONE);
                 }
-                ivBrakeBattery.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -399,7 +404,8 @@ public class MainActivity extends AppCompatActivity {
             case R.id.reset_pref_peripheral:
                 BluetoothHandler.getInstance(this).resetBlePreferredPeripheral();
                 return true;
-
+            case R.id.calib_brake_max:
+                BluetoothHandler.getInstance(this).sendCalibOrder(CalibType.BrakeMaxPressure, 0);
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -449,7 +455,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     public void onClickEco(View v) {
 
         mEco--;
@@ -482,7 +487,7 @@ public class MainActivity extends AppCompatActivity {
     public void onClickCurrent(View v) {
         Log.d(TAG, "onClickCurrent");
 
-        BluetoothHandler.getInstance(this).sendCurrentCalibValue((byte) 0x01);
+        BluetoothHandler.getInstance(this).sendCalibOrder(CalibType.CurrentZero, 0);
 
         mLastCurrent = 0;
         tvCurrentMax.setText(String.format(Locale.ENGLISH, "..."));
@@ -538,10 +543,14 @@ public class MainActivity extends AppCompatActivity {
 
         this.menu = menu;
 
-        item = menu.findItem(R.id.bt_connect);
-        if (item.getActionView() != null)
-            item.getActionView().clearAnimation();
-        item.setActionView(getBtAnimation(mLastBtStatus));
+        iconBtStatus = menu.findItem(R.id.bt_connect);
+        if (iconBtStatus.getActionView() != null)
+            iconBtStatus.getActionView().clearAnimation();
+        iconBtStatus.setActionView(getBtAnimation(mLastBtStatus));
+
+        tvBeaconVisible = menu.findItem(R.id.beacon_visible).getActionView();
+        tvBeaconVisible.setVisibility(View.GONE);
+        tvBeaconRssi = tvBeaconVisible.findViewById(R.id.beaconRssi);
 
         return super.onPrepareOptionsMenu(menu);
     }
@@ -574,11 +583,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        unregisterReceiver(connectStatusReceiver);
         unregisterReceiver(locationServiceStateReceiver);
         unregisterReceiver(modeDataReceiver);
         unregisterReceiver(measurementsDataReceiver);
         unregisterReceiver(brakeStatusDataReceiver);
         unregisterReceiver(btLockDataReceiver);
+        unregisterReceiver(speedLimiterDataReceiver);
+        unregisterReceiver(ecoDataReceiver);
+        unregisterReceiver(accelDataReceiver);
+        unregisterReceiver(auxDataReceiver);
 
     }
 
@@ -634,9 +648,11 @@ public class MainActivity extends AppCompatActivity {
 
             Timber.i("==========> new BT status : %d", status);
 
-            item = menu.findItem(R.id.bt_connect);
-            item.getActionView().clearAnimation();
-            item.setActionView(getBtAnimation(status));
+            iconBtStatus = menu.findItem(R.id.bt_connect);
+            iconBtStatus.getActionView().clearAnimation();
+            iconBtStatus.setActionView(getBtAnimation(status));
+
+            tvBeaconVisible.setVisibility(View.VISIBLE);
 
             actionBarSetup(name);
 
@@ -779,12 +795,17 @@ public class MainActivity extends AppCompatActivity {
             BtlockMeasurement measurement = (BtlockMeasurement) intent.getSerializableExtra(BluetoothHandler.MEASUREMENT_BTLOCK_EXTRA);
             if (measurement == null) return;
 
+            Timber.i("btLockDataReceiver : %s", measurement.toString());
+
             int bleLockStatus = measurement.bleLockStatus;
             int bleLockBeaconVisibleValue = measurement.btLockBeaconVisibleValue;
             int btLockBeaconRssiValue = measurement.btLockBeaconRssiValue;
             int bleLockForcedValue = measurement.bleLockForcedValue;
 
             mBleLockForce = bleLockForcedValue;
+
+            tvBeaconVisible.setVisibility(View.VISIBLE);
+            tvBeaconRssi.setText(Integer.toString(btLockBeaconRssiValue));
 
             int btLockMode = Settings.listToValueBtLockMode(context, EasySettings.retrieveSettingsSharedPrefs(context).getString(Settings.Bluetooth_lock_mode, ""));
 

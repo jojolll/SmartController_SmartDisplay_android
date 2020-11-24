@@ -2,11 +2,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+
+    <item
+        android:id="@+id/beacon_visible"
+        android:title="actione one"
+        app:actionLayout="@layout/icon_beacon_status"
+        app:showAsAction="always" />
+
     <item
         android:id="@+id/bt_connect"
         android:icon="@android:drawable/ic_popup_sync"
         android:title="actione one"
-        app:showAsAction="always" />
+        app:showAsAction="always"/>
 
     <item
         android:id="@+id/settings"
@@ -19,11 +26,6 @@
         app:showAsAction="never"/>
 
     <item
-        android:id="@+id/ota_mode"
-        android:title="@string/menu_software_update_ota"
-        app:showAsAction="never" />
-
-    <item
         android:id="@+id/logs"
         android:title="@string/menu_logs"
         app:showAsAction="never" />
@@ -31,6 +33,16 @@
     <item
         android:id="@+id/graph"
         android:title="@string/menu_graphics"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/calib_brake_max"
+        android:title="Calibrate brake max pressure"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/ota_mode"
+        android:title="@string/menu_software_update_ota"
         app:showAsAction="never" />
 
 </menu>

@@ -14,6 +14,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class Settings {
 
@@ -73,6 +74,10 @@ public class Settings {
     public static final String Battery_saving = "Battery saving";
     public static final String Battery_saving_medium_voltage = "Automatic medium battery saving at battery percent";
     public static final String Battery_saving_strong_voltage = "Automatic strong battery saving at battery percent";
+
+    public static final String OTA_Wifi = "OTA update";
+    public static final String Wifi_ssid = "Wifi network name (SSID)";
+    public static final String Wifi_pwd = "Wifi password";
 
     private static final String LIST_Bluetooth_lock_mode_1 = "None";
     private static final String LIST_Bluetooth_lock_mode_2 = "Smartphone connected";
@@ -294,7 +299,24 @@ public class Settings {
                         .build(),
                 new SeekBarSettingsObject.Builder(Speed_limiter_max_speed, Speed_limiter_max_speed, 25, 20, 33)
                         .setUseValueAsSummary()
+                        .addDivider()
+                        .build(),
+//
+// ----------------------
+                new HeaderSettingsObject.Builder(Settings.OTA_Wifi)
+                        .build(),
+                new EditTextSettingsObject.Builder(Settings.Wifi_ssid, Settings.Wifi_ssid, "", "save")
+                        .setDialogContent("Enter Wifi SSID")
+                        .setUseValueAsPrefillText()
+                        .setNegativeBtnText("cancel")
+                        .setUseValueAsSummary()
+                        .build(),
+                new EditTextSettingsObject.Builder(Settings.Wifi_pwd, Settings.Wifi_pwd, "", "save")
+                        .setDialogContent("Enter Wifi password")
+                        .setUseValueAsPrefillText()
+                        .setNegativeBtnText("cancel")
                         .build()
+
         );
         return settings;
     }
@@ -396,9 +418,11 @@ public class Settings {
         DataOutputStream dos = new DataOutputStream(bos);
 
         try {
-            String beaconAddress = EasySettings.retrieveSettingsSharedPrefs(ctx).getString(Beacon_Mac_Address, "AA:BB:CC:DD:EE:FF").substring(0, 17).toLowerCase();
-            dos.writeBytes(beaconAddress); // size 17
             dos.writeByte(listToValueBrakeMode(ctx, Electric_brake_type));
+            String beaconAddress = EasySettings.retrieveSettingsSharedPrefs(ctx).getString(Beacon_Mac_Address, "AA:BB:CC:DD:EE:FF").substring(0, 17).toLowerCase();
+            dos.writeByte((byte) 0); // dummy
+            dos.writeByte((byte) 0); // dummy
+            dos.writeBytes(beaconAddress); // size 17
             // remain 2
 
             dos.flush();
@@ -441,6 +465,45 @@ public class Settings {
             dos.writeByte((byte) ((pinCode >> 16) & 0xff));
             dos.writeByte((byte) ((pinCode >> 24) & 0xff));
             // remain 5
+
+            dos.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bos.toByteArray();
+    }
+
+
+    static public byte[] settings4ToByteArray(Context ctx) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        DataOutputStream dos = new DataOutputStream(bos);
+
+        try {
+
+            String wifiSsid = EasySettings.retrieveSettingsSharedPrefs(ctx).getString(Wifi_ssid, "");
+            if (wifiSsid.length() > 20)
+                wifiSsid = wifiSsid.substring(0, 19);
+            dos.writeBytes(wifiSsid); // size 20
+            // remain 0
+
+            dos.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bos.toByteArray();
+
+    }
+
+    static public byte[] settings5ToByteArray(Context ctx) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        DataOutputStream dos = new DataOutputStream(bos);
+
+        try {
+            String wifiPwd = EasySettings.retrieveSettingsSharedPrefs(ctx).getString(Wifi_pwd, "");
+            if (wifiPwd.length() > 20)
+                wifiPwd = wifiPwd.substring(0, 19);
+            dos.writeBytes(wifiPwd); // size 20
+            // remain 0
 
             dos.flush();
         } catch (IOException e) {

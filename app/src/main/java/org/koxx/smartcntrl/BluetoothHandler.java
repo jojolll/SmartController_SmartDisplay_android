@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 
+import org.koxx.smartcntrl.datas.CalibType;
+import org.koxx.smartcntrl.tools.BytesTools;
 import org.welie.blessed.BluetoothBytesParser;
 import org.welie.blessed.BluetoothCentral;
 import org.welie.blessed.BluetoothCentralCallback;
@@ -74,17 +76,17 @@ class BluetoothHandler {
     private static final UUID MEASUREMENTS_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a0");
     private static final UUID MODE_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a1");
     private static final UUID BRAKE_STATUS_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a2");
-//    private static final UUID VOLTAGE_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a3");
+//    private static final UUID xxxxxxxxx = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a3");
 //    private static final UUID AMPERE_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a4");
 //    private static final UUID POWER_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a5");
     private static final UUID BTLOCK_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a6");
-//    private static final UUID TEMPERATURE_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a7");
-    //private static final UUID HUMIDITY_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a8");
+    private static final UUID SETTINGS4_WIFI_SSID_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a7");
+    private static final UUID SETTINGS5_WIFI_PWD_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a8");
     private static final UUID SETTINGS1_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a9");
     private static final UUID SPEED_LIMITER_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26aa");
     private static final UUID ECO_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26ab");
     private static final UUID ACCEL_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26ac");
-    private static final UUID CURRENT_CALIB_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26ad");
+    private static final UUID CALIB_ORDER_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26ad");
     private static final UUID SWITCH_TO_OTA_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26ae");
     private static final UUID LOGS_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26af");
     private static final UUID FAST_UPDATE_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26b0");
@@ -154,11 +156,6 @@ class BluetoothHandler {
                 if (accelCharacteristic != null) {
                     peripheral.setNotify(accelCharacteristic, true);
                     peripheral.readCharacteristic(accelCharacteristic);
-                }
-                BluetoothGattCharacteristic currentCalibCharacteristic = peripheral.getCharacteristic(SMARTCNTRL_MAIN_SERVICE_UUID, CURRENT_CALIB_CHARACTERISTIC_UUID);
-                if (currentCalibCharacteristic != null) {
-                    peripheral.setNotify(currentCalibCharacteristic, true);
-                    peripheral.readCharacteristic(currentCalibCharacteristic);
                 }
                 BluetoothGattCharacteristic logCharacteristic = peripheral.getCharacteristic(SMARTCNTRL_MAIN_SERVICE_UUID, LOGS_CHARACTERISTIC_UUID);
                 if (logCharacteristic != null) {
@@ -256,12 +253,6 @@ class BluetoothHandler {
                 Integer accel = parser.getIntValue(BluetoothBytesParser.FORMAT_UINT8);
                 Intent intent = new Intent(MEASUREMENT_ACCEL);
                 intent.putExtra(MEASUREMENT_ACCEL_EXTRA, accel);
-                intent.putExtra(MEASUREMENT_EXTRA_PERIPHERAL, peripheral.getAddress());
-                context.sendBroadcast(intent);
-            } else if (characteristicUUID.equals(CURRENT_CALIB_CHARACTERISTIC_UUID)) {
-                Integer current_calib = parser.getIntValue(BluetoothBytesParser.FORMAT_UINT8);
-                Intent intent = new Intent(MEASUREMENT_CURRENT_CALIB);
-                intent.putExtra(MEASUREMENT_CURRENT_CALIB_EXTRA, current_calib);
                 intent.putExtra(MEASUREMENT_EXTRA_PERIPHERAL, peripheral.getAddress());
                 context.sendBroadcast(intent);
             } else if (characteristicUUID.equals(AUX_CHARACTERISTIC_UUID)) {
@@ -464,18 +455,48 @@ class BluetoothHandler {
         BluetoothPeripheral peripheral = getConnectedPeripheral();
         if (peripheral == null) return;
 
-        BluetoothGattCharacteristic characteristic = peripheral.getCharacteristic(SMARTCNTRL_MAIN_SERVICE_UUID, SETTINGS1_CHARACTERISTIC_UUID);
-        byte[] dataSettings = Settings.settings1ToByteArray(context);
-        peripheral.writeCharacteristic(characteristic, dataSettings, WRITE_TYPE_DEFAULT);
+        byte[] dataSettings;
+        BluetoothGattCharacteristic characteristic;
 
-        characteristic = peripheral.getCharacteristic(SMARTCNTRL_MAIN_SERVICE_UUID, SETTINGS2_CHARACTERISTIC_UUID);
-        dataSettings = Settings.settings2ToByteArray(context);
-        peripheral.writeCharacteristic(characteristic, dataSettings, WRITE_TYPE_DEFAULT);
+        try {
+            characteristic = peripheral.getCharacteristic(SMARTCNTRL_MAIN_SERVICE_UUID, SETTINGS1_CHARACTERISTIC_UUID);
+            dataSettings = Settings.settings1ToByteArray(context);
+            peripheral.writeCharacteristic(characteristic, dataSettings, WRITE_TYPE_DEFAULT);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        characteristic = peripheral.getCharacteristic(SMARTCNTRL_MAIN_SERVICE_UUID, SETTINGS3_CHARACTERISTIC_UUID);
-        dataSettings = Settings.settings3ToByteArray(context);
-        peripheral.writeCharacteristic(characteristic, dataSettings, WRITE_TYPE_DEFAULT);
+        try {
+            characteristic = peripheral.getCharacteristic(SMARTCNTRL_MAIN_SERVICE_UUID, SETTINGS2_CHARACTERISTIC_UUID);
+            dataSettings = Settings.settings2ToByteArray(context);
+            peripheral.writeCharacteristic(characteristic, dataSettings, WRITE_TYPE_DEFAULT);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
+        try {
+            characteristic = peripheral.getCharacteristic(SMARTCNTRL_MAIN_SERVICE_UUID, SETTINGS3_CHARACTERISTIC_UUID);
+            dataSettings = Settings.settings3ToByteArray(context);
+            peripheral.writeCharacteristic(characteristic, dataSettings, WRITE_TYPE_DEFAULT);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            characteristic = peripheral.getCharacteristic(SMARTCNTRL_MAIN_SERVICE_UUID, SETTINGS4_WIFI_SSID_CHARACTERISTIC_UUID);
+            dataSettings = Settings.settings4ToByteArray(context);
+            peripheral.writeCharacteristic(characteristic, dataSettings, WRITE_TYPE_DEFAULT);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            characteristic = peripheral.getCharacteristic(SMARTCNTRL_MAIN_SERVICE_UUID, SETTINGS5_WIFI_PWD_CHARACTERISTIC_UUID);
+            dataSettings = Settings.settings5ToByteArray(context);
+            peripheral.writeCharacteristic(characteristic, dataSettings, WRITE_TYPE_DEFAULT);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -518,13 +539,6 @@ class BluetoothHandler {
         BluetoothPeripheral peripheral = getConnectedPeripheral();
         if (peripheral == null) return;
         BluetoothGattCharacteristic characteristic = peripheral.getCharacteristic(SMARTCNTRL_MAIN_SERVICE_UUID, ACCEL_CHARACTERISTIC_UUID);
-        peripheral.writeCharacteristic(characteristic, new byte[]{value}, WRITE_TYPE_DEFAULT);
-    }
-
-    public void sendCurrentCalibValue(byte value) {
-        BluetoothPeripheral peripheral = getConnectedPeripheral();
-        if (peripheral == null) return;
-        BluetoothGattCharacteristic characteristic = peripheral.getCharacteristic(SMARTCNTRL_MAIN_SERVICE_UUID, CURRENT_CALIB_CHARACTERISTIC_UUID);
         peripheral.writeCharacteristic(characteristic, new byte[]{value}, WRITE_TYPE_DEFAULT);
     }
 
@@ -575,6 +589,27 @@ class BluetoothHandler {
         peripheral.writeCharacteristic(characteristic, new byte[]{value}, WRITE_TYPE_DEFAULT);
     }
 
+    public void sendCalibOrder(CalibType order, int value) {
+        Timber.i("sendCalibOrder");
+
+        BluetoothPeripheral peripheral = getConnectedPeripheral();
+        if (peripheral == null) return;
+        BluetoothGattCharacteristic characteristic = peripheral.getCharacteristic(SMARTCNTRL_MAIN_SERVICE_UUID, CALIB_ORDER_CHARACTERISTIC_UUID);
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        DataOutputStream dos = new DataOutputStream(bos);
+        try {
+
+            dos.writeByte((byte) order.getNumVal());
+            dos.write(BytesTools.intToByteArrayInverted(value));
+
+            dos.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        peripheral.writeCharacteristic(characteristic, bos.toByteArray(), WRITE_TYPE_DEFAULT);
+    }
 
     public void sendSpeedPidValue(Integer kp, Integer ki, Integer kd) {
         Timber.i("sendSpeedPidValue");
@@ -645,4 +680,5 @@ class BluetoothHandler {
         editor.putString(PREFS_PREFERRED_BLE, "");
         editor.commit();
     }
+
 }
