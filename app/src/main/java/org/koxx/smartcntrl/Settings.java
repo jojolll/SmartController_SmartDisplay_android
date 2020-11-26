@@ -30,7 +30,9 @@ public class Settings {
     public static final String Wheel_size = "Wheel size";
     public static final String Motor_pole_number = "Motor number of magnets";
     public static final String Battery_min_voltage = "Battery min voltage";
-    public static final String Battery_max_voltage = "Battery max voltage -";
+    public static final String Battery_max_voltage = "Battery max voltage";
+    public static final String Battery_capacity = "Battery capacity";
+    public static final String Battery_discharge_rate = "Battery discharge rate";
 
     public static final String Escooter_LCD_display = "E-scooter LCD display";
     public static final String LCD_Speed_adjustement = "LCD Speed adjustment";
@@ -130,28 +132,37 @@ public class Settings {
                 new HeaderSettingsObject.Builder(Settings.Escooter_Specs)
                         .build(),
                 new EditTextSettingsObject.Builder(Settings.Wheel_size, Settings.Wheel_size, "8", "save")
-                        .setDialogContent("enter new value here")
-                        .setHint("in inches")
+                        .setDialogTitle("In inches")
                         .setUseValueAsPrefillText()
                         .setNegativeBtnText("cancel")
                         .setUseValueAsSummary()
                         .build(),
                 new EditTextSettingsObject.Builder(Settings.Motor_pole_number, Settings.Motor_pole_number, "15", "save")
-                        .setDialogContent("enter new value here")
+                        .setDialogTitle("Number of poles pairs")
                         .setUseValueAsPrefillText()
                         .setNegativeBtnText("cancel")
                         .setUseValueAsSummary()
                         .build(),
                 new EditTextSettingsObject.Builder(Settings.Battery_min_voltage, Settings.Battery_min_voltage, "42", "save")
-                        .setDialogContent("enter new value here")
-                        .setHint("in volts")
+                        .setDialogTitle("In volts")
                         .setUseValueAsPrefillText()
                         .setNegativeBtnText("cancel")
                         .setUseValueAsSummary()
                         .build(),
                 new EditTextSettingsObject.Builder(Settings.Battery_max_voltage, Settings.Battery_max_voltage, "54.8", "save")
-                        .setDialogContent("enter new value here")
-                        .setHint("in volts")
+                        .setDialogTitle("In volts")
+                        .setUseValueAsPrefillText()
+                        .setNegativeBtnText("cancel")
+                        .setUseValueAsSummary()
+                        .build(),
+                new EditTextSettingsObject.Builder(Settings.Battery_capacity, Settings.Battery_capacity, "15.6", "save")
+                        .setDialogTitle("In amperes per hours")
+                        .setUseValueAsPrefillText()
+                        .setNegativeBtnText("cancel")
+                        .setUseValueAsSummary()
+                        .build(),
+                new EditTextSettingsObject.Builder(Settings.Battery_discharge_rate, Settings.Battery_discharge_rate, "0.4", "save")
+                        .setDialogTitle("In amperes hours per km")
                         .setUseValueAsPrefillText()
                         .setNegativeBtnText("cancel")
                         .setUseValueAsSummary()
@@ -162,9 +173,7 @@ public class Settings {
                         .build(),
 
                 new EditTextSettingsObject.Builder(Settings.Speed_adjustment, Settings.Speed_adjustment, "0", "save")
-                        .setDialogContent("enter new value here")
-                        .setDialogTitle("display adjusted speed (-10 = displayed speed decreased by 10%)")
-                        .setHint("in inches")
+                        .setDialogTitle("Display adjusted speed (-10 = displayed speed decreased by 10%)")
                         .setUseValueAsPrefillText()
                         .setNegativeBtnText("cancel")
                         .setUseValueAsSummary()
@@ -174,9 +183,7 @@ public class Settings {
                 new HeaderSettingsObject.Builder(Settings.Escooter_LCD_display)
                         .build(),
                 new EditTextSettingsObject.Builder(Settings.LCD_Speed_adjustement, Settings.LCD_Speed_adjustement, "0", "save")
-                        .setDialogContent("enter new value here")
-                        .setDialogTitle("display adjusted speed (-10 = displayed speed decreased by 10%)")
-                        .setHint("in inches")
+                        .setDialogTitle("Display adjusted speed (-10 = displayed speed decreased by 10%)")
                         .setUseValueAsPrefillText()
                         .setNegativeBtnText("cancel")
                         .setUseValueAsSummary()
@@ -213,13 +220,13 @@ public class Settings {
                         .setNegativeBtnText("cancel")
                         .build(),
                 new EditTextSettingsObject.Builder(Settings.Bluetooth_pin_code, Settings.Bluetooth_pin_code, "147258", "save")
-                        .setDialogContent("enter new numeric value here")
+                        .setDialogTitle("PIN code (6 digits max)")
                         .setUseValueAsPrefillText()
                         .setNegativeBtnText("cancel")
                         .setUseValueAsSummary()
                         .build(),
                 new EditTextSettingsObject.Builder(Settings.Beacon_Mac_Address, Settings.Beacon_Mac_Address, "aa:bb:cc:dd:ee:ff", "save")
-                        .setDialogContent("enter mac address")
+                        .setDialogTitle("MAC address")
                         .setUseValueAsPrefillText()
                         .setNegativeBtnText("cancel")
                         .setUseValueAsSummary()
@@ -306,13 +313,13 @@ public class Settings {
                 new HeaderSettingsObject.Builder(Settings.OTA_Wifi)
                         .build(),
                 new EditTextSettingsObject.Builder(Settings.Wifi_ssid, Settings.Wifi_ssid, "", "save")
-                        .setDialogContent("Enter Wifi SSID")
+                        .setDialogTitle("Wifi SSID")
                         .setUseValueAsPrefillText()
                         .setNegativeBtnText("cancel")
                         .setUseValueAsSummary()
                         .build(),
                 new EditTextSettingsObject.Builder(Settings.Wifi_pwd, Settings.Wifi_pwd, "", "save")
-                        .setDialogContent("Enter Wifi password")
+                        .setDialogTitle("Wifi password")
                         .setUseValueAsPrefillText()
                         .setNegativeBtnText("cancel")
                         .build()
@@ -464,7 +471,16 @@ public class Settings {
             dos.writeByte((byte) ((pinCode >> 8) & 0xff));
             dos.writeByte((byte) ((pinCode >> 16) & 0xff));
             dos.writeByte((byte) ((pinCode >> 24) & 0xff));
-            // remain 5
+
+            value = (int) (Float.parseFloat(EasySettings.retrieveSettingsSharedPrefs(ctx).getString(Battery_capacity, "").replace(",", ".")) * 10);
+            dos.writeByte((byte) ((value >> 0) & 0xff));
+            dos.writeByte((byte) ((value >> 8) & 0xff));
+
+            value = (int) (Float.parseFloat(EasySettings.retrieveSettingsSharedPrefs(ctx).getString(Battery_discharge_rate, "").replace(",", ".")) * 100);
+            dos.writeByte((byte) ((value >> 0) & 0xff));
+            dos.writeByte((byte) ((value >> 8) & 0xff));
+
+            // remain 1
 
             dos.flush();
         } catch (IOException e) {
