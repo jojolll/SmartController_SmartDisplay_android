@@ -56,10 +56,7 @@ import java.util.Locale;
 import timber.log.Timber;
 
 // TODO : GPS speed
-// TODO : missing settings
 // TODO : screen fraction
-// TODO : brake (to fix)
-// TODO : add beacon visibility
 // TODO : change icons
 // TODO : brake overload warning
 
@@ -496,7 +493,7 @@ public class MainActivity extends AppCompatActivity {
     public void onClickCurrent(View v) {
         Log.d(TAG, "onClickCurrent");
 
-        BluetoothHandler.getInstance(this).sendCalibOrder(CalibType.CurrentZero, 0);
+        BluetoothHandler.getInstance(this).sendCalibOrder(CalibType.CurrentZero, 200);
 
         mLastCurrent = 0;
         tvCurrentMax.setText(String.format(Locale.ENGLISH, "..."));
@@ -721,11 +718,19 @@ public class MainActivity extends AppCompatActivity {
             // voltage
             tvVoltage.setText(String.format(Locale.ENGLISH, "%2.1f V", measurement.voltage));
 
+            float batMin = 0, batMax = 0;
+            try {
+                batMax = Float.parseFloat(EasySettings.retrieveSettingsSharedPrefs(context).getString(Settings.Battery_max_voltage, "0"));
+                batMin = Float.parseFloat(EasySettings.retrieveSettingsSharedPrefs(context).getString(Settings.Battery_min_voltage, "0"));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             // update battery indicator
             setBatteryIndicator(
-                    Float.parseFloat(EasySettings.retrieveSettingsSharedPrefs(context).getString(Settings.Battery_min_voltage, "0")),
+                    batMin,
                     (float) (measurement.voltage),
-                    Float.parseFloat(EasySettings.retrieveSettingsSharedPrefs(context).getString(Settings.Battery_max_voltage, "0"))
+                    batMax
             );
 
             // check is battery is overloaded
