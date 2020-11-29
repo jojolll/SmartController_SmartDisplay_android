@@ -63,7 +63,7 @@ public class Settings {
     public static final String Electric_brake_min_value = "Electric brake min value";
     public static final String Electric_brake_max_value = "Electric brake max value";
     public static final String Electric_brake_time_between_mode_shift = "Electric brake time between mode shift";
-    public static final String Electric_brake_disabled_voltage = "Electric brake disabled on high battery voltage";
+    public static final String Electric_brake_disabled_on_high_voltage = "Electric brake disabled on high battery voltage";
     public static final String Electric_brake_disabled_percent_limit = "Electric brake disabled percent limit";
 
     public static final String Limiters = "Limiters";
@@ -277,7 +277,7 @@ public class Settings {
                 new SeekBarSettingsObject.Builder(Electric_brake_time_between_mode_shift, Electric_brake_time_between_mode_shift, 500, 100, 2000)
                         .setUseValueAsSummary()
                         .build(),
-                new CheckBoxSettingsObject.Builder(Electric_brake_disabled_voltage, Electric_brake_disabled_voltage, false)
+                new CheckBoxSettingsObject.Builder(Electric_brake_disabled_on_high_voltage, Electric_brake_disabled_on_high_voltage, false)
                         .setOffText("off")
                         .setOnText("on")
                         .build(),
@@ -399,7 +399,7 @@ public class Settings {
             int value = EasySettings.retrieveSettingsSharedPrefs(ctx).getInt(Electric_brake_time_between_mode_shift, 500);
             dos.writeByte((byte) ((value >> 0) & 0xff));
             dos.writeByte((byte) ((value >> 8) & 0xff));
-            dos.writeByte(EasySettings.retrieveSettingsSharedPrefs(ctx).getBoolean(Electric_brake_disabled_voltage, false) ? 1 : 0);
+            dos.writeByte(EasySettings.retrieveSettingsSharedPrefs(ctx).getBoolean(Electric_brake_disabled_on_high_voltage, false) ? 1 : 0);
             dos.writeByte(EasySettings.retrieveSettingsSharedPrefs(ctx).getInt(Electric_brake_disabled_percent_limit, 0));
             dos.writeByte(EasySettings.retrieveSettingsSharedPrefs(ctx).getBoolean(Current_loop_mode, false) ? 1 : 0);
             dos.writeByte(EasySettings.retrieveSettingsSharedPrefs(ctx).getInt(Current_loop_max_current, 0));

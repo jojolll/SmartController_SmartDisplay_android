@@ -734,11 +734,11 @@ public class MainActivity extends AppCompatActivity {
             );
 
             // check is battery is overloaded
-            boolean overloadCheck = EasySettings.retrieveSettingsSharedPrefs(context).getBoolean(Settings.Electric_brake_disabled_voltage, true);
-            int batMaxVoltage = EasySettings.retrieveSettingsSharedPrefs(context).getInt(Settings.Electric_brake_max_value, 0);
-            int batMinVoltage = EasySettings.retrieveSettingsSharedPrefs(context).getInt(Settings.Electric_brake_min_value, 0);
-            int limitVoltage = EasySettings.retrieveSettingsSharedPrefs(context).getInt(Settings.Electric_brake_disabled_percent_limit, 0);
-            if ((measurement.voltage > batMinVoltage + (limitVoltage * (batMaxVoltage - batMinVoltage))) && (overloadCheck))
+            boolean overloadCheck = EasySettings.retrieveSettingsSharedPrefs(context).getBoolean(Settings.Electric_brake_disabled_on_high_voltage, true);
+            float batMaxVoltage = (Float.parseFloat(EasySettings.retrieveSettingsSharedPrefs(context).getString(Settings.Battery_max_voltage, "").replace(",", ".")));
+            float batMinVoltage = (Float.parseFloat(EasySettings.retrieveSettingsSharedPrefs(context).getString(Settings.Battery_min_voltage, "").replace(",", ".")));
+            int limitPercent = EasySettings.retrieveSettingsSharedPrefs(context).getInt(Settings.Electric_brake_disabled_percent_limit, 0);
+            if ((measurement.voltage > batMinVoltage + (limitPercent * (batMaxVoltage - batMinVoltage)/ 100.0) ) && (overloadCheck))
                 mBatteryOverLoad = true;
             else
                 mBatteryOverLoad = false;
