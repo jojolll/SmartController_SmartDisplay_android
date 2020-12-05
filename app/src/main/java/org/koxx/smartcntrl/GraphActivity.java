@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 
@@ -44,6 +45,8 @@ public class GraphActivity extends Base implements OnSeekBarChangeListener,
     private LineChart chart;
     private SeekBar seekBarX, seekBarY;
     private TextView tvX, tvY;
+
+    EditText te_kp, te_ki, te_kd;
 
     ArrayList<Entry> values1 = new ArrayList<>();
     ArrayList<Entry> values2 = new ArrayList<>();
@@ -123,6 +126,13 @@ public class GraphActivity extends Base implements OnSeekBarChangeListener,
         rightAxis.setDrawGridLines(false);
         rightAxis.setDrawZeroLine(false);
         //rightAxis.setGranularityEnabled(false);
+
+        te_kp = findViewById(R.id.kp);
+        te_ki = findViewById(R.id.ki);
+        te_kd = findViewById(R.id.kd);
+        te_kp.setText("2.0");
+        te_ki.setText("0.0");
+        te_kd.setText("0.0");
 
         BluetoothHandler.getInstance(this).setGraph(this);
         BluetoothHandler.getInstance(this).sendFastUpdateValue((byte) 0x01);
@@ -262,19 +272,16 @@ public class GraphActivity extends Base implements OnSeekBarChangeListener,
 
     public void onClickSpeed(View view) {
 
-        EditText te_kp, te_ki, te_kd;
-        te_kp = findViewById(R.id.kp);
-        te_ki = findViewById(R.id.ki);
-        te_kd = findViewById(R.id.kd);
         Timber.i("kp = %s / ki = %s / kd = %s", te_kp.getText(), te_kp.getText(), te_kp.getText());
 
         try {
             BluetoothHandler.getInstance(this).sendSpeedPidValue(
-                    Integer.parseInt(String.valueOf(te_kp.getText())),
-                    Integer.parseInt(String.valueOf(te_ki.getText())),
-                    Integer.parseInt(String.valueOf(te_kd.getText())));
+                    Float.parseFloat(String.valueOf(te_kp.getText())),
+                    Float.parseFloat(String.valueOf(te_ki.getText())),
+                    Float.parseFloat(String.valueOf(te_kd.getText())));
         } catch (Exception e) {
             e.printStackTrace();
+            Toast.makeText(this, "Value error", Toast.LENGTH_SHORT).show();
         }
     }
 }

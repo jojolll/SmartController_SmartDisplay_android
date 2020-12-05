@@ -28,7 +28,7 @@ public class Settings {
 
     public static final String Escooter_Specs = "E-scooter caracteristics";
     public static final String Wheel_size = "Wheel size";
-    public static final String Motor_pole_number = "Motor number of magnets";
+    public static final String Motor_pole_number = "Motor number of magnets pairs";
     public static final String Battery_min_voltage = "Battery min voltage";
     public static final String Battery_max_voltage = "Battery max voltage";
     public static final String Battery_capacity = "Battery capacity";

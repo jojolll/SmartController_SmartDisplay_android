@@ -76,7 +76,7 @@ class BluetoothHandler {
     private static final UUID MEASUREMENTS_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a0");
     private static final UUID MODE_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a1");
     private static final UUID BRAKE_STATUS_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a2");
-//    private static final UUID xxxxxxxxx = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a3");
+    //    private static final UUID xxxxxxxxx = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a3");
 //    private static final UUID AMPERE_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a4");
 //    private static final UUID POWER_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a5");
     private static final UUID BTLOCK_CHARACTERISTIC_UUID = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a6");
@@ -611,7 +611,7 @@ class BluetoothHandler {
         peripheral.writeCharacteristic(characteristic, bos.toByteArray(), WRITE_TYPE_DEFAULT);
     }
 
-    public void sendSpeedPidValue(Integer kp, Integer ki, Integer kd) {
+    public void sendSpeedPidValue(float kp, float ki, float kd) {
         Timber.i("sendSpeedPidValue");
 
         BluetoothPeripheral peripheral = getConnectedPeripheral();
@@ -621,21 +621,23 @@ class BluetoothHandler {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(bos);
         try {
+            int temp = (int) (kp * 1000);
+            dos.writeByte((byte) ((temp >> 0) & 0xff));
+            dos.writeByte((byte) ((temp >> 8) & 0xff));
+            dos.writeByte((byte) ((temp >> 16) & 0xff));
+            dos.writeByte((byte) ((temp >> 24) & 0xff));
 
-            dos.writeByte((byte) ((kp >> 0) & 0xff));
-            dos.writeByte((byte) ((kp >> 8) & 0xff));
-            dos.writeByte((byte) ((kp >> 16) & 0xff));
-            dos.writeByte((byte) ((kp >> 24) & 0xff));
+            temp = (int) (ki * 1000);
+            dos.writeByte((byte) ((temp >> 0) & 0xff));
+            dos.writeByte((byte) ((temp >> 8) & 0xff));
+            dos.writeByte((byte) ((temp >> 16) & 0xff));
+            dos.writeByte((byte) ((temp >> 24) & 0xff));
 
-            dos.writeByte((byte) ((ki >> 0) & 0xff));
-            dos.writeByte((byte) ((ki >> 8) & 0xff));
-            dos.writeByte((byte) ((ki >> 16) & 0xff));
-            dos.writeByte((byte) ((ki >> 24) & 0xff));
-
-            dos.writeByte((byte) ((kd >> 0) & 0xff));
-            dos.writeByte((byte) ((kd >> 8) & 0xff));
-            dos.writeByte((byte) ((kd >> 16) & 0xff));
-            dos.writeByte((byte) ((kd >> 24) & 0xff));
+            temp = (int) (kd * 1000);
+            dos.writeByte((byte) ((temp >> 0) & 0xff));
+            dos.writeByte((byte) ((temp >> 8) & 0xff));
+            dos.writeByte((byte) ((temp >> 16) & 0xff));
+            dos.writeByte((byte) ((temp >> 24) & 0xff));
 
             dos.flush();
         } catch (IOException e) {
