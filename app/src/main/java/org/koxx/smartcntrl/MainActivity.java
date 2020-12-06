@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_SETTINGS_LIST = "EXTRA_SETTINGS_LIST";
     public static final String SETTINGS_KEY_RINGTONE = "SETTINGS_KEY_RINGTONE";
 
-    private TextView tvSpeed, tvVoltage, tvCurrent, tvSpeedMax, tvCurrentMax, tvPower, tvPowerMax, tvTemperature, tvTemperatureMax, tvBtLock, tvHumidity, tvSpeedLimiter, tvEco, tvAccel, tvAux, tvDistance;
+    private TextView tvSpeed, tvVoltage, tvCurrent, tvSpeedMax, tvCurrentMax, tvPower, tvPowerMax, tvTemperature, tvTemperatureMax, tvBtLock, tvHumidity, tvSpeedLimiter, tvEco, tvAccel, tvAux, tvDistance, tvDistanceOdo;
     private ImageView ivBrakeBattery, ivBrakePressed;
 
     private final DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
@@ -140,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
         tvAccel = (TextView) findViewById(R.id.AccelValue);
         tvAux = (TextView) findViewById(R.id.AuxValue);
         tvDistance = (TextView) findViewById(R.id.DistanceValue);
+        tvDistanceOdo = (TextView) findViewById(R.id.DistanceOdoValue);
 
         ivBrakeBattery = (ImageView) findViewById(R.id.BrakeBatteryWarning);
         ivBrakePressed = (ImageView) findViewById(R.id.BrakePressedWarning);
@@ -710,9 +711,12 @@ public class MainActivity extends AppCompatActivity {
 
             //--------------------------------
             // distance
-            double dst = measurement.distance / 100.0;
+            double dst = measurement.distance;
             tvDistance.setText(String.format(Locale.ENGLISH, "%3.1f km", dst));
 
+
+            double dstOdo = measurement.distanceOdo;
+            tvDistanceOdo.setText(String.format(Locale.ENGLISH, "%3.1f km", dstOdo));
 
             //--------------------------------
             // voltage
@@ -738,7 +742,7 @@ public class MainActivity extends AppCompatActivity {
             float batMaxVoltage = (Float.parseFloat(EasySettings.retrieveSettingsSharedPrefs(context).getString(Settings.Battery_max_voltage, "").replace(",", ".")));
             float batMinVoltage = (Float.parseFloat(EasySettings.retrieveSettingsSharedPrefs(context).getString(Settings.Battery_min_voltage, "").replace(",", ".")));
             int limitPercent = EasySettings.retrieveSettingsSharedPrefs(context).getInt(Settings.Electric_brake_disabled_percent_limit, 0);
-            if ((measurement.voltage > batMinVoltage + (limitPercent * (batMaxVoltage - batMinVoltage)/ 100.0) ) && (overloadCheck))
+            if ((measurement.voltage > batMinVoltage + (limitPercent * (batMaxVoltage - batMinVoltage) / 100.0)) && (overloadCheck))
                 mBatteryOverLoad = true;
             else
                 mBatteryOverLoad = false;
@@ -827,12 +831,12 @@ public class MainActivity extends AppCompatActivity {
             if (bleLockStatus == 1) {
 
                 if (bleLockForcedValue == 1) {
-                    tvBtLock.setText(String.format(Locale.ENGLISH, "%s", "ON (FORCED)"));
+                    tvBtLock.setText(String.format(Locale.ENGLISH, "%s",     "ON Force"));
                 } else {
                     if (bleLockBeaconVisibleValue == 0) {
-                        tvBtLock.setText(String.format(Locale.ENGLISH, "%s", "ON (beacon lost)"));
+                        tvBtLock.setText(String.format(Locale.ENGLISH, "%s", "ON Beac"));
                     } else {
-                        tvBtLock.setText(String.format(Locale.ENGLISH, "%s", "ON (smart. lost)"));
+                        tvBtLock.setText(String.format(Locale.ENGLISH, "%s", "ON Smart"));
                     }
                 }
             }
@@ -840,9 +844,9 @@ public class MainActivity extends AppCompatActivity {
             else {
                 if (bleLockBeaconVisibleValue == 1)
                     if ((bleLockStatus == 3) || (bleLockStatus == 4)) {
-                        tvBtLock.setText(String.format(Locale.ENGLISH, "%s", "OFF (beacon visible"));
+                        tvBtLock.setText(String.format(Locale.ENGLISH, "%s", "OFF Beac"));
                     } else if ((bleLockStatus == 2)) {
-                        tvBtLock.setText(String.format(Locale.ENGLISH, "%s", "OFF (smart. connected)"));
+                        tvBtLock.setText(String.format(Locale.ENGLISH, "%s", "OFF Smart"));
                     } else {
                         tvBtLock.setText(String.format(Locale.ENGLISH, "%s", "OFF"));
                     }
@@ -921,15 +925,15 @@ public class MainActivity extends AppCompatActivity {
             if (mAccel == 0)
                 txt = "MAX";
             else if (mAccel == 1)
-                txt = "VERY FAST";
+                txt = "V. FAST";
             else if (mAccel == 2)
                 txt = "FAST";
             else if (mAccel == 3)
-                txt = "MEDIUM";
+                txt = "MED.";
             else if (mAccel == 4)
                 txt = "SLOW";
             else if (mAccel == 5)
-                txt = "VERY SLOW";
+                txt = "V. SLOW";
 
             tvAccel.setText(txt);
         }

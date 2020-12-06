@@ -279,79 +279,98 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/cardBottomMargin"
-                android:background="@color/colorCard"
                 android:clickable="true"
                 android:onClick="onClickEco"
-                android:orientation="vertical"
-                android:padding="5dp">
+                android:orientation="horizontal"
+                android:layout_marginBottom="@dimen/cardBottomMargin">
 
-                <TextView
-                    android:layout_width="match_parent"
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="0.5"
                     android:layout_height="wrap_content"
-                    android:text="ECO"
-                    android:textAlignment="viewStart"
-                    android:textColor="@color/colorText"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
+                    android:background="@color/colorCard"
+                    android:clickable="true"
+                    android:onClick="onClickEco"
+                    android:orientation="vertical"
+                    android:padding="5dp"
+                    android:layout_marginRight="5dp">
 
-                <TextView
-                    android:id="@+id/EcoValue"
-                    android:layout_width="match_parent"
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="ECO"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/colorText"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/EcoValue"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="-0dp"
+                        android:paddingBottom="5dp"
+                        android:text="..."
+                        android:textAlignment="center"
+                        android:textColor="@color/colorText"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="0.5"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="-5dp"
-                    android:paddingBottom="5dp"
-                    android:text="..."
-                    android:textAlignment="center"
-                    android:textColor="@color/colorText"
-                    android:textSize="28sp"
-                    android:textStyle="bold" />
+                    android:background="@color/colorCard"
+                    android:clickable="true"
+                    android:onClick="onClickAccel"
+                    android:orientation="vertical"
+                    android:padding="5dp">
 
+                    <TextView
+
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="ACCEL."
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/colorText"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/AccelValue"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="-0dp"
+                        android:paddingBottom="5dp"
+                        android:text="..."
+                        android:textAlignment="center"
+                        android:textColor="@color/colorText"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/cardBottomMargin"
-                android:background="@color/colorCard"
                 android:clickable="true"
-                android:onClick="onClickAccel"
-                android:orientation="vertical"
-                android:padding="5dp">
-
-                <TextView
-
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="ACCEL."
-                    android:textAlignment="viewStart"
-                    android:textColor="@color/colorText"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/AccelValue"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="-5dp"
-                    android:paddingBottom="5dp"
-                    android:text="..."
-                    android:textAlignment="center"
-                    android:textColor="@color/colorText"
-                    android:textSize="28sp"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
+                android:onClick="onClickEco"
+                android:orientation="horizontal"
+                android:layout_marginBottom="@dimen/cardBottomMargin">
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="0.5"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/cardBottomMargin"
                 android:background="@color/colorCard"
                 android:clickable="true"
                 android:onClick="onClickBtLock"
                 android:orientation="vertical"
-                android:padding="5dp">
+                android:padding="5dp"
+                android:layout_marginRight="5dp">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -366,20 +385,20 @@
                     android:id="@+id/BtValue"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="-5dp"
+                    android:layout_marginTop="-0dp"
                     android:paddingBottom="5dp"
                     android:text="..."
                     android:textAlignment="center"
                     android:textColor="@color/colorText"
-                    android:textSize="28sp"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="0.5"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/cardBottomMargin"
                 android:background="@color/colorCard"
                 android:clickable="true"
                 android:onClick="onClickSpeedLmt"
@@ -399,14 +418,15 @@
                     android:id="@+id/SpdLimitValue"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="-5dp"
+                    android:layout_marginTop="-0dp"
                     android:paddingBottom="5dp"
                     android:text="..."
                     android:textAlignment="center"
                     android:textColor="@color/colorText"
-                    android:textSize="28sp"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
 
+            </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -440,6 +460,52 @@
                     android:textSize="28sp"
                     android:textStyle="bold" />
 
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/Distance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/cardBottomMargin"
+                android:background="@color/colorCard"
+                android:clickable="true"
+                android:onClick="onClickDistance"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="DST"
+                    android:textAlignment="viewStart"
+                    android:textColor="@color/colorText"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/DistanceValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-5dp"
+                    android:paddingBottom="5dp"
+                    android:text="..."
+                    android:textAlignment="center"
+                    android:textColor="@color/colorText"
+                    android:textSize="28sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/DistanceOdoValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-5dp"
+                    android:paddingBottom="5dp"
+                    android:text="..."
+                    android:textAlignment="center"
+                    android:textColor="@color/colorText"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
             </LinearLayout>
 
 
@@ -800,40 +866,6 @@
                     android:textAlignment="center"
                     android:textColor="@color/colorText"
                     android:textSize="20sp"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/Distance"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/cardBottomMargin"
-                android:background="@color/colorCard"
-                android:clickable="true"
-                android:onClick="onClickDistance"
-                android:orientation="vertical"
-                android:padding="5dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="DST"
-                    android:textAlignment="viewStart"
-                    android:textColor="@color/colorText"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/DistanceValue"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="-5dp"
-                    android:paddingBottom="5dp"
-                    android:text="..."
-                    android:textAlignment="center"
-                    android:textColor="@color/colorText"
-                    android:textSize="28sp"
                     android:textStyle="bold" />
 
             </LinearLayout>

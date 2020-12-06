@@ -15,7 +15,7 @@ public class Measurements implements Serializable {
     public Integer power;
     public float temperature;
     public float humidity;
-    public float distance;
+    public float distance, distanceOdo;
 
 
     public Measurements(byte[] byteArray) {
@@ -28,12 +28,13 @@ public class Measurements implements Serializable {
         temperature =  (float) (parser.getIntValue(BluetoothBytesParser.FORMAT_SINT16) / 10.0);
         humidity =  (float) (parser.getIntValue(BluetoothBytesParser.FORMAT_UINT16) / 10.0);
         distance =  (float) (parser.getIntValue(BluetoothBytesParser.FORMAT_UINT16) / 100.0);
+        distanceOdo =  (float) (parser.getIntValue(BluetoothBytesParser.FORMAT_UINT16) / 10.0);
     }
 
     @Override
     public String toString() {
 
-        return String.format(Locale.ENGLISH,"%d km/h / %2.1f V / %2.1f A / %d W / %2.1f deg / %2.1f HR / %2.1f kms",
-                speedValue, voltage, current, power, temperature, humidity, distance);
+        return String.format(Locale.ENGLISH,"%d km/h / %2.1f V / %2.1f A / %d W / %2.1f deg / %2.1f HR / %2.1f kms / %2.1f kms",
+                speedValue, voltage, current, power, temperature, humidity, distance, distanceOdo);
     }
 }
