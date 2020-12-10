@@ -28,7 +28,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -711,9 +710,8 @@ public class MainActivity extends AppCompatActivity {
 
             //--------------------------------
             // distance
-            double dst = measurement.distance;
+            double dst = measurement.distanceTrip;
             tvDistance.setText(String.format(Locale.ENGLISH, "%3.1f km", dst));
-
 
             double dstOdo = measurement.distanceOdo;
             tvDistanceOdo.setText(String.format(Locale.ENGLISH, "%3.1f km", dstOdo));
