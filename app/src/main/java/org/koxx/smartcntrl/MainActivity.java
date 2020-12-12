@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_SETTINGS_LIST = "EXTRA_SETTINGS_LIST";
     public static final String SETTINGS_KEY_RINGTONE = "SETTINGS_KEY_RINGTONE";
 
-    private TextView tvSpeed, tvVoltage, tvCurrent, tvSpeedMax, tvCurrentMax, tvPower, tvPowerMax, tvTemperature, tvTemperatureMax, tvBtLock, tvHumidity, tvSpeedLimiter, tvEco, tvAccel, tvAux, tvDistance, tvDistanceOdo;
+    private TextView tvSpeed, tvVoltage, tvCurrent, tvSpeedMax, tvCurrentMax, tvPower, tvPowerMax, tvTemperature, tvTemperatureMax, tvBtLock, tvHumidity, tvSpeedLimiter, tvEco, tvAccel, tvAux, tvDistance, tvDistanceOdo, tvAuton;
     private ImageView ivBrakeBattery, ivBrakePressed;
 
     private final DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
@@ -140,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
         tvAux = (TextView) findViewById(R.id.AuxValue);
         tvDistance = (TextView) findViewById(R.id.DistanceValue);
         tvDistanceOdo = (TextView) findViewById(R.id.DistanceOdoValue);
+        tvAuton = (TextView) findViewById(R.id.AutonomyValue);
 
         ivBrakeBattery = (ImageView) findViewById(R.id.BrakeBatteryWarning);
         ivBrakePressed = (ImageView) findViewById(R.id.BrakePressedWarning);
@@ -168,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
 
         // set indicators
         setModeIndicator(1);
-        setBatteryIndicator(40, 60, 60);
+        setBatteryIndicator(40, 0, 60);
         setBrakeIndicator(EasySettings.retrieveSettingsSharedPrefs(this).getInt(Settings.Electric_brake_min_value, 0),
                 -1,
                 EasySettings.retrieveSettingsSharedPrefs(this).getInt(Settings.Electric_brake_max_value, 0),
@@ -322,9 +323,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void setBatteryIndicator(float min, float value, float max) {
+    public void setBatteryIndicator(float min, int bat, float max) {
 
-        int bat = (int) (1 / ((max - min) / (value - min)) * 100);
+        //int bat = (int) (1 / ((max - min) / (value - min)) * 100);
 
         for (int i = 0; i < 10; i++) {
             String viewId = "VoltageValue" + (i + 1);
@@ -731,9 +732,15 @@ public class MainActivity extends AppCompatActivity {
             // update battery indicator
             setBatteryIndicator(
                     batMin,
-                    (float) (measurement.voltage),
+                    measurement.batteryLevel,
                     batMax
             );
+
+
+            //--------------------------------
+            // autonomy
+            tvAuton.setText(String.format(Locale.ENGLISH, "%d", measurement.batteryAutonomy) + " km");
+
 
             // check is battery is overloaded
             boolean overloadCheck = EasySettings.retrieveSettingsSharedPrefs(context).getBoolean(Settings.Electric_brake_disabled_on_high_voltage, true);

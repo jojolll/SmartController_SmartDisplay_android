@@ -31,8 +31,7 @@ public class Settings {
     public static final String Motor_pole_number = "Motor number of magnets pairs";
     public static final String Battery_min_voltage = "Battery min voltage";
     public static final String Battery_max_voltage = "Battery max voltage";
-    public static final String Battery_capacity = "Battery capacity";
-    public static final String Battery_discharge_rate = "Battery discharge rate";
+    public static final String Battery_max_distance = "Battery distance - max distance with full battery";
 
     public static final String Escooter_LCD_display = "E-scooter LCD display";
     public static final String LCD_Speed_adjustement = "LCD Speed adjustment";
@@ -155,14 +154,8 @@ public class Settings {
                         .setNegativeBtnText("cancel")
                         .setUseValueAsSummary()
                         .build(),
-                new EditTextSettingsObject.Builder(Settings.Battery_capacity, Settings.Battery_capacity, "15.6", "save")
-                        .setDialogTitle("In amperes per hours")
-                        .setUseValueAsPrefillText()
-                        .setNegativeBtnText("cancel")
-                        .setUseValueAsSummary()
-                        .build(),
-                new EditTextSettingsObject.Builder(Settings.Battery_discharge_rate, Settings.Battery_discharge_rate, "0.4", "save")
-                        .setDialogTitle("In amperes hours per km")
+                new EditTextSettingsObject.Builder(Settings.Battery_max_distance, Settings.Battery_max_distance, "40", "save")
+                        .setDialogTitle("In kilometers")
                         .setUseValueAsPrefillText()
                         .setNegativeBtnText("cancel")
                         .setUseValueAsSummary()
@@ -427,7 +420,7 @@ public class Settings {
         try {
             dos.writeByte(listToValueBrakeMode(ctx, Electric_brake_type));
             String beaconAddress = EasySettings.retrieveSettingsSharedPrefs(ctx).getString(Beacon_Mac_Address, "AA:BB:CC:DD:EE:FF").substring(0, 17).toLowerCase();
-            dos.writeByte((byte) 0); // dummy
+            dos.writeByte((int) (Float.parseFloat(EasySettings.retrieveSettingsSharedPrefs(ctx).getString(Battery_max_distance, "").replace(",", ".")) * 10)); // dummy
             dos.writeByte((byte) 0); // dummy
             dos.writeBytes(beaconAddress); // size 17
             // remain 2
@@ -472,15 +465,11 @@ public class Settings {
             dos.writeByte((byte) ((pinCode >> 16) & 0xff));
             dos.writeByte((byte) ((pinCode >> 24) & 0xff));
 
-            value = (int) (Float.parseFloat(EasySettings.retrieveSettingsSharedPrefs(ctx).getString(Battery_capacity, "").replace(",", ".")) * 10);
+            value = (int) (Float.parseFloat(EasySettings.retrieveSettingsSharedPrefs(ctx).getString(Battery_max_distance, "").replace(",", ".")) * 10);
             dos.writeByte((byte) ((value >> 0) & 0xff));
             dos.writeByte((byte) ((value >> 8) & 0xff));
 
-            value = (int) (Float.parseFloat(EasySettings.retrieveSettingsSharedPrefs(ctx).getString(Battery_discharge_rate, "").replace(",", ".")) * 100);
-            dos.writeByte((byte) ((value >> 0) & 0xff));
-            dos.writeByte((byte) ((value >> 8) & 0xff));
-
-            // remain 1
+            // remain 3
 
             dos.flush();
         } catch (IOException e) {

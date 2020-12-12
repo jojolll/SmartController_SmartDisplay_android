@@ -509,6 +509,53 @@
             </LinearLayout>
 
 
+            <LinearLayout
+                android:id="@+id/Time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/cardBottomMargin"
+                android:background="@color/colorCard"
+                android:clickable="true"
+                android:onClick="onClickTime"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="TIME"
+                    android:textAlignment="viewStart"
+                    android:textColor="@color/colorText"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/TimeOnValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-5dp"
+                    android:paddingBottom="5dp"
+                    android:text="..."
+                    android:textAlignment="center"
+                    android:textColor="@color/colorText"
+                    android:textSize="28sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/TimeRunValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-5dp"
+                    android:paddingBottom="5dp"
+                    android:text="..."
+                    android:textAlignment="center"
+                    android:textColor="@color/colorText"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+
         </LinearLayout>
 
         <LinearLayout
@@ -655,6 +702,39 @@
                         android:layout_marginRight="@dimen/voltageBatMargin"
                         android:background="#fff" />
                 </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/cardBottomMargin"
+                android:background="@color/colorCard"
+                android:clickable="true"
+                android:onClick="onClickCurrent"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="AUTON."
+                    android:textAlignment="viewStart"
+                    android:textColor="@color/colorText"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/AutonomyValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-5dp"
+                    android:paddingBottom="5dp"
+                    android:text="..."
+                    android:textAlignment="center"
+                    android:textColor="@color/colorText"
+                    android:textSize="28sp"
+                    android:textStyle="bold" />
+
             </LinearLayout>
 
 
@@ -820,52 +900,6 @@
                     android:textAlignment="center"
                     android:textColor="@color/colorText"
                     android:textSize="28sp"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/Time"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/cardBottomMargin"
-                android:background="@color/colorCard"
-                android:clickable="true"
-                android:onClick="onClickTime"
-                android:orientation="vertical"
-                android:padding="5dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="TIME"
-                    android:textAlignment="viewStart"
-                    android:textColor="@color/colorText"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/TimeOnValue"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="-5dp"
-                    android:paddingBottom="5dp"
-                    android:text="..."
-                    android:textAlignment="center"
-                    android:textColor="@color/colorText"
-                    android:textSize="28sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/TimeRunValue"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="-5dp"
-                    android:paddingBottom="5dp"
-                    android:text="..."
-                    android:textAlignment="center"
-                    android:textColor="@color/colorText"
-                    android:textSize="20sp"
                     android:textStyle="bold" />
 
             </LinearLayout>
