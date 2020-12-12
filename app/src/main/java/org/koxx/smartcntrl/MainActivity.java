@@ -410,7 +410,7 @@ public class MainActivity extends AppCompatActivity {
                 showAlertDialogButtonClicked(CalibType.BatMaxVoltage);
                 return true;
             case R.id.calib_voltage_min:
-                showAlertDialogButtonClicked(CalibType.BatMaxVoltage);
+                showAlertDialogButtonClicked(CalibType.BatMinVoltage);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -1052,11 +1052,7 @@ public class MainActivity extends AppCompatActivity {
                                                 R.id.editText);
 
                                 float value = Float.valueOf(editText.getText().toString()) * 10;
-                                if (calibType == CalibType.BatMaxVoltage) {
-                                    BluetoothHandler.getInstance(getApplicationContext()).sendCalibOrder(CalibType.BatMaxVoltage, (int) value);
-                                } else if (calibType == CalibType.BatMinVoltage) {
-                                    BluetoothHandler.getInstance(getApplicationContext()).sendCalibOrder(CalibType.BatMinVoltage, (int) value);
-                                }
+                                    BluetoothHandler.getInstance(getApplicationContext()).sendCalibOrder(calibType, (int) value);
                             }
                         });
 
