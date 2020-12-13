@@ -93,6 +93,10 @@ public class ChronometerTimeRun implements Parcelable {
         son_baslama = System.currentTimeMillis();
     }
 
+    public long getDuration(){
+        return global;
+    }
+
     @Override
     public int describeContents() {
         return 0;

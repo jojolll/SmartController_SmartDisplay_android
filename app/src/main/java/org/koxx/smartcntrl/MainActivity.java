@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_SETTINGS_LIST = "EXTRA_SETTINGS_LIST";
     public static final String SETTINGS_KEY_RINGTONE = "SETTINGS_KEY_RINGTONE";
 
-    private TextView tvSpeed, tvVoltage, tvCurrent, tvSpeedMax, tvCurrentMax, tvPower, tvPowerMax, tvTemperature, tvTemperatureMax, tvBtLock, tvHumidity, tvSpeedLimiter, tvEco, tvAccel, tvAux, tvDistance, tvDistanceOdo, tvAuton;
+    private TextView tvSpeed, tvVoltage, tvCurrent, tvSpeedMax, tvSpeedMed, tvCurrentMax, tvPower, tvPowerMax, tvTemperature, tvTemperatureMax, tvBtLock, tvHumidity, tvSpeedLimiter, tvEco, tvAccel, tvAux, tvDistance, tvDistanceOdo, tvAuton;
     private ImageView ivBrakeBattery, ivBrakePressed;
 
     private final DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
@@ -129,6 +129,7 @@ public class MainActivity extends AppCompatActivity {
         tvPower = (TextView) findViewById(R.id.PowerValue);
         tvTemperature = (TextView) findViewById(R.id.TemperatureValue);
         tvSpeedMax = (TextView) findViewById(R.id.SpeedMaxValue);
+        tvSpeedMed = (TextView) findViewById(R.id.SpeedMedValue);
         tvCurrentMax = (TextView) findViewById(R.id.AmpereMaxValue);
         tvPowerMax = (TextView) findViewById(R.id.PowerMaxValue);
         tvTemperatureMax = (TextView) findViewById(R.id.TemperatureMaxValue);
@@ -689,7 +690,28 @@ public class MainActivity extends AppCompatActivity {
 
             //--------------------------------
             // speed
+
+            // current speed
             tvSpeed.setText(String.format(Locale.ENGLISH, "%d km/h", measurement.speedValue));
+
+            // max speed
+            if (measurement.speedValue >= mMaxSpeed) {
+                tvSpeedMax.setText(String.format(Locale.ENGLISH, "%d km/h", measurement.speedValue));
+                mMaxSpeed = measurement.speedValue;
+            }
+
+            // medium speed
+            if (chronoTimeRun.getDuration() > 0) {
+                int speedMed = (int) (measurement.distanceTrip / (chronoTimeRun.getDuration()  /1000.0 / 60 / 60));
+                tvSpeedMed.setText(String.format(Locale.ENGLISH, "%d km/h", speedMed));
+            }
+            else
+            {
+                tvSpeedMed.setText(String.format(Locale.ENGLISH, "0 km/h"));
+            }
+
+            //--------------------------------
+            // chrono
 
             // start / stop 'time run'
             if ((measurement.speedValue > 0) && (mLastSpeed < 5)) {
@@ -701,12 +723,6 @@ public class MainActivity extends AppCompatActivity {
             } else if ((measurement.speedValue == 0) && (mLastSpeed > 0)) {
                 chronoTimeRun.Stop();
             }
-
-            if (measurement.speedValue >= mMaxSpeed) {
-                tvSpeedMax.setText(String.format(Locale.ENGLISH, "%d km/h", measurement.speedValue));
-                mMaxSpeed = measurement.speedValue;
-            }
-
             mLastSpeed = measurement.speedValue;
 
             //--------------------------------
