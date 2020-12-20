@@ -292,7 +292,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (!isBatteryTooLoaded) {
                 if (EasySettings.retrieveSettingsSharedPrefs(this).getBoolean(Settings.Electric_brake_progressive_mode, false)) {
-                    if (i == value) {
+                    if ((i == value) && (isPressed)) {
                         ((TextView) findViewById(resID)).setTextColor(getResources().getColor(R.color.colorText));
                         ((TextView) findViewById(resID)).setVisibility(View.VISIBLE);
                     } else if (i < min) {
