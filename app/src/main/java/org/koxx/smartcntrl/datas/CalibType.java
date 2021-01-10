@@ -4,7 +4,8 @@ public enum CalibType {
     BrakeMaxPressure(0),
     BatMaxVoltage(1),
     BatMinVoltage(2),
-    CurrentZero(3);
+    CurrentZero(3),
+    BrakeMinPressure(4);
 
     private int numVal;
 

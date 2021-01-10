@@ -405,6 +405,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.reset_pref_peripheral:
                 BluetoothHandler.getInstance(this).resetBlePreferredPeripheral();
                 return true;
+            case R.id.calib_brake_min:
+                BluetoothHandler.getInstance(this).sendCalibOrder(CalibType.BrakeMinPressure, 0);
+                return true;
             case R.id.calib_brake_max:
                 BluetoothHandler.getInstance(this).sendCalibOrder(CalibType.BrakeMaxPressure, 0);
                 return true;

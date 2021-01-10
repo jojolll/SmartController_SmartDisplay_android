@@ -36,6 +36,11 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/calib_brake_min"
+        android:title="Calibrate brake min pressure"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/calib_brake_max"
         android:title="Calibrate brake max pressure"
         app:showAsAction="never" />
