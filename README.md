@@ -1,4 +1,4 @@
-Check this project : https://github.com/Koxx3/minimo
+Check this project : https://github.com/Koxx3/SmartController_SmartDisplay_ESP32
 
 ## Download APK
 
