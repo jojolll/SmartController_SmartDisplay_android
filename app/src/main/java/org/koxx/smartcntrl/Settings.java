@@ -80,10 +80,10 @@ public class Settings {
     public static final String Wifi_ssid = "Wifi network name (SSID)";
     public static final String Wifi_pwd = "Wifi password";
 
-    private static final String LIST_Bluetooth_lock_mode_1 = "None";
-    private static final String LIST_Bluetooth_lock_mode_2 = "Smartphone connected";
-    private static final String LIST_Bluetooth_lock_mode_3 = "Smartphone connected or beacon visible";
-    private static final String LIST_Bluetooth_lock_mode_4 = "Beacon visible";
+    public static final String LIST_Bluetooth_lock_mode_1 = "None";
+    public static final String LIST_Bluetooth_lock_mode_2 = "Smartphone connected";
+    public static final String LIST_Bluetooth_lock_mode_3 = "Smartphone connected or beacon visible";
+    public static final String LIST_Bluetooth_lock_mode_4 = "Beacon visible";
 
     private static final String LIST_Button_press_action_0 = "None";
     private static final String LIST_Button_press_action_1 = "Mode Z ON/OFF";

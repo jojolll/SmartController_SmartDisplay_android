@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
 
     ArrayList<SettingsObject> mySettingsList;
 
-    private MenuItem iconBtStatus;
+    private MenuItem iconBtStatus, iconBeaconVisible;
     private Menu menu;
     private AnimationSet animation;
     private TextView tvBeaconRssi;
@@ -372,6 +372,8 @@ public class MainActivity extends AppCompatActivity {
                     false,
                     mBatteryOverLoad);
 
+            setBeaconVisibilityStatus();
+
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -559,7 +561,11 @@ public class MainActivity extends AppCompatActivity {
             iconBtStatus.getActionView().clearAnimation();
         iconBtStatus.setActionView(getBtAnimation(mLastBtStatus));
 
-        tvBeaconVisible = menu.findItem(R.id.beacon_visible).getActionView();
+        iconBeaconVisible = menu.findItem(R.id.beacon_visible);
+
+        setBeaconVisibilityStatus();
+
+        tvBeaconVisible = iconBeaconVisible.getActionView();
         tvBeaconVisible.setVisibility(View.GONE);
         tvBeaconRssi = tvBeaconVisible.findViewById(R.id.beaconRssi);
 
@@ -589,6 +595,21 @@ public class MainActivity extends AppCompatActivity {
 
     private void initBluetoothHandler() {
         BluetoothHandler.getInstance(getApplicationContext());
+    }
+
+    private void setBeaconVisibilityStatus() {
+
+        if ((EasySettings.retrieveSettingsSharedPrefs(this).getString(Settings.Bluetooth_lock_mode, "").equals(Settings.LIST_Bluetooth_lock_mode_3)) || // beacon & smartphone
+                (EasySettings.retrieveSettingsSharedPrefs(this).getString(Settings.Bluetooth_lock_mode, "").equals(Settings.LIST_Bluetooth_lock_mode_4))) // beacon
+        {
+            if (mLastBtStatus == BluetoothHandler.CONNECT_STATUS_OK) {
+                iconBeaconVisible.setVisible(true);
+            } else {
+                iconBeaconVisible.setVisible(false);
+            }
+        } else {
+            iconBeaconVisible.setVisible(false);
+        }
     }
 
     @Override
@@ -663,12 +684,15 @@ public class MainActivity extends AppCompatActivity {
             iconBtStatus.getActionView().clearAnimation();
             iconBtStatus.setActionView(getBtAnimation(status));
 
-            tvBeaconVisible.setVisibility(View.VISIBLE);
+            if ((EasySettings.retrieveSettingsSharedPrefs(context).getString(Settings.Bluetooth_lock_mode, "").equals(Settings.LIST_Bluetooth_lock_mode_3)) || // beacon & smartphone
+                    (EasySettings.retrieveSettingsSharedPrefs(context).getString(Settings.Bluetooth_lock_mode, "").equals(Settings.LIST_Bluetooth_lock_mode_4))) // beacon
+            {
+                iconBeaconVisible = menu.findItem(R.id.beacon_visible);
+                iconBeaconVisible.setVisible(true);
+            }
 
             actionBarSetup(name);
 
-            //item.setEnabled(menusEnabled); // any text will be automatically disabled
-            //item.setIcon(resIcon);
         }
     };
     private final BroadcastReceiver modeDataReceiver = new BroadcastReceiver() {
@@ -705,11 +729,9 @@ public class MainActivity extends AppCompatActivity {
 
             // medium speed
             if (chronoTimeRun.getDuration() > 0) {
-                int speedMed = (int) (measurement.distanceTrip / (chronoTimeRun.getDuration()  /1000.0 / 60 / 60));
+                int speedMed = (int) (measurement.distanceTrip / (chronoTimeRun.getDuration() / 1000.0 / 60 / 60));
                 tvSpeedMed.setText(String.format(Locale.ENGLISH, "%d km/h", speedMed));
-            }
-            else
-            {
+            } else {
                 tvSpeedMed.setText(String.format(Locale.ENGLISH, "0 km/h"));
             }
 
@@ -855,7 +877,7 @@ public class MainActivity extends AppCompatActivity {
             if (bleLockStatus == 1) {
 
                 if (bleLockForcedValue == 1) {
-                    tvBtLock.setText(String.format(Locale.ENGLISH, "%s",     "ON Force"));
+                    tvBtLock.setText(String.format(Locale.ENGLISH, "%s", "ON Force"));
                 } else {
                     if (bleLockBeaconVisibleValue == 0) {
                         tvBtLock.setText(String.format(Locale.ENGLISH, "%s", "ON Beac"));
@@ -1078,7 +1100,7 @@ public class MainActivity extends AppCompatActivity {
                                                 R.id.editText);
 
                                 float value = Float.valueOf(editText.getText().toString()) * 10;
-                                    BluetoothHandler.getInstance(getApplicationContext()).sendCalibOrder(calibType, (int) value);
+                                BluetoothHandler.getInstance(getApplicationContext()).sendCalibOrder(calibType, (int) value);
                             }
                         });
 
