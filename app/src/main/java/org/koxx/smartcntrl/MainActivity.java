@@ -2,6 +2,7 @@ package org.koxx.smartcntrl;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
@@ -100,7 +101,6 @@ public class MainActivity extends AppCompatActivity {
     LinearLayout viewTime;
     ChronometerTimeOn chronoTimeOn;
     ChronometerTimeRun chronoTimeRun;
-
 
     ArrayList<SettingsObject> mySettingsList;
 
@@ -202,6 +202,8 @@ public class MainActivity extends AppCompatActivity {
                 chronoTimeOn.Reset();
                 chronoTimeOn.Start();
                 chronoTimeRun.Reset();
+                BluetoothHandler.getInstance(v.getContext()).sendDstReset();
+                tvDistance.setText("0.0 km");
                 tvTimeOn.setText(ChronometerTimeOn.formatToSeconds(chronoTimeOn.global));
                 tvTimeRun.setText(ChronometerTimeOn.formatToSeconds(chronoTimeRun.global));
             }
@@ -429,6 +431,7 @@ public class MainActivity extends AppCompatActivity {
 
         mMaxSpeed = 0;
         tvSpeedMax.setText(String.format(Locale.ENGLISH, "..."));
+        tvSpeedMed.setText(String.format(Locale.ENGLISH, "..."));
 
     }
 
@@ -463,6 +466,12 @@ public class MainActivity extends AppCompatActivity {
 
         BluetoothHandler.getInstance(this).sendDstReset();
         tvDistance.setText("0.0 km");
+
+        chronoTimeRun.Reset();
+        if (mLastSpeed > 0) {
+            chronoTimeRun.Stop();
+            chronoTimeRun.Start();
+        }
 
         Log.d(TAG, "onClickDistance reset");
     }
