@@ -888,7 +888,7 @@ public class MainActivity extends AppCompatActivity {
             mBleLockForce = bleLockForcedValue;
 
             //tvBeaconVisible.setVisibility(View.VISIBLE);
-            if (btLockBeaconRssiValue < 0)
+            if (btLockBeaconRssiValue >= -1)
                 tvBeaconRssi.setText("invis.");
             else
                 tvBeaconRssi.setText(Integer.toString(btLockBeaconRssiValue));

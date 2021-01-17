@@ -1,8 +1,5 @@
 package org.koxx.smartcntrl;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -13,6 +10,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.hotmail.or_dvir.easysettings_dialogs_kx.events.EditTextSettingsNeutralButtonClickedEvent;
+import com.hotmail.or_dvir.easysettings_dialogs_kx.events.EditTextSettingsValueChangedEvent;
+import com.hotmail.or_dvir.easysettings_dialogs_kx.events.ListSettingsNeutralButtonClickedEvent;
+import com.hotmail.or_dvir.easysettings_dialogs_kx.events.ListSettingsValueChangedEvent;
 import com.hotmail.or_dvir.easysettings_kx.events.BasicSettingsClickEvent;
 import com.hotmail.or_dvir.easysettings_kx.events.CheckBoxSettingsClickEvent;
 import com.hotmail.or_dvir.easysettings_kx.events.SeekBarSettingsProgressChangedEvent;
@@ -20,10 +24,6 @@ import com.hotmail.or_dvir.easysettings_kx.events.SeekBarSettingsValueChangedEve
 import com.hotmail.or_dvir.easysettings_kx.events.SwitchSettingsClickEvent;
 import com.hotmail.or_dvir.easysettings_kx.pojos.EasySettings;
 import com.hotmail.or_dvir.easysettings_kx.pojos.SettingsObject;
-import com.hotmail.or_dvir.easysettings_dialogs_kx.events.EditTextSettingsNeutralButtonClickedEvent;
-import com.hotmail.or_dvir.easysettings_dialogs_kx.events.EditTextSettingsValueChangedEvent;
-import com.hotmail.or_dvir.easysettings_dialogs_kx.events.ListSettingsNeutralButtonClickedEvent;
-import com.hotmail.or_dvir.easysettings_dialogs_kx.events.ListSettingsValueChangedEvent;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -215,59 +215,63 @@ public class SettingsActivity extends AppCompatActivity {
 
         else
         {
-            makeToast(event.getClickedSettingsObj().getTitle());
+//            makeToast(event.getClickedSettingsObj().getTitle());
         }
     }
 
     @Subscribe
     public void onCheckBoxSettingsClicked(CheckBoxSettingsClickEvent event)
     {
+/*
         boolean prefValue = EasySettings.retrieveSettingsSharedPrefs(this)
                 .getBoolean(event.getClickedSettingsObj().getKey(),
                         event.getClickedSettingsObj().getDefaultValue());
 
         makeToast(prefValue + "");
+ */
     }
 
     @Subscribe
     public void onSwitchSettingsClicked(SwitchSettingsClickEvent event)
     {
+        /*
         boolean prefValue = EasySettings.retrieveSettingsSharedPrefs(this)
                 .getBoolean(event.getClickedSettingsObj().getKey(),
                         event.getClickedSettingsObj().getDefaultValue());
 
         makeToast(prefValue + "");
+        */
     }
 
     @Subscribe
     public void onListDialogSettingsNeutralButtonClicked(ListSettingsNeutralButtonClickedEvent event)
     {
-        makeToast("list dialog neutral button click");
+        //makeToast("list dialog neutral button click");
     }
 
     @Subscribe
     public void onEditTextDialogSettingsNeutralButtonClicked(EditTextSettingsNeutralButtonClickedEvent event)
     {
-        makeToast("edit text neutral button click");
+       // makeToast("edit text neutral button click");
     }
 
     @Subscribe
     public void onSeekBarSettingsValueChanged(SeekBarSettingsValueChangedEvent event)
     {
-        makeToast("value set to " + event.getSeekBarObj().getValue());
+        //makeToast("value set to " + event.getSeekBarObj().getValue());
     }
 
     @Subscribe
     public void onEditTextSettingsValueChanged(EditTextSettingsValueChangedEvent event)
     {
-        makeToast("value set to " + event.getEditTextSettingsObj().getValue());
+       // makeToast("value set to " + event.getEditTextSettingsObj().getValue());
     }
 
     @Subscribe
     public void onListSettingsValueChanged(ListSettingsValueChangedEvent event)
     {
         //todo remember: event.getNewValueAsSaved() returns the value with the delimiter
-        makeToast("value set to " + event.getNewValueAsSaved());
+       // makeToast("value set to " + event.getNewValueAsSaved());
 
         StringBuilder temp = new StringBuilder();
 

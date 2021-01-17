@@ -8,17 +8,17 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatEditText;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.internal.MDButton;
+import com.hotmail.or_dvir.easysettings_dialogs.R;
 import com.hotmail.or_dvir.easysettings_dialogs_kx.events.EditTextSettingsValueChangedEvent;
 import com.hotmail.or_dvir.easysettings_kx.enums.ESettingsTypes;
 import com.hotmail.or_dvir.easysettings_kx.pojos.SettingsObject;
-import com.hotmail.or_dvir.easysettings_dialogs.R;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -29,17 +29,20 @@ import java.io.Serializable;
  * see the methods in {@link EditTextSettingsObject.Builder} for available options
  */
 public class EditTextSettingsObject extends DialogSettingsObject<EditTextSettingsObject.Builder, String>
-        implements Serializable {
+        implements Serializable
+{
     private String hint;
     private int minChars;
     private int maxChars;
     private String prefillText;
     private int inputType;
     private boolean useValueAsPrefillText;
-    private MaterialDialog dialog;
+    //private MaterialDialog dialog;
     private String regexp = ".*";
 
-    private EditTextSettingsObject(Builder builder) {
+
+    private EditTextSettingsObject(Builder builder)
+    {
         super(builder);
         this.hint = builder.hint;
         this.prefillText = builder.prefillText;
@@ -54,21 +57,26 @@ public class EditTextSettingsObject extends DialogSettingsObject<EditTextSetting
     }
 
     /**
+     *
      * @return the hint of the {@link android.widget.EditText}
      */
-    public String getHint() {
+    public String getHint()
+    {
         return hint;
     }
 
     /**
+     *
      * @return the prefill text of the {@link android.widget.EditText}
      */
-    public String getPrefillText() {
+    public String getPrefillText()
+    {
         return prefillText;
     }
 
     @Override
-    public int getLayout() {
+    public int getLayout()
+    {
         //todo in this case i am using the same layout as a basic settings object
         //todo which simply contains a title text view, and a summary text view
         //todo you can put your own custom layout here
@@ -76,7 +84,8 @@ public class EditTextSettingsObject extends DialogSettingsObject<EditTextSetting
     }
 
     @Override
-    public String checkDataValidity(Context context, SharedPreferences prefs) {
+    public String checkDataValidity(Context context, SharedPreferences prefs)
+    {
         //in this case, the value saved could be any text...
         //so no validity check is needed.
         //we simply return the previously saved value
@@ -84,13 +93,15 @@ public class EditTextSettingsObject extends DialogSettingsObject<EditTextSetting
     }
 
     @Override
-    public String getValueHumanReadable() {
+    public String getValueHumanReadable()
+    {
         //in this case, the value saved is itself a string
         return getValue();
     }
 
     @Override
-    public void initializeViews(View root) {
+    public void initializeViews(View root)
+    {
         //todo because we are using the R.layout.layout basic_settings_object,
         //todo we need to call the super method here to initialize the title and summary text views.
         //todo if you are making a completely custom layout here, no need to call the super method
@@ -101,9 +112,11 @@ public class EditTextSettingsObject extends DialogSettingsObject<EditTextSetting
         //todo when building this object
 //        tvSummary.setText(previouslySavedValue);
 
-        root.setOnClickListener(new View.OnClickListener() {
+        root.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view)
+            {
                 showDialog(view);
 
                 //todo if you'd like, you can also send a custom event here to notify
@@ -147,16 +160,14 @@ public class EditTextSettingsObject extends DialogSettingsObject<EditTextSetting
             localPrefillText = getPrefillText();
         }
 
-        /*InputType.TYPE_CLASS_TEXT*/
-        /*TYPE_NUMBER_FLAG_DECIMAL*/
-        dialog = builder.inputType(inputType)
+        MaterialDialog dialog = builder.inputType(inputType)
                 .input(localHint, localPrefillText, false, new MaterialDialog.InputCallback() {
                     @Override
-                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                    public void onInput(@NonNull MaterialDialog localDialog, CharSequence input) {
                         //todo don't forget to save the new value!
                         String newValue = input + "";
 
-                        setValueAndSaveSetting(dialog.getContext(), newValue);
+                        setValueAndSaveSetting(localDialog.getContext(), newValue);
                         String test = getValue();
                         //NOTE:
                         //this if statement MUST come AFTER setting the new value
@@ -169,20 +180,17 @@ public class EditTextSettingsObject extends DialogSettingsObject<EditTextSetting
                     }
                 }).build();
 
+        final MDButton buttonOk = dialog.getActionButton(DialogAction.POSITIVE);
+
         AppCompatEditText text = dialog.getView().findViewById(android.R.id.input);
 
-        // disable the ok button if not enought or too much characters
-        if ((minChars >= 0) && (text.length() < minChars) || (text.length() > maxChars))
-            dialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
+        // disable the ok button if not enought or too much characterstext
+        dialog.getActionButton(DialogAction.POSITIVE).setEnabled(isTextValid(text.toString()));
 
         text.addTextChangedListener(new TextWatcher() {
 
             public void onTextChanged(CharSequence s, int start, int before,
                                       int count) {
-                if (!s.equals("")) {
-                    //do your work here
-                    Log.d("sample", "onTextChanged : " + s);
-                }
             }
 
 
@@ -193,24 +201,16 @@ public class EditTextSettingsObject extends DialogSettingsObject<EditTextSetting
             public void afterTextChanged(Editable s) {
                 Log.d("sample", "afterTextChanged: " + s);
 
-                boolean isValid = true;
-                if ((minChars >= 0) && (s.length() < minChars) || (s.length() > maxChars))
-                    isValid = false;
-
-                if (!s.toString().matches(regexp)) {
-                    isValid = false;
-                }
-
-                dialog.getActionButton(DialogAction.POSITIVE).setEnabled(isValid);
+                buttonOk.setEnabled(isTextValid(s.toString()));
 
             }
         });
 
-
+/*
         dialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(view.getContext(), "button 1 clicked", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(view.getContext(), "button 1 clicked", Toast.LENGTH_SHORT).show();
                 dialog.onClick(view);
 
                 //todo if you'd like, you can also send a custom event here to notify
@@ -220,11 +220,23 @@ public class EditTextSettingsObject extends DialogSettingsObject<EditTextSetting
                 //todo you need to make your own custom event here
             }
         });
+*/
 
         //todo if needed, add more button listeners here
         dialog.show();
     }
 
+    boolean isTextValid(String s) {
+        boolean isValid = true;
+        if ((minChars >= 0) && (s.length() < minChars) || (s.length() > maxChars))
+            isValid = false;
+
+        if (!s.toString().matches(regexp)) {
+            isValid = false;
+        }
+        return isValid;
+    }
+    
     /////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////
@@ -235,7 +247,8 @@ public class EditTextSettingsObject extends DialogSettingsObject<EditTextSetting
     /////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////
 
-    public static class Builder extends DialogSettingsObject.Builder<Builder, String> {
+    public static class Builder extends DialogSettingsObject.Builder<Builder, String>
+    {
         private String hint = "";
         private int minChars = -1;
         private int maxChars = 127;
@@ -245,16 +258,18 @@ public class EditTextSettingsObject extends DialogSettingsObject<EditTextSetting
         private String regexp = ".*";
 
         /**
-         * @param key             the key for this {@link EditTextSettingsObject}
-         *                        to be saved in the apps' {@link SharedPreferences}
-         * @param title           the title for this {@link EditTextSettingsObject}
-         * @param defaultValue    the default value for this {@link EditTextSettingsObject}
+         *
+         * @param key the key for this {@link EditTextSettingsObject}
+         *            to be saved in the apps' {@link SharedPreferences}
+         * @param title the title for this {@link EditTextSettingsObject}
+         * @param defaultValue the default value for this {@link EditTextSettingsObject}
          * @param positiveBtnText the text to display for the positive button of the dialog
          */
         public Builder(String key,
                        String title,
                        String defaultValue,
-                       String positiveBtnText) {
+                       String positiveBtnText)
+        {
             //todo don't forget to pass your own id's here!
             super(key,
                     title,
@@ -267,21 +282,45 @@ public class EditTextSettingsObject extends DialogSettingsObject<EditTextSetting
             setPositiveBtnText(positiveBtnText);
         }
 
-        public String getHint() {
+        public String getHint()
+        {
             return hint;
         }
 
-        public String getPrefillText() {
+        public String getPrefillText()
+        {
             return prefillText;
         }
 
         /**
          * sets the hint to be used in the dialogs' {@link android.widget.EditText}
-         *
          * @param hint
          */
-        public Builder setHint(String hint) {
+        public Builder setHint(String hint)
+        {
             this.hint = hint;
+            return this;
+        }
+
+        /**
+         * sets the prefill text to be used in the dialogs' {@link android.widget.EditText}
+         * @param prefillText
+         */
+        public Builder setPrefillText(String prefillText)
+        {
+            this.prefillText = prefillText;
+            return this;
+        }
+
+        /**
+         * if this method is called, the value of this {@link EditTextSettingsObject}
+         * will be used as the pre-fill text of the {@link android.widget.EditText} inside the dialog.
+         * this method overrides the value set in {@link SettingsObject.Builder#setUseValueAsSummary()}
+         * @return
+         */
+        public Builder setUseValueAsPrefillText()
+        {
+            this.useValueAsPrefillText = true;
             return this;
         }
 
@@ -305,16 +344,6 @@ public class EditTextSettingsObject extends DialogSettingsObject<EditTextSetting
             return this;
         }
 
-        /**
-         * sets the prefill text to be used in the dialogs' {@link android.widget.EditText}
-         *
-         * @param prefillText
-         */
-        public Builder setPrefillText(String prefillText) {
-            this.prefillText = prefillText;
-            return this;
-        }
-
 
         /**
          * sets the input type
@@ -334,22 +363,12 @@ public class EditTextSettingsObject extends DialogSettingsObject<EditTextSetting
         }
 
 
-        /**
-         * if this method is called, the value of this {@link EditTextSettingsObject}
-         * will be used as the pre-fill text of the {@link android.widget.EditText} inside the dialog.
-         * this method overrides the value set in {@link SettingsObject.Builder#setUseValueAsSummary()}
-         *
-         * @return
-         */
-        public Builder setUseValueAsPrefillText() {
-            this.useValueAsPrefillText = true;
-            return this;
-        }
-
 
         @Override
-        public EditTextSettingsObject build() {
+        public EditTextSettingsObject build()
+        {
             return new EditTextSettingsObject(this);
         }
     }
+
 }
