@@ -15,8 +15,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -25,7 +23,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -106,8 +103,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<SettingsObject> mySettingsList;
 
     private MenuItem iconBtStatus, iconBeaconVisible;
-    private Menu menu;
-    private AnimationSet animation;
+    private Menu optionMenu;
     private TextView tvBeaconRssi;
     private View tvBeaconVisible;
 
@@ -115,6 +111,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Plant a tree
+        Timber.plant(new Timber.DebugTree());
 
         ApplicationLifecycleHandler handler = new ApplicationLifecycleHandler(getApplicationContext());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -377,7 +375,7 @@ public class MainActivity extends AppCompatActivity {
                     false,
                     mBatteryOverLoad);
 
-            setBeaconVisibilityStatus();
+            setBeaconIconStatus();
 
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -566,19 +564,12 @@ public class MainActivity extends AppCompatActivity {
 
     public boolean onPrepareOptionsMenu(Menu menu) {
 
-        this.menu = menu;
+        this.optionMenu = menu;
 
-        iconBtStatus = menu.findItem(R.id.bt_connect);
-        if (iconBtStatus.getActionView() != null)
-            iconBtStatus.getActionView().clearAnimation();
-        iconBtStatus.setActionView(getBtAnimation(mLastBtStatus));
+        setBleIconStatus();
+        setBeaconIconStatus();
 
-        iconBeaconVisible = menu.findItem(R.id.beacon_visible);
-
-        setBeaconVisibilityStatus();
-
-        tvBeaconVisible = iconBeaconVisible.getActionView();
-        tvBeaconVisible.setVisibility(View.GONE);
+        tvBeaconVisible = menu.findItem(R.id.beacon_visible).getActionView();
         tvBeaconRssi = tvBeaconVisible.findViewById(R.id.beaconRssi);
 
         return super.onPrepareOptionsMenu(menu);
@@ -609,19 +600,35 @@ public class MainActivity extends AppCompatActivity {
         BluetoothHandler.getInstance(getApplicationContext());
     }
 
-    private void setBeaconVisibilityStatus() {
+    private void setBleIconStatus() {
 
+        iconBtStatus = optionMenu.findItem(R.id.bt_connect);
+        if (iconBtStatus.getActionView() != null) {
+            iconBtStatus.getActionView().clearAnimation();
+        }
+        View anim = getBtAnimation(iconBtStatus.getActionView(), mLastBtStatus);
+        iconBtStatus.setActionView(anim);
+
+    }
+
+    private void setBeaconIconStatus() {
+
+        iconBeaconVisible = optionMenu.findItem(R.id.beacon_visible);
         if ((EasySettings.retrieveSettingsSharedPrefs(this).getString(SmartElecSettings.Bluetooth_lock_mode, "").equals(SmartElecSettings.LIST_Bluetooth_lock_mode_3)) || // beacon & smartphone
                 (EasySettings.retrieveSettingsSharedPrefs(this).getString(SmartElecSettings.Bluetooth_lock_mode, "").equals(SmartElecSettings.LIST_Bluetooth_lock_mode_4))) // beacon
         {
             if (mLastBtStatus == BluetoothHandler.CONNECT_STATUS_OK) {
-                iconBeaconVisible.setVisible(true);
+//                iconBeaconVisible.setVisible(true);
+                iconBeaconVisible.getActionView().setAlpha(1);
             } else {
-                iconBeaconVisible.setVisible(false);
+//                iconBeaconVisible.setVisible(false);
+                iconBeaconVisible.getActionView().setAlpha(0);
             }
         } else {
-            iconBeaconVisible.setVisible(false);
+//            iconBeaconVisible.setVisible(false);
+            iconBeaconVisible.getActionView().setAlpha(0);
         }
+
     }
 
     @Override
@@ -652,13 +659,20 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    ImageView getBtAnimation(int value) {
+    private View getBtAnimation(View iv, int value) {
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        ImageView iv = null;
+
+        Timber.i("getBtAnimation : %d", value);
 
         if (value == BluetoothHandler.CONNECT_STATUS_OK) {
             iv = (ImageView) inflater.inflate(R.layout.icon_bt_blue_only, null);
+            AlphaAnimation alphaAnimation = new AlphaAnimation(0.8f, 1.0f);
+            alphaAnimation.setDuration(1000);
+            alphaAnimation.setRepeatCount(Animation.INFINITE);
+            alphaAnimation.setRepeatMode(Animation.REVERSE);
+            iv.clearAnimation();
+            iv.startAnimation(alphaAnimation);
 
         } else if (value == BluetoothHandler.CONNECT_STATUS_FAILED) {
             iv = (ImageView) inflater.inflate(R.layout.icon_bt_red_only, null);
@@ -692,26 +706,14 @@ public class MainActivity extends AppCompatActivity {
 
             Timber.i("==========> new BT status : %d", status);
 
-            iconBtStatus = menu.findItem(R.id.bt_connect);
-            iconBtStatus.getActionView().clearAnimation();
-            iconBtStatus.setActionView(getBtAnimation(status));
-
-            if ((EasySettings.retrieveSettingsSharedPrefs(context).getString(SmartElecSettings.Bluetooth_lock_mode, "").equals(SmartElecSettings.LIST_Bluetooth_lock_mode_3)) || // beacon & smartphone
-                    (EasySettings.retrieveSettingsSharedPrefs(context).getString(SmartElecSettings.Bluetooth_lock_mode, "").equals(SmartElecSettings.LIST_Bluetooth_lock_mode_4))) // beacon
-            {
-                if (mLastBtStatus == BluetoothHandler.CONNECT_STATUS_OK) {
-                    iconBeaconVisible.setVisible(true);
-                } else {
-                    iconBeaconVisible.setVisible(false);
-                }
-            } else {
-                iconBeaconVisible.setVisible(false);
-            }
+            setBleIconStatus();
+            setBeaconIconStatus();
 
             actionBarSetup(name);
 
         }
     };
+
     private final BroadcastReceiver modeDataReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -873,7 +875,6 @@ public class MainActivity extends AppCompatActivity {
     private final BroadcastReceiver btLockDataReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Timber.i("btLockDataReceiver");
             BluetoothPeripheral peripheral = getPeripheral(intent.getStringExtra(BluetoothHandler.MEASUREMENT_EXTRA_PERIPHERAL));
             BtlockMeasurement measurement = (BtlockMeasurement) intent.getSerializableExtra(BluetoothHandler.MEASUREMENT_BTLOCK_EXTRA);
             if (measurement == null) return;
@@ -887,7 +888,7 @@ public class MainActivity extends AppCompatActivity {
 
             mBleLockForce = bleLockForcedValue;
 
-            tvBeaconVisible.setVisibility(View.VISIBLE);
+            //tvBeaconVisible.setVisibility(View.VISIBLE);
             tvBeaconRssi.setText(Integer.toString(btLockBeaconRssiValue));
 
             int btLockMode = SmartElecSettings.listToValueBtLockMode(context, EasySettings.retrieveSettingsSharedPrefs(context).getString(SmartElecSettings.Bluetooth_lock_mode, ""));
@@ -1035,7 +1036,7 @@ public class MainActivity extends AppCompatActivity {
         boolean isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         boolean isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
-        Timber.i("Location service status : isGpsEnabled = %d / isNetworkEnabled = %d", isGpsEnabled ? 0:1, isNetworkEnabled ? 0:1);
+        Timber.i("Location service status : isGpsEnabled = %d / isNetworkEnabled = %d", isGpsEnabled ? 0 : 1, isNetworkEnabled ? 0 : 1);
 
         return isGpsEnabled || isNetworkEnabled;
     }

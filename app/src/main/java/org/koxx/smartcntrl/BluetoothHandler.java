@@ -408,7 +408,7 @@ class BluetoothHandler {
         this.context = context;
 
         // Plant a tree
-        //Timber.plant(new Timber.DebugTree());
+        Timber.plant(new Timber.DebugTree());
 
         // Create BluetoothCentral
         central = new BluetoothCentral(context, bluetoothCentralCallback, new Handler());
