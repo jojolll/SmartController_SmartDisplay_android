@@ -37,6 +37,7 @@ public class EditTextSettingsObject extends DialogSettingsObject<EditTextSetting
     private int inputType;
     private boolean useValueAsPrefillText;
     private MaterialDialog dialog;
+    private String regexp = ".*";
 
     private EditTextSettingsObject(Builder builder) {
         super(builder);
@@ -46,6 +47,7 @@ public class EditTextSettingsObject extends DialogSettingsObject<EditTextSetting
         this.minChars = builder.minChars;
         this.maxChars = builder.maxChars;
         this.inputType = builder.inputType;
+        this.regexp = builder.regexp;
 
         //todo if you don't want to use the builder pattern,
         //todo you can also use a regular constructor
@@ -170,8 +172,8 @@ public class EditTextSettingsObject extends DialogSettingsObject<EditTextSetting
         AppCompatEditText text = dialog.getView().findViewById(android.R.id.input);
 
         // disable the ok button if not enought or too much characters
-		if ((minChars >= 0) && (text.length() < minChars) || (text.length() > maxChars))
-			dialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
+        if ((minChars >= 0) && (text.length() < minChars) || (text.length() > maxChars))
+            dialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
 
         text.addTextChangedListener(new TextWatcher() {
 
@@ -190,10 +192,17 @@ public class EditTextSettingsObject extends DialogSettingsObject<EditTextSetting
 
             public void afterTextChanged(Editable s) {
                 Log.d("sample", "afterTextChanged: " + s);
+
+                boolean isValid = true;
                 if ((minChars >= 0) && (s.length() < minChars) || (s.length() > maxChars))
-                    dialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
-                else
-                    dialog.getActionButton(DialogAction.POSITIVE).setEnabled(true);
+                    isValid = false;
+
+                if (!s.toString().matches(regexp)) {
+                    isValid = false;
+                }
+
+                dialog.getActionButton(DialogAction.POSITIVE).setEnabled(isValid);
+
             }
         });
 
@@ -233,6 +242,7 @@ public class EditTextSettingsObject extends DialogSettingsObject<EditTextSetting
         private String prefillText = "";
         private int inputType = InputType.TYPE_CLASS_TEXT;
         private boolean useValueAsPrefillText = false;
+        private String regexp = ".*";
 
         /**
          * @param key             the key for this {@link EditTextSettingsObject}
@@ -311,6 +321,15 @@ public class EditTextSettingsObject extends DialogSettingsObject<EditTextSetting
          */
         public Builder setInputType(int value) {
             this.inputType = value;
+            return this;
+        }
+
+
+        /**
+         * sets the input type
+         */
+        public Builder setRegex(String value) {
+            this.regexp = value;
             return this;
         }
 

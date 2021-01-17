@@ -888,7 +888,10 @@ public class MainActivity extends AppCompatActivity {
             mBleLockForce = bleLockForcedValue;
 
             //tvBeaconVisible.setVisibility(View.VISIBLE);
-            tvBeaconRssi.setText(Integer.toString(btLockBeaconRssiValue));
+            if (btLockBeaconRssiValue < 0)
+                tvBeaconRssi.setText("invis.");
+            else
+                tvBeaconRssi.setText(Integer.toString(btLockBeaconRssiValue));
 
             int btLockMode = SmartElecSettings.listToValueBtLockMode(context, EasySettings.retrieveSettingsSharedPrefs(context).getString(SmartElecSettings.Bluetooth_lock_mode, ""));
 
