@@ -2,7 +2,6 @@ package org.koxx.smartcntrl;
 
 import android.Manifest;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
@@ -16,6 +15,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -116,7 +117,9 @@ public class MainActivity extends AppCompatActivity {
 
 
         ApplicationLifecycleHandler handler = new ApplicationLifecycleHandler(getApplicationContext());
-        registerActivityLifecycleCallbacks(handler);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            registerActivityLifecycleCallbacks(handler);
+        }
         registerComponentCallbacks(handler);
 
         setContentView(R.layout.activity_main);
@@ -164,16 +167,16 @@ public class MainActivity extends AppCompatActivity {
 
         //todo note that there might be some more methods available for the below builders.
         //todo please check docs/original code for all available options
-        mySettingsList = Settings.initialize();
+        mySettingsList = SmartElecSettings.initialize();
 
         EasySettings.initializeSettings(this, mySettingsList);
 
         // set indicators
         setModeIndicator(1);
         setBatteryIndicator(40, 0, 60);
-        setBrakeIndicator(EasySettings.retrieveSettingsSharedPrefs(this).getInt(Settings.Electric_brake_min_value, 0),
+        setBrakeIndicator(EasySettings.retrieveSettingsSharedPrefs(this).getInt(SmartElecSettings.Electric_brake_min_value, 0),
                 -1,
-                EasySettings.retrieveSettingsSharedPrefs(this).getInt(Settings.Electric_brake_max_value, 0),
+                EasySettings.retrieveSettingsSharedPrefs(this).getInt(SmartElecSettings.Electric_brake_max_value, 0),
                 false,
                 mBatteryOverLoad);
 
@@ -293,7 +296,7 @@ public class MainActivity extends AppCompatActivity {
             int resID = getResources().getIdentifier(viewId, "id", getPackageName());
 
             if (!isBatteryTooLoaded) {
-                if (EasySettings.retrieveSettingsSharedPrefs(this).getBoolean(Settings.Electric_brake_progressive_mode, false)) {
+                if (EasySettings.retrieveSettingsSharedPrefs(this).getBoolean(SmartElecSettings.Electric_brake_progressive_mode, false)) {
                     if ((i == value) && (isPressed)) {
                         ((TextView) findViewById(resID)).setTextColor(getResources().getColor(R.color.colorText));
                         ((TextView) findViewById(resID)).setVisibility(View.VISIBLE);
@@ -368,9 +371,9 @@ public class MainActivity extends AppCompatActivity {
 
             mySettingsList = (ArrayList<SettingsObject>) data.getSerializableExtra(SettingsActivity.INTENT_EXTRA_RESULT);
 
-            setBrakeIndicator(EasySettings.retrieveSettingsSharedPrefs(this).getInt(Settings.Electric_brake_min_value, 0),
+            setBrakeIndicator(EasySettings.retrieveSettingsSharedPrefs(this).getInt(SmartElecSettings.Electric_brake_min_value, 0),
                     -1,
-                    EasySettings.retrieveSettingsSharedPrefs(this).getInt(Settings.Electric_brake_max_value, 0),
+                    EasySettings.retrieveSettingsSharedPrefs(this).getInt(SmartElecSettings.Electric_brake_max_value, 0),
                     false,
                     mBatteryOverLoad);
 
@@ -549,7 +552,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onClickBrake");
 
 
-        if (!EasySettings.retrieveSettingsSharedPrefs(this).getBoolean(Settings.Electric_brake_progressive_mode, false)) {
+        if (!EasySettings.retrieveSettingsSharedPrefs(this).getBoolean(SmartElecSettings.Electric_brake_progressive_mode, false)) {
             mBrakeStatus++;
             if (mBrakeStatus > 5)
                 mBrakeStatus = 0;
@@ -608,8 +611,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void setBeaconVisibilityStatus() {
 
-        if ((EasySettings.retrieveSettingsSharedPrefs(this).getString(Settings.Bluetooth_lock_mode, "").equals(Settings.LIST_Bluetooth_lock_mode_3)) || // beacon & smartphone
-                (EasySettings.retrieveSettingsSharedPrefs(this).getString(Settings.Bluetooth_lock_mode, "").equals(Settings.LIST_Bluetooth_lock_mode_4))) // beacon
+        if ((EasySettings.retrieveSettingsSharedPrefs(this).getString(SmartElecSettings.Bluetooth_lock_mode, "").equals(SmartElecSettings.LIST_Bluetooth_lock_mode_3)) || // beacon & smartphone
+                (EasySettings.retrieveSettingsSharedPrefs(this).getString(SmartElecSettings.Bluetooth_lock_mode, "").equals(SmartElecSettings.LIST_Bluetooth_lock_mode_4))) // beacon
         {
             if (mLastBtStatus == BluetoothHandler.CONNECT_STATUS_OK) {
                 iconBeaconVisible.setVisible(true);
@@ -693,8 +696,8 @@ public class MainActivity extends AppCompatActivity {
             iconBtStatus.getActionView().clearAnimation();
             iconBtStatus.setActionView(getBtAnimation(status));
 
-            if ((EasySettings.retrieveSettingsSharedPrefs(context).getString(Settings.Bluetooth_lock_mode, "").equals(Settings.LIST_Bluetooth_lock_mode_3)) || // beacon & smartphone
-                    (EasySettings.retrieveSettingsSharedPrefs(context).getString(Settings.Bluetooth_lock_mode, "").equals(Settings.LIST_Bluetooth_lock_mode_4))) // beacon
+            if ((EasySettings.retrieveSettingsSharedPrefs(context).getString(SmartElecSettings.Bluetooth_lock_mode, "").equals(SmartElecSettings.LIST_Bluetooth_lock_mode_3)) || // beacon & smartphone
+                    (EasySettings.retrieveSettingsSharedPrefs(context).getString(SmartElecSettings.Bluetooth_lock_mode, "").equals(SmartElecSettings.LIST_Bluetooth_lock_mode_4))) // beacon
             {
                 if (mLastBtStatus == BluetoothHandler.CONNECT_STATUS_OK) {
                     iconBeaconVisible.setVisible(true);
@@ -780,8 +783,8 @@ public class MainActivity extends AppCompatActivity {
 
             float batMin = 0, batMax = 0;
             try {
-                batMax = Float.parseFloat(EasySettings.retrieveSettingsSharedPrefs(context).getString(Settings.Battery_max_voltage, "0"));
-                batMin = Float.parseFloat(EasySettings.retrieveSettingsSharedPrefs(context).getString(Settings.Battery_min_voltage, "0"));
+                batMax = Float.parseFloat(EasySettings.retrieveSettingsSharedPrefs(context).getString(SmartElecSettings.Battery_max_voltage, "0"));
+                batMin = Float.parseFloat(EasySettings.retrieveSettingsSharedPrefs(context).getString(SmartElecSettings.Battery_min_voltage, "0"));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -800,19 +803,19 @@ public class MainActivity extends AppCompatActivity {
 
 
             // check is battery is overloaded
-            boolean overloadCheck = EasySettings.retrieveSettingsSharedPrefs(context).getBoolean(Settings.Electric_brake_disabled_on_high_voltage, true);
-            float batMaxVoltage = (Float.parseFloat(EasySettings.retrieveSettingsSharedPrefs(context).getString(Settings.Battery_max_voltage, "").replace(",", ".")));
-            float batMinVoltage = (Float.parseFloat(EasySettings.retrieveSettingsSharedPrefs(context).getString(Settings.Battery_min_voltage, "").replace(",", ".")));
-            int limitPercent = EasySettings.retrieveSettingsSharedPrefs(context).getInt(Settings.Electric_brake_disabled_percent_limit, 0);
+            boolean overloadCheck = EasySettings.retrieveSettingsSharedPrefs(context).getBoolean(SmartElecSettings.Electric_brake_disabled_on_high_voltage, true);
+            float batMaxVoltage = (Float.parseFloat(EasySettings.retrieveSettingsSharedPrefs(context).getString(SmartElecSettings.Battery_max_voltage, "").replace(",", ".")));
+            float batMinVoltage = (Float.parseFloat(EasySettings.retrieveSettingsSharedPrefs(context).getString(SmartElecSettings.Battery_min_voltage, "").replace(",", ".")));
+            int limitPercent = EasySettings.retrieveSettingsSharedPrefs(context).getInt(SmartElecSettings.Electric_brake_disabled_percent_limit, 0);
             if ((measurement.voltage > batMinVoltage + (limitPercent * (batMaxVoltage - batMinVoltage) / 100.0)) && (overloadCheck))
                 mBatteryOverLoad = true;
             else
                 mBatteryOverLoad = false;
 
             // update brake indicator
-            setBrakeIndicator(EasySettings.retrieveSettingsSharedPrefs(context).getInt(Settings.Electric_brake_min_value, 0),
+            setBrakeIndicator(EasySettings.retrieveSettingsSharedPrefs(context).getInt(SmartElecSettings.Electric_brake_min_value, 0),
                     mBrakeStatus,
-                    EasySettings.retrieveSettingsSharedPrefs(context).getInt(Settings.Electric_brake_max_value, 0),
+                    EasySettings.retrieveSettingsSharedPrefs(context).getInt(SmartElecSettings.Electric_brake_max_value, 0),
                     mBrakePressed,
                     mBatteryOverLoad);
 
@@ -857,9 +860,9 @@ public class MainActivity extends AppCompatActivity {
             mBrakeStatus = measurement.brakeValue;
             mBrakePressed = measurement.brakePressed;
 
-            setBrakeIndicator(EasySettings.retrieveSettingsSharedPrefs(context).getInt(Settings.Electric_brake_min_value, 0),
+            setBrakeIndicator(EasySettings.retrieveSettingsSharedPrefs(context).getInt(SmartElecSettings.Electric_brake_min_value, 0),
                     mBrakeStatus,
-                    EasySettings.retrieveSettingsSharedPrefs(context).getInt(Settings.Electric_brake_max_value, 0),
+                    EasySettings.retrieveSettingsSharedPrefs(context).getInt(SmartElecSettings.Electric_brake_max_value, 0),
                     mBrakePressed,
                     mBatteryOverLoad);
 
@@ -887,7 +890,7 @@ public class MainActivity extends AppCompatActivity {
             tvBeaconVisible.setVisibility(View.VISIBLE);
             tvBeaconRssi.setText(Integer.toString(btLockBeaconRssiValue));
 
-            int btLockMode = Settings.listToValueBtLockMode(context, EasySettings.retrieveSettingsSharedPrefs(context).getString(Settings.Bluetooth_lock_mode, ""));
+            int btLockMode = SmartElecSettings.listToValueBtLockMode(context, EasySettings.retrieveSettingsSharedPrefs(context).getString(SmartElecSettings.Bluetooth_lock_mode, ""));
 
             // LOCKED
             if (bleLockStatus == 1) {
@@ -1031,6 +1034,8 @@ public class MainActivity extends AppCompatActivity {
 
         boolean isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         boolean isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+        Timber.i("Location service status : isGpsEnabled = %d / isNetworkEnabled = %d", isGpsEnabled ? 0:1, isNetworkEnabled ? 0:1);
 
         return isGpsEnabled || isNetworkEnabled;
     }

@@ -14,9 +14,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.UUID;
 
-public class Settings {
+public class SmartElecSettings {
 
     public static final String Smartphone_display = "Smartphone display";
     public static final String Speed_adjustment = "Speed adjustment";
@@ -128,33 +127,33 @@ public class Settings {
 
         ArrayList<SettingsObject> settings = EasySettings.createSettingsArray(
 // ----------------------
-                new HeaderSettingsObject.Builder(Settings.Escooter_Specs)
+                new HeaderSettingsObject.Builder(SmartElecSettings.Escooter_Specs)
                         .build(),
-                new EditTextSettingsObject.Builder(Settings.Wheel_size, Settings.Wheel_size, "8", "save")
+                new EditTextSettingsObject.Builder(SmartElecSettings.Wheel_size, SmartElecSettings.Wheel_size, "8", "save")
                         .setDialogTitle("In inches")
                         .setUseValueAsPrefillText()
                         .setNegativeBtnText("cancel")
                         .setUseValueAsSummary()
                         .build(),
-                new EditTextSettingsObject.Builder(Settings.Motor_pole_number, Settings.Motor_pole_number, "15", "save")
+                new EditTextSettingsObject.Builder(SmartElecSettings.Motor_pole_number, SmartElecSettings.Motor_pole_number, "15", "save")
                         .setDialogTitle("Number of poles pairs")
                         .setUseValueAsPrefillText()
                         .setNegativeBtnText("cancel")
                         .setUseValueAsSummary()
                         .build(),
-                new EditTextSettingsObject.Builder(Settings.Battery_min_voltage, Settings.Battery_min_voltage, "42", "save")
+                new EditTextSettingsObject.Builder(SmartElecSettings.Battery_min_voltage, SmartElecSettings.Battery_min_voltage, "42", "save")
                         .setDialogTitle("In volts")
                         .setUseValueAsPrefillText()
                         .setNegativeBtnText("cancel")
                         .setUseValueAsSummary()
                         .build(),
-                new EditTextSettingsObject.Builder(Settings.Battery_max_voltage, Settings.Battery_max_voltage, "54.8", "save")
+                new EditTextSettingsObject.Builder(SmartElecSettings.Battery_max_voltage, SmartElecSettings.Battery_max_voltage, "54.8", "save")
                         .setDialogTitle("In volts")
                         .setUseValueAsPrefillText()
                         .setNegativeBtnText("cancel")
                         .setUseValueAsSummary()
                         .build(),
-                new EditTextSettingsObject.Builder(Settings.Battery_max_distance, Settings.Battery_max_distance, "40", "save")
+                new EditTextSettingsObject.Builder(SmartElecSettings.Battery_max_distance, SmartElecSettings.Battery_max_distance, "40", "save")
                         .setDialogTitle("In kilometers")
                         .setUseValueAsPrefillText()
                         .setNegativeBtnText("cancel")
@@ -162,10 +161,10 @@ public class Settings {
                         .addDivider()
                         .build(),
 // ----------------------
-                new HeaderSettingsObject.Builder(Settings.Smartphone_display)
+                new HeaderSettingsObject.Builder(SmartElecSettings.Smartphone_display)
                         .build(),
 
-                new EditTextSettingsObject.Builder(Settings.Speed_adjustment, Settings.Speed_adjustment, "0", "save")
+                new EditTextSettingsObject.Builder(SmartElecSettings.Speed_adjustment, SmartElecSettings.Speed_adjustment, "0", "save")
                         .setDialogTitle("Display adjusted speed (-10 = displayed speed decreased by 10%)")
                         .setUseValueAsPrefillText()
                         .setNegativeBtnText("cancel")
@@ -173,9 +172,9 @@ public class Settings {
                         .addDivider()
                         .build(),
 // ----------------------
-                new HeaderSettingsObject.Builder(Settings.Escooter_LCD_display)
+                new HeaderSettingsObject.Builder(SmartElecSettings.Escooter_LCD_display)
                         .build(),
-                new EditTextSettingsObject.Builder(Settings.LCD_Speed_adjustement, Settings.LCD_Speed_adjustement, "0", "save")
+                new EditTextSettingsObject.Builder(SmartElecSettings.LCD_Speed_adjustement, SmartElecSettings.LCD_Speed_adjustement, "0", "save")
                         .setDialogTitle("Display adjusted speed (-10 = displayed speed decreased by 10%)")
                         .setUseValueAsPrefillText()
                         .setNegativeBtnText("cancel")
@@ -183,7 +182,7 @@ public class Settings {
                         .addDivider()
                         .build(),
 // ----------------------
-                new HeaderSettingsObject.Builder(Settings.Escooter_Accessories)
+                new HeaderSettingsObject.Builder(SmartElecSettings.Escooter_Accessories)
                         .build(),
                 new ListSettingsObject.Builder(Button_1_short_press_action, Button_1_short_press_action, LIST_Button_press_action_1, LIST_Button_short_press_action, "save")
                         .setUseValueAsSummary()
@@ -206,19 +205,19 @@ public class Settings {
                         .addDivider()
                         .build(),
 // ----------------------
-                new HeaderSettingsObject.Builder(Settings.SmartController)
+                new HeaderSettingsObject.Builder(SmartElecSettings.SmartController)
                         .build(),
                 new ListSettingsObject.Builder(Bluetooth_lock_mode, Bluetooth_lock_mode, LIST_Bluetooth_lock_mode_1, LIST_Bluetooth_lock_mode, "save")
                         .setUseValueAsSummary()
                         .setNegativeBtnText("cancel")
                         .build(),
-                new EditTextSettingsObject.Builder(Settings.Bluetooth_pin_code, Settings.Bluetooth_pin_code, "147258", "save")
+                new EditTextSettingsObject.Builder(SmartElecSettings.Bluetooth_pin_code, SmartElecSettings.Bluetooth_pin_code, "147258", "save")
                         .setDialogTitle("PIN code (6 digits max)")
                         .setUseValueAsPrefillText()
                         .setNegativeBtnText("cancel")
                         .setUseValueAsSummary()
                         .build(),
-                new EditTextSettingsObject.Builder(Settings.Beacon_Mac_Address, Settings.Beacon_Mac_Address, "aa:bb:cc:dd:ee:ff", "save")
+                new EditTextSettingsObject.Builder(SmartElecSettings.Beacon_Mac_Address, SmartElecSettings.Beacon_Mac_Address, "aa:bb:cc:dd:ee:ff", "save")
                         .setDialogTitle("MAC address")
                         .setUseValueAsPrefillText()
                         .setNegativeBtnText("cancel")
@@ -241,7 +240,7 @@ public class Settings {
                         .build(),
 
 // ----------------------
-                new HeaderSettingsObject.Builder(Settings.Battery_saving)
+                new HeaderSettingsObject.Builder(SmartElecSettings.Battery_saving)
                         .build(),
                 new SeekBarSettingsObject.Builder(Battery_saving_medium_voltage, Battery_saving_medium_voltage, 40, 0, 100)
                         .setUseValueAsSummary()
@@ -251,7 +250,7 @@ public class Settings {
                         .addDivider()
                         .build(),
 // ----------------------
-                new HeaderSettingsObject.Builder(Settings.Electric_brake)
+                new HeaderSettingsObject.Builder(SmartElecSettings.Electric_brake)
                         .build(),
                 new CheckBoxSettingsObject.Builder(Electric_brake_progressive_mode, Electric_brake_progressive_mode, false)
                         .setOffText("off")
@@ -280,7 +279,7 @@ public class Settings {
                         .build(),
 //
 // ----------------------
-                new HeaderSettingsObject.Builder(Settings.Limiters)
+                new HeaderSettingsObject.Builder(SmartElecSettings.Limiters)
                         .build(),
                 new CheckBoxSettingsObject.Builder(Current_loop_mode, Current_loop_mode, false)
                         .setOffText("off")
@@ -303,15 +302,15 @@ public class Settings {
                         .build(),
 //
 // ----------------------
-                new HeaderSettingsObject.Builder(Settings.OTA_Wifi)
+                new HeaderSettingsObject.Builder(SmartElecSettings.OTA_Wifi)
                         .build(),
-                new EditTextSettingsObject.Builder(Settings.Wifi_ssid, Settings.Wifi_ssid, "", "save")
+                new EditTextSettingsObject.Builder(SmartElecSettings.Wifi_ssid, SmartElecSettings.Wifi_ssid, "", "save")
                         .setDialogTitle("Wifi SSID")
                         .setUseValueAsPrefillText()
                         .setNegativeBtnText("cancel")
                         .setUseValueAsSummary()
                         .build(),
-                new EditTextSettingsObject.Builder(Settings.Wifi_pwd, Settings.Wifi_pwd, "", "save")
+                new EditTextSettingsObject.Builder(SmartElecSettings.Wifi_pwd, SmartElecSettings.Wifi_pwd, "", "save")
                         .setDialogTitle("Wifi password")
                         .setUseValueAsPrefillText()
                         .setNegativeBtnText("cancel")

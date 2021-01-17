@@ -460,7 +460,7 @@ class BluetoothHandler {
 
         try {
             characteristic = peripheral.getCharacteristic(SMARTCNTRL_MAIN_SERVICE_UUID, SETTINGS1_CHARACTERISTIC_UUID);
-            dataSettings = Settings.settings1ToByteArray(context);
+            dataSettings = SmartElecSettings.settings1ToByteArray(context);
             peripheral.writeCharacteristic(characteristic, dataSettings, WRITE_TYPE_DEFAULT);
         } catch (Exception e) {
             e.printStackTrace();
@@ -468,7 +468,7 @@ class BluetoothHandler {
 
         try {
             characteristic = peripheral.getCharacteristic(SMARTCNTRL_MAIN_SERVICE_UUID, SETTINGS2_CHARACTERISTIC_UUID);
-            dataSettings = Settings.settings2ToByteArray(context);
+            dataSettings = SmartElecSettings.settings2ToByteArray(context);
             peripheral.writeCharacteristic(characteristic, dataSettings, WRITE_TYPE_DEFAULT);
         } catch (Exception e) {
             e.printStackTrace();
@@ -476,7 +476,7 @@ class BluetoothHandler {
 
         try {
             characteristic = peripheral.getCharacteristic(SMARTCNTRL_MAIN_SERVICE_UUID, SETTINGS3_CHARACTERISTIC_UUID);
-            dataSettings = Settings.settings3ToByteArray(context);
+            dataSettings = SmartElecSettings.settings3ToByteArray(context);
             peripheral.writeCharacteristic(characteristic, dataSettings, WRITE_TYPE_DEFAULT);
         } catch (Exception e) {
             e.printStackTrace();
@@ -484,7 +484,7 @@ class BluetoothHandler {
 
         try {
             characteristic = peripheral.getCharacteristic(SMARTCNTRL_MAIN_SERVICE_UUID, SETTINGS4_WIFI_SSID_CHARACTERISTIC_UUID);
-            dataSettings = Settings.settings4ToByteArray(context);
+            dataSettings = SmartElecSettings.settings4ToByteArray(context);
             peripheral.writeCharacteristic(characteristic, dataSettings, WRITE_TYPE_DEFAULT);
         } catch (Exception e) {
             e.printStackTrace();
@@ -492,7 +492,7 @@ class BluetoothHandler {
 
         try {
             characteristic = peripheral.getCharacteristic(SMARTCNTRL_MAIN_SERVICE_UUID, SETTINGS5_WIFI_PWD_CHARACTERISTIC_UUID);
-            dataSettings = Settings.settings5ToByteArray(context);
+            dataSettings = SmartElecSettings.settings5ToByteArray(context);
             peripheral.writeCharacteristic(characteristic, dataSettings, WRITE_TYPE_DEFAULT);
         } catch (Exception e) {
             e.printStackTrace();

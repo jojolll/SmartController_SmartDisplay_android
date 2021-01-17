@@ -8,6 +8,8 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.lifecycle.ProcessLifecycleOwner;
+
 public class ApplicationLifecycleHandler implements Application.ActivityLifecycleCallbacks, ComponentCallbacks2 {
 
     private static final String TAG = ApplicationLifecycleHandler.class.getSimpleName();
