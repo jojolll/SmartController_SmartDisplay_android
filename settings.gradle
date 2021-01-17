@@ -1,1 +1,1 @@
-include ':app', ':blessed'
+include ':app', ':blessed', ':easysettings-basic', ':easysettings-dialogs'

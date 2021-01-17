@@ -31,20 +31,19 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-
-import com.hotmail.or_dvir.easysettings.pojos.EasySettings;
-import com.hotmail.or_dvir.easysettings.pojos.SettingsObject;
-
-import org.koxx.smartcntrl.datas.BrakeStatusMeasurement;
-import org.koxx.smartcntrl.datas.BtlockMeasurement;
-import org.koxx.smartcntrl.datas.CalibType;
-import org.koxx.smartcntrl.datas.ModeMeasurement;
-import org.welie.blessed.BluetoothCentral;
-import org.welie.blessed.BluetoothPeripheral;
+import com.hotmail.or_dvir.easysettings_kx.pojos.EasySettings;
+import com.hotmail.or_dvir.easysettings_kx.pojos.SettingsObject;
 
 import org.koxx.smartcntrl.chrono.ChronometerTimeOn;
 import org.koxx.smartcntrl.chrono.ChronometerTimeRun;
+import org.koxx.smartcntrl.datas.BrakeStatusMeasurement;
+import org.koxx.smartcntrl.datas.BtlockMeasurement;
+import org.koxx.smartcntrl.datas.CalibType;
 import org.koxx.smartcntrl.datas.Measurements;
+import org.koxx.smartcntrl.datas.ModeMeasurement;
+import org.koxx.smartcntrl.settings.SmartElecSettings;
+import org.welie.blessed.BluetoothCentral;
+import org.welie.blessed.BluetoothPeripheral;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

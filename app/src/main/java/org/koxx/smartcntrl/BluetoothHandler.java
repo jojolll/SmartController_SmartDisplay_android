@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 
 import org.koxx.smartcntrl.datas.CalibType;
+import org.koxx.smartcntrl.settings.SmartElecSettings;
 import org.koxx.smartcntrl.tools.BytesTools;
 import org.welie.blessed.BluetoothBytesParser;
 import org.welie.blessed.BluetoothCentral;

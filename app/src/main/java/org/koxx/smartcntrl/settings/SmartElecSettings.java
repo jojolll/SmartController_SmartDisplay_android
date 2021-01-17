@@ -1,14 +1,15 @@
-package org.koxx.smartcntrl;
+package org.koxx.smartcntrl.settings;
 
 import android.content.Context;
+import android.text.InputType;
 
-import com.hotmail.or_dvir.easysettings.pojos.CheckBoxSettingsObject;
-import com.hotmail.or_dvir.easysettings.pojos.EasySettings;
-import com.hotmail.or_dvir.easysettings.pojos.HeaderSettingsObject;
-import com.hotmail.or_dvir.easysettings.pojos.SeekBarSettingsObject;
-import com.hotmail.or_dvir.easysettings.pojos.SettingsObject;
-import com.hotmail.or_dvir.easysettings_dialogs.pojos.EditTextSettingsObject;
-import com.hotmail.or_dvir.easysettings_dialogs.pojos.ListSettingsObject;
+import com.hotmail.or_dvir.easysettings_kx.pojos.CheckBoxSettingsObject;
+import com.hotmail.or_dvir.easysettings_kx.pojos.EasySettings;
+import com.hotmail.or_dvir.easysettings_kx.pojos.HeaderSettingsObject;
+import com.hotmail.or_dvir.easysettings_kx.pojos.SeekBarSettingsObject;
+import com.hotmail.or_dvir.easysettings_kx.pojos.SettingsObject;
+import com.hotmail.or_dvir.easysettings_dialogs_kx.pojos.EditTextSettingsObject;
+import com.hotmail.or_dvir.easysettings_dialogs_kx.pojos.ListSettingsObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -212,9 +213,12 @@ public class SmartElecSettings {
                         .setNegativeBtnText("cancel")
                         .build(),
                 new EditTextSettingsObject.Builder(SmartElecSettings.Bluetooth_pin_code, SmartElecSettings.Bluetooth_pin_code, "147258", "save")
-                        .setDialogTitle("PIN code (6 digits max)")
+                        .setDialogTitle("PIN code (use 6 digits only)")
                         .setUseValueAsPrefillText()
                         .setNegativeBtnText("cancel")
+                        .setInputType(InputType.TYPE_CLASS_NUMBER)
+                        .setMaxCharacters(6)
+                        .setMinCharacters(6)
                         .setUseValueAsSummary()
                         .build(),
                 new EditTextSettingsObject.Builder(SmartElecSettings.Beacon_Mac_Address, SmartElecSettings.Beacon_Mac_Address, "aa:bb:cc:dd:ee:ff", "save")

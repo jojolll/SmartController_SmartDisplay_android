@@ -13,17 +13,17 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.hotmail.or_dvir.easysettings.events.BasicSettingsClickEvent;
-import com.hotmail.or_dvir.easysettings.events.CheckBoxSettingsClickEvent;
-import com.hotmail.or_dvir.easysettings.events.SeekBarSettingsProgressChangedEvent;
-import com.hotmail.or_dvir.easysettings.events.SeekBarSettingsValueChangedEvent;
-import com.hotmail.or_dvir.easysettings.events.SwitchSettingsClickEvent;
-import com.hotmail.or_dvir.easysettings.pojos.EasySettings;
-import com.hotmail.or_dvir.easysettings.pojos.SettingsObject;
-import com.hotmail.or_dvir.easysettings_dialogs.events.EditTextSettingsNeutralButtonClickedEvent;
-import com.hotmail.or_dvir.easysettings_dialogs.events.EditTextSettingsValueChangedEvent;
-import com.hotmail.or_dvir.easysettings_dialogs.events.ListSettingsNeutralButtonClickedEvent;
-import com.hotmail.or_dvir.easysettings_dialogs.events.ListSettingsValueChangedEvent;
+import com.hotmail.or_dvir.easysettings_kx.events.BasicSettingsClickEvent;
+import com.hotmail.or_dvir.easysettings_kx.events.CheckBoxSettingsClickEvent;
+import com.hotmail.or_dvir.easysettings_kx.events.SeekBarSettingsProgressChangedEvent;
+import com.hotmail.or_dvir.easysettings_kx.events.SeekBarSettingsValueChangedEvent;
+import com.hotmail.or_dvir.easysettings_kx.events.SwitchSettingsClickEvent;
+import com.hotmail.or_dvir.easysettings_kx.pojos.EasySettings;
+import com.hotmail.or_dvir.easysettings_kx.pojos.SettingsObject;
+import com.hotmail.or_dvir.easysettings_dialogs_kx.events.EditTextSettingsNeutralButtonClickedEvent;
+import com.hotmail.or_dvir.easysettings_dialogs_kx.events.EditTextSettingsValueChangedEvent;
+import com.hotmail.or_dvir.easysettings_dialogs_kx.events.ListSettingsNeutralButtonClickedEvent;
+import com.hotmail.or_dvir.easysettings_dialogs_kx.events.ListSettingsValueChangedEvent;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
