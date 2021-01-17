@@ -696,8 +696,13 @@ public class MainActivity extends AppCompatActivity {
             if ((EasySettings.retrieveSettingsSharedPrefs(context).getString(Settings.Bluetooth_lock_mode, "").equals(Settings.LIST_Bluetooth_lock_mode_3)) || // beacon & smartphone
                     (EasySettings.retrieveSettingsSharedPrefs(context).getString(Settings.Bluetooth_lock_mode, "").equals(Settings.LIST_Bluetooth_lock_mode_4))) // beacon
             {
-                iconBeaconVisible = menu.findItem(R.id.beacon_visible);
-                iconBeaconVisible.setVisible(true);
+                if (mLastBtStatus == BluetoothHandler.CONNECT_STATUS_OK) {
+                    iconBeaconVisible.setVisible(true);
+                } else {
+                    iconBeaconVisible.setVisible(false);
+                }
+            } else {
+                iconBeaconVisible.setVisible(false);
             }
 
             actionBarSetup(name);
@@ -739,8 +744,8 @@ public class MainActivity extends AppCompatActivity {
             // medium speed
             if (chronoTimeRun.getDuration() > 0) {
                 int speedMed = (int) (measurement.distanceTrip / (chronoTimeRun.getDuration() / 1000.0 / 60 / 60));
-                if (speedMed > mMaxSpeed)
-                    speedMed = mMaxSpeed;
+                if (speedMed > measurement.speedValue)
+                    speedMed = measurement.speedValue;
                 tvSpeedMed.setText(String.format(Locale.ENGLISH, "%d km/h", speedMed));
             } else {
                 tvSpeedMed.setText(String.format(Locale.ENGLISH, "0 km/h"));
