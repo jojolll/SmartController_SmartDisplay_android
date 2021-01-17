@@ -748,8 +748,8 @@ public class MainActivity extends AppCompatActivity {
             // medium speed
             if (chronoTimeRun.getDuration() > 0) {
                 int speedMed = (int) (measurement.distanceTrip / (chronoTimeRun.getDuration() / 1000.0 / 60 / 60));
-                if (speedMed > measurement.speedValue)
-                    speedMed = measurement.speedValue;
+                if (speedMed > mMaxSpeed)
+                    speedMed = (int) mMaxSpeed;
                 tvSpeedMed.setText(String.format(Locale.ENGLISH, "%d km/h", speedMed));
             } else {
                 tvSpeedMed.setText(String.format(Locale.ENGLISH, "0 km/h"));
