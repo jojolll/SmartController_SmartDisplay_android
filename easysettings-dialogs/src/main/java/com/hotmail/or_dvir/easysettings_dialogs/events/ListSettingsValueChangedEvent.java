@@ -1,6 +1,6 @@
-package com.hotmail.or_dvir.easysettings_dialogs_kx.events;
+package com.hotmail.or_dvir.easysettings_dialogs.events;
 
-import com.hotmail.or_dvir.easysettings_dialogs_kx.pojos.ListSettingsObject;
+import com.hotmail.or_dvir.easysettings_dialogs.pojos.ListSettingsObject;
 
 /**
  * an event that is sent when the value of a {@link ListSettingsObject}

@@ -15,7 +15,10 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:backupAgent=".settings.BackupAgent">
+        <meta-data android:name="com.google.android.backup.api_key"
+            android:value="unused" />
         <activity
             android:name="org.koxx.smartcntrl.GraphActivity"
             android:label="@string/title_activity_graph"

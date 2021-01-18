@@ -1,4 +1,4 @@
-package com.hotmail.or_dvir.easysettings_kx.pojos;
+package com.hotmail.or_dvir.easysettings.pojos;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
 import androidx.annotation.Nullable;
 
 import com.hotmail.or_dvir.easysettings.R;
-import com.hotmail.or_dvir.easysettings_kx.enums.ESettingsTypes;
+import com.hotmail.or_dvir.easysettings.enums.ESettingsTypes;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,6 +22,8 @@ import java.util.Set;
 @SuppressWarnings("PointlessBooleanExpression")
 public class EasySettings
 {
+	public static final String SHARED_PREFS_KEY = "com.hotmail.or_dvir.easysettings.settings";
+
 	/**
 	 * a helper method for creating an {@link ArrayList} of {@link SettingsObject}s for your app.
 	 * @param settingsObjects
@@ -218,6 +220,7 @@ public class EasySettings
 	public static SharedPreferences retrieveSettingsSharedPrefs(Context context)
 	{
 		String name = context.getString(R.string.sharedPreferencesSettingsName);
+
 		return context.getSharedPreferences(name, Context.MODE_PRIVATE);
 	}
 }

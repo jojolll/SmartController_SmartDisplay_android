@@ -1,6 +1,6 @@
-package com.hotmail.or_dvir.easysettings_kx.events;
+package com.hotmail.or_dvir.easysettings.events;
 
-import com.hotmail.or_dvir.easysettings_kx.pojos.BasicSettingsObject;
+import com.hotmail.or_dvir.easysettings.pojos.BasicSettingsObject;
 
 /**
  * an event which is sent whenever a {@link BasicSettingsObject}

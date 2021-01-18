@@ -1,6 +1,6 @@
-package com.hotmail.or_dvir.easysettings_kx.events;
+package com.hotmail.or_dvir.easysettings.events;
 
-import com.hotmail.or_dvir.easysettings_kx.pojos.CheckBoxSettingsObject;
+import com.hotmail.or_dvir.easysettings.pojos.CheckBoxSettingsObject;
 
 /**
  * an event that is sent whenever a {@link CheckBoxSettingsObject}

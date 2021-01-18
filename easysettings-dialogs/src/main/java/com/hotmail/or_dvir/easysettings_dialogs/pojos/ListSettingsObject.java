@@ -1,4 +1,4 @@
-package com.hotmail.or_dvir.easysettings_dialogs_kx.pojos;
+package com.hotmail.or_dvir.easysettings_dialogs.pojos;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -9,9 +9,9 @@ import androidx.annotation.NonNull;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.hotmail.or_dvir.easysettings_dialogs_kx.events.ListSettingsValueChangedEvent;
-import com.hotmail.or_dvir.easysettings_kx.enums.ESettingsTypes;
-import com.hotmail.or_dvir.easysettings_kx.pojos.EasySettings;
+import com.hotmail.or_dvir.easysettings_dialogs.events.ListSettingsValueChangedEvent;
+import com.hotmail.or_dvir.easysettings.enums.ESettingsTypes;
+import com.hotmail.or_dvir.easysettings.pojos.EasySettings;
 import com.hotmail.or_dvir.easysettings_dialogs.R;
 
 import org.greenrobot.eventbus.EventBus;

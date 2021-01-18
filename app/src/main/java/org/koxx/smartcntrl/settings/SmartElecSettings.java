@@ -3,13 +3,13 @@ package org.koxx.smartcntrl.settings;
 import android.content.Context;
 import android.text.InputType;
 
-import com.hotmail.or_dvir.easysettings_kx.pojos.CheckBoxSettingsObject;
-import com.hotmail.or_dvir.easysettings_kx.pojos.EasySettings;
-import com.hotmail.or_dvir.easysettings_kx.pojos.HeaderSettingsObject;
-import com.hotmail.or_dvir.easysettings_kx.pojos.SeekBarSettingsObject;
-import com.hotmail.or_dvir.easysettings_kx.pojos.SettingsObject;
-import com.hotmail.or_dvir.easysettings_dialogs_kx.pojos.EditTextSettingsObject;
-import com.hotmail.or_dvir.easysettings_dialogs_kx.pojos.ListSettingsObject;
+import com.hotmail.or_dvir.easysettings.pojos.CheckBoxSettingsObject;
+import com.hotmail.or_dvir.easysettings.pojos.EasySettings;
+import com.hotmail.or_dvir.easysettings.pojos.HeaderSettingsObject;
+import com.hotmail.or_dvir.easysettings.pojos.SeekBarSettingsObject;
+import com.hotmail.or_dvir.easysettings.pojos.SettingsObject;
+import com.hotmail.or_dvir.easysettings_dialogs.pojos.EditTextSettingsObject;
+import com.hotmail.or_dvir.easysettings_dialogs.pojos.ListSettingsObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;

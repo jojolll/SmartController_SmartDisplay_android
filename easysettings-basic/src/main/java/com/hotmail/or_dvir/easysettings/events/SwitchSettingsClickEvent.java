@@ -1,6 +1,6 @@
-package com.hotmail.or_dvir.easysettings_kx.events;
+package com.hotmail.or_dvir.easysettings.events;
 
-import com.hotmail.or_dvir.easysettings_kx.pojos.SwitchSettingsObject;
+import com.hotmail.or_dvir.easysettings.pojos.SwitchSettingsObject;
 
 /**
  * an event that is sent when a {@link SwitchSettingsObject} is clicked

@@ -1,6 +1,6 @@
-package com.hotmail.or_dvir.easysettings_kx.events;
+package com.hotmail.or_dvir.easysettings.events;
 
-import com.hotmail.or_dvir.easysettings_kx.pojos.SeekBarSettingsObject;
+import com.hotmail.or_dvir.easysettings.pojos.SeekBarSettingsObject;
 
 /**
  * an event that is sent whenever the FINAL value of

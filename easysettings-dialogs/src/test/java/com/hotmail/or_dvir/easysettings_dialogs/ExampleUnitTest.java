@@ -1,4 +1,4 @@
-package com.hotmail.or_dvir.easysettings_dialogs_kx;
+package com.hotmail.or_dvir.easysettings_dialogs;
 
 import org.junit.Test;
 

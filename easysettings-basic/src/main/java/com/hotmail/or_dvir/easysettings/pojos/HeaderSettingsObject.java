@@ -1,10 +1,10 @@
-package com.hotmail.or_dvir.easysettings_kx.pojos;
+package com.hotmail.or_dvir.easysettings.pojos;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.view.View;
 import com.hotmail.or_dvir.easysettings.R;
-import com.hotmail.or_dvir.easysettings_kx.enums.ESettingsTypes;
+import com.hotmail.or_dvir.easysettings.enums.ESettingsTypes;
 
 import java.io.Serializable;
 

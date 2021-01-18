@@ -1,4 +1,4 @@
-package com.hotmail.or_dvir.easysettings_kx.pojos;
+package com.hotmail.or_dvir.easysettings.pojos;
 
 import android.content.SharedPreferences;
 

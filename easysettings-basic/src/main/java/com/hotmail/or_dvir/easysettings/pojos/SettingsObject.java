@@ -1,4 +1,4 @@
-package com.hotmail.or_dvir.easysettings_kx.pojos;
+package com.hotmail.or_dvir.easysettings.pojos;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -13,7 +13,7 @@ import androidx.annotation.IdRes;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.Nullable;
 
-import com.hotmail.or_dvir.easysettings_kx.enums.ESettingsTypes;
+import com.hotmail.or_dvir.easysettings.enums.ESettingsTypes;
 
 import java.io.Serializable;
 import java.util.Arrays;

@@ -1,4 +1,4 @@
-package com.hotmail.or_dvir.easysettings_kx;
+package com.hotmail.or_dvir.easysettings;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

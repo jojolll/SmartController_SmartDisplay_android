@@ -1,4 +1,4 @@
-package com.hotmail.or_dvir.easysettings_kx.pojos;
+package com.hotmail.or_dvir.easysettings.pojos;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -6,9 +6,9 @@ import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import com.hotmail.or_dvir.easysettings.R;
-import com.hotmail.or_dvir.easysettings_kx.enums.ESettingsTypes;
-import com.hotmail.or_dvir.easysettings_kx.events.SeekBarSettingsProgressChangedEvent;
-import com.hotmail.or_dvir.easysettings_kx.events.SeekBarSettingsValueChangedEvent;
+import com.hotmail.or_dvir.easysettings.enums.ESettingsTypes;
+import com.hotmail.or_dvir.easysettings.events.SeekBarSettingsProgressChangedEvent;
+import com.hotmail.or_dvir.easysettings.events.SeekBarSettingsValueChangedEvent;
 
 import org.greenrobot.eventbus.EventBus;
 import java.io.Serializable;

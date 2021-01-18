@@ -1,4 +1,4 @@
-package com.hotmail.or_dvir.easysettings_kx.enums;
+package com.hotmail.or_dvir.easysettings.enums;
 
 public enum ESettingsTypes
 {

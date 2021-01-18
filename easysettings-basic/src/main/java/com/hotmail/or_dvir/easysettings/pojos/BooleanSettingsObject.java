@@ -1,4 +1,4 @@
-package com.hotmail.or_dvir.easysettings_kx.pojos;
+package com.hotmail.or_dvir.easysettings.pojos;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -9,9 +9,9 @@ import android.widget.TextView;
 import androidx.annotation.IdRes;
 import androidx.annotation.Nullable;
 
-import com.hotmail.or_dvir.easysettings_kx.enums.ESettingsTypes;
-import com.hotmail.or_dvir.easysettings_kx.events.CheckBoxSettingsClickEvent;
-import com.hotmail.or_dvir.easysettings_kx.events.SwitchSettingsClickEvent;
+import com.hotmail.or_dvir.easysettings.enums.ESettingsTypes;
+import com.hotmail.or_dvir.easysettings.events.CheckBoxSettingsClickEvent;
+import com.hotmail.or_dvir.easysettings.events.SwitchSettingsClickEvent;
 
 import org.greenrobot.eventbus.EventBus;
 

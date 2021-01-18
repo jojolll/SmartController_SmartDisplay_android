@@ -31,8 +31,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.hotmail.or_dvir.easysettings_kx.pojos.EasySettings;
-import com.hotmail.or_dvir.easysettings_kx.pojos.SettingsObject;
+import com.hotmail.or_dvir.easysettings.pojos.EasySettings;
+import com.hotmail.or_dvir.easysettings.pojos.SettingsObject;
 
 import org.koxx.smartcntrl.chrono.ChronometerTimeOn;
 import org.koxx.smartcntrl.chrono.ChronometerTimeRun;
