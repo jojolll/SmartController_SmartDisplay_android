@@ -16,6 +16,7 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:restoreAnyVersion="true"
         android:backupAgent=".settings.BackupAgent">
         <meta-data android:name="com.google.android.backup.api_key"
             android:value="unused" />
